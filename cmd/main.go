@@ -34,6 +34,14 @@ func main() {
 			Msg("Error while creating DI Container")
 	}
 
+	// Generate Key Pair
+	if err := c.GetSigner().GenerateKeys(); err != nil {
+		zerologlog.
+			Fatal().
+			Err(err).
+			Msg("Error while generating ed25519 key pair")
+	}
+
 	defer c.Close()
 
 	app := fiber.New(fiber.Config{

@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/SSH-Management/utils"
+
 	"github.com/rs/zerolog"
 	zerologlog "github.com/rs/zerolog/log"
 	"github.com/rzajac/zltest"
-
-	"github.com/SSH-Management/utils"
 )
 
 const DateTimeFormat = "2006-01-02 15:04:05"

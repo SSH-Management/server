@@ -1,3 +1,4 @@
+---
 #------------------------------------------------------------------------------
 # Database
 #------------------------------------------------------------------------------
@@ -13,9 +14,8 @@ database:
   conn_max_idle: 10
   conn_max_opened: 10
 
-bind: "0.0.0.0"
+bind: '0.0.0.0'
 port: 8080
-
 
 logging:
   file: /var/logs/ssh_management/server.log
@@ -44,8 +44,6 @@ views:
   static:
     dir: ./static
     path: /static
-
-
 
 #------------------------------------------------------------------------------
 # Redis server (used for rate limiting)

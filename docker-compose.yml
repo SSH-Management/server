@@ -8,11 +8,26 @@ services:
     networks:
       - net
     volumes:
-      - './logs/server.log:/var/log/ssh_management/server.log'
+      - './logs:/var/log/ssh_management'
   redis:
     image: 'redis:6-alpine'
     networks:
       - net
+  mysql:
+    image: 'mariadb:10.7.1-focal'
+    ports:
+      - '3306:3306'
+    networks:
+      - net
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: ssh_management
+      MARIADB_USER: server
+      MARIADB_PASSWORD: server
+    volumes:
+      - mysql:/var/lib/mysql
 networks:
   net:
     driver: bridge
+volumes:
+  mysql:

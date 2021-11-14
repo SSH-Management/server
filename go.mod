@@ -4,7 +4,10 @@ go 1.17
 
 require (
 	github.com/SSH-Management/linux-user v0.1.1
+	github.com/SSH-Management/request-signer/v2 v2.0.0
 	github.com/SSH-Management/server-sdk v0.2.2
+	github.com/SSH-Management/ssh v1.0.0
+	github.com/SSH-Management/utils v1.0.0
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0
@@ -15,14 +18,10 @@ require (
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.31.0
-	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
 	gorm.io/gorm v1.22.2
 )
 
 require (
-	github.com/SSH-Management/request-signer v1.0.0 // indirect
-	github.com/SSH-Management/ssh v1.0.0 // indirect
-	github.com/SSH-Management/utils v1.0.0 // indirect
 	github.com/andybalholm/brotli v1.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -45,6 +44,7 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
+	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa // indirect
 	golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/ini.v1 v1.63.2 // indirect

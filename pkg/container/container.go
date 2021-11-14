@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	linux_user "github.com/SSH-Management/linux-user"
-	signer "github.com/SSH-Management/request-signer"
+	"github.com/SSH-Management/request-signer/v2"
 
 	"github.com/SSH-Management/server/pkg/log"
 	"github.com/SSH-Management/server/pkg/repositories/group"
@@ -26,8 +26,7 @@ type Container struct {
 	userService     user.Interface
 	unixUserService linux_user.UnixInterface
 
-
-	userRepository  userrepo.Interface
+	userRepository   userrepo.Interface
 	groupRepository  group.Interface
 	serverRepository server.Interface
 	roleRepository   role.Interface

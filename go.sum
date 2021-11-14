@@ -47,8 +47,8 @@ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/SSH-Management/linux-user v0.1.1 h1:kQuLk0FTnDczAYnBRvVi3J15745zpNELOqMptDySeY4=
 github.com/SSH-Management/linux-user v0.1.1/go.mod h1:4gJJDf4Vf9dlnjKIA3xOV66u5Hkquecyu6+fui6n3Bw=
-github.com/SSH-Management/request-signer v1.0.0 h1:yXnT1T905g5ZJIvZ3eJyspu+/OLSGumhzMS+w1OINjE=
-github.com/SSH-Management/request-signer v1.0.0/go.mod h1:AOfzbA3wm+FLoZFk5/YsWlNRVya+qo+FeJpcjvPh4a8=
+github.com/SSH-Management/request-signer/v2 v2.0.0 h1:i27yMAuqfHYHJqWeOQjzpyJ1OZCs4PZtQVBWjwjT2QU=
+github.com/SSH-Management/request-signer/v2 v2.0.0/go.mod h1:TzijZ4N3flY1qm7PZUz6QEWcK3Wmq3Jg38ygKfR6DdQ=
 github.com/SSH-Management/server-sdk v0.2.2 h1:T+vTamLOxF5X67cew1yMbAUpC0N1+bHRNNu9CdXt9L8=
 github.com/SSH-Management/server-sdk v0.2.2/go.mod h1:j3j1gNY2UcG0s3NXVlECNEauQsU/Y1LeYdCN6lMi6z8=
 github.com/SSH-Management/ssh v1.0.0 h1:Be2C5xWcjgviNfqcuIXJX6fdlavtmq8rXbAzyBNV4Kc=
@@ -367,8 +367,6 @@ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPh
 golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a/go.mod h1:P+XmwS30IXTQdn5tA2iutPOUgjI07+tq3H3K9MVA1s8=
 golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
 golang.org/x/crypto v0.0.0-20210817164053-32db794688a5/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
-golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 h1:7I4JAnoQBe7ZtJcBaYHi5UtiO8tQHbUSXxL+pnGRANg=
-golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
 golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa h1:idItI2DDfCokpg0N51B2VtiLdJ4vAuXC9fnCb2gACo4=
 golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
 golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
@@ -537,8 +535,6 @@ golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod h1:oPkhp1MJrh7nUepCBc
 golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.0.0-20211103235746-7861aae1554b h1:1VkfZQv42XQlA/jchYumAnv1UPo6RgF9rJFkTgZIxO4=
-golang.org/x/sys v0.0.0-20211103235746-7861aae1554b/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02 h1:7NCfEGl0sfUojmX78nK9pBJuUlSZWEJA/TwASvfiPLo=
 golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 h1:v+OssWQX+hTHEmOBgwxdZxK4zHq3yOs8F9J7mk0PY8E=

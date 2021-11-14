@@ -2,7 +2,7 @@ package models
 
 type Role struct {
 	Model
-	Name string
+	Name string `gorm:"column:name" json:"name,omitempty"`
 
 	Users []User
 }

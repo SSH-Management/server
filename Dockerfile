@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN apk update && apk add make gcc && make build-server
+RUN apk update && apk add make gcc && make build
 
 FROM alpine:3.13
 

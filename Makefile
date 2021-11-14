@@ -4,6 +4,10 @@ ENV ?= development
 VERSION ?= dev
 GOPATH ?= ${HOME}/go
 DOCKER ?= 0
+TAG ?= 1.0.0
+PLATFORMS ?= linux/arm64,linux/amd64
+
+DATABASE_URL="mysql://server:server@tcp(localhost:3306)/ssh_management?charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
 
 CC = gcc
 CXX = g++
@@ -15,13 +19,13 @@ all: clean build
 .PHONY: build
 build:
 ifeq ($(ENV),production)
-	CGO_ENABLED=0 CXX=g++ CC=gcc go build -ldflags="-s -w -X 'main.Version=${VERSION}'" -o ./bin/server/ssh_management ./cmd/*.go
+	CGO_ENABLED=0 CXX=g++ CC=gcc go build -ldflags="-s -w -X 'main.Version=${VERSION}'" -o ./bin/ssh_management ./cmd/*.go
 else ifeq ($(ENV),development)
 	CXX=g++ CC=gcc go build -o ./bin/ssh_management ./cmd/*.go
 else
 	echo "Target ${ENV} is not supported"
 endif
-	cp ssh_management.example.yml ./bin/server/ssh_management.yml
+	cp ssh_management.example.yml ./bin/ssh_management.yml
 
 .PHONY: run-server
 run-server:
@@ -61,15 +65,15 @@ clean:
 
 .PHONY: migrate
 migrate:
-	CC=gcc CXX=g++ migrate -source file://$(shell pwd)/database/migrations -database $(DATABASE_URL) up
+	@migrate -source file://$(shell pwd)/migrations -database $(DATABASE_URL) up
 
 .PHONY: migrate-down
 migrate-down:
-	CC=gcc CXX=g++ migrate -source file://$(shell pwd)/database/migrations -database $(DATABASE_URL) down
+	@migrate -source file://$(shell pwd)/migrations -database $(DATABASE_URL) down
 
 .PHONY: migrate-create
 migration-create:
-	CC=gcc CXX=g++ migrate -database $(DATABASE_URL) create -dir ./database/migrations -seq -ext sql $(M_NAME)
+	@migrate -database $(DATABASE_URL) create -dir ./migrations -seq -ext sql $(M_NAME)
 
 .PHONY: install-migrate-cli
 install-migrate-cli:/
@@ -82,3 +86,7 @@ ifneq ($(findstring migrate,$(shell ls $(GOPATH)/bin)),migrate)
 	cd cmd/migrate && \
 	go build -tags 'postgres sqlite3 mysql github file' -ldflags="-X main.Version=${MIGRATE_TAG}" -o $(GOPATH)/bin/migrate ${GOPATH}/src/github.com/golang-migrate/migrate/cmd/migrate
 endif
+
+.PHONY: buildx
+buildx:
+	docker buildx build --platform $(PLATFORMS) -t "malusevd99/ssh-management:server-$(TAG)" --push .
