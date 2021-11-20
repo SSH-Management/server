@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 
-	"github.com/SSH-Management/utils"
+	"github.com/SSH-Management/utils/v2"
 
 	"github.com/SSH-Management/server/cmd/http/middleware"
 	"github.com/SSH-Management/server/pkg/container"

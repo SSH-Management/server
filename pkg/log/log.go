@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SSH-Management/utils"
+	"github.com/SSH-Management/utils/v2"
 
 	"github.com/rs/zerolog"
 	zerologlog "github.com/rs/zerolog/log"
@@ -52,10 +52,6 @@ func (l Logger) Close() error {
 }
 
 func ConfigureDefaultLogger(level string, writer io.Writer) {
-	if writer == nil {
-		writer = os.Stderr
-	}
-
 	zerolog.SetGlobalLevel(Parse(level))
 	zerolog.TimeFieldFormat = DateTimeFormat
 	zerolog.DurationFieldUnit = time.Microsecond
@@ -65,7 +61,7 @@ func ConfigureDefaultLogger(level string, writer io.Writer) {
 }
 
 func New(fp, level string, toConsole bool, sample uint32) (*Logger, error) {
-	file, err := utils.CreateLogFile(fp, 0o755)
+	file, err := utils.CreateLogFile(fp)
 
 	if err != nil {
 		zerologlog.Error().Err(err).Msgf("Error while creating %s log", fp)

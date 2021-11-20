@@ -6,7 +6,7 @@ import (
 	"os"
 
 	sdk "github.com/SSH-Management/server-sdk"
-	"github.com/SSH-Management/utils"
+	"github.com/SSH-Management/utils/v2"
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/SSH-Management/server/pkg/db"

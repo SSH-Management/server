@@ -35,7 +35,7 @@ func main() {
 	}
 
 	// Generate Key Pair
-	if err := c.GetSigner().GenerateKeys(); err != nil {
+	if err := c.GetKeyGenerator().Generate(); err != nil {
 		zerologlog.
 			Fatal().
 			Err(err).

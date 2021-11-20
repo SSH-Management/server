@@ -1,32 +1,40 @@
 package container
 
 import (
-	"github.com/SSH-Management/request-signer/v2"
-	"github.com/SSH-Management/utils"
+	"errors"
+
+	signer "github.com/SSH-Management/request-signer/v3"
+	"github.com/SSH-Management/utils/v2"
 )
 
-func (c *Container) GetSigner() signer.Interface {
+func (c *Container) GetSigner() signer.Signer {
 	if c.signer == nil {
 		var err error
 
-		publicKey := c.Config.GetString("crypto.ed25519.public")
 		privateKey := c.Config.GetString("crypto.ed25519.private")
 
-		_, err = utils.CreatePath(publicKey, 0644)
+		_, err = utils.CreateDirectoryFromFile(privateKey, 0o644)
 
 		if err != nil {
 			c.Logger.Fatal().
-				Str("public_key_path", publicKey).
 				Str("private_key_path", privateKey).
 				Err(err).
 				Msg("Failed to create path to keys")
 		}
 
-		c.signer, err = signer.New(publicKey, privateKey)
+		generator := c.GetKeyGenerator()
+
+		if err := generator.Generate(); err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
+			c.Logger.Fatal().
+				Str("private_key_path", privateKey).
+				Err(err).
+				Msg("Failed to generate ed25519 keys")
+		}
+
+		c.signer, err = signer.NewSigner(privateKey)
 
 		if err != nil {
 			c.Logger.Fatal().
-				Str("public_key_path", publicKey).
 				Str("private_key_path", privateKey).
 				Err(err).
 				Msg("Error while creating request signer")
@@ -34,4 +42,33 @@ func (c *Container) GetSigner() signer.Interface {
 	}
 
 	return c.signer
+}
+
+func (c *Container) GetKeyGenerator() signer.KeyGenerator {
+	var err error
+
+	publicKey := c.Config.GetString("crypto.ed25519.public")
+	privateKey := c.Config.GetString("crypto.ed25519.private")
+
+	_, err = utils.CreateDirectoryFromFile(publicKey, 0o644)
+
+	if err != nil {
+		c.Logger.Fatal().
+			Str("public_key_path", publicKey).
+			Str("private_key_path", privateKey).
+			Err(err).
+			Msg("Failed to create path to keys")
+	}
+
+	generator, err := signer.NewKeyGenerator(privateKey, publicKey)
+
+	if err != nil {
+		c.Logger.Fatal().
+			Str("public_key_path", publicKey).
+			Str("private_key_path", privateKey).
+			Err(err).
+			Msg("Failed to create ed25519 key generator")
+	}
+
+	return generator
 }
