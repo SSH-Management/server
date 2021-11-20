@@ -27,9 +27,9 @@ else
 endif
 	cp ssh_management.example.yml ./bin/ssh_management.yml
 
-.PHONY: run-server
-run-server:
-	CXX=g++ CC=gcc go run  ./cmd/server/*.go -logging debug
+.PHONY: run
+run:
+	CXX=g++ CC=gcc go run  ./cmd/*.go
 
 #.PHONY: copy-files
 #copy-files: config.yml

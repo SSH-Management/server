@@ -29,5 +29,6 @@ services:
 networks:
   net:
     driver: bridge
+    name: ssh_server_net
 volumes:
   mysql:

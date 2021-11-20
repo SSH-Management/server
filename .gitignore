@@ -20,3 +20,4 @@ node_modules/
 bin/
 logs/
 home/
+ssh_management.yml

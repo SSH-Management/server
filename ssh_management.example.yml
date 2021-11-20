@@ -1,7 +1,4 @@
 ---
-#------------------------------------------------------------------------------
-# Database
-#------------------------------------------------------------------------------
 database:
   driver: mysql
   username: ssh_management
@@ -18,36 +15,25 @@ bind: '0.0.0.0'
 port: 8080
 
 logging:
-  file: /var/logs/ssh_management/server.log
+  file: /var/log/ssh_management/server.log
   level: info
   console: true
   sample: 0
+
+system_groups:
+  sudo: sudo
 
 crypto:
   ed25519:
     public: './keys/public.key'
     private: './keys/private.key'
-  #------------------------------------------------------------------------------
-  # Authentication key used for HMAC token signing and secure cookies
-  #------------------------------------------------------------------------------
   auth_key: ''
-
-  #------------------------------------------------------------------------------
-  # Encryption key used for encrypting cookies
-  #------------------------------------------------------------------------------
   enc_key: ''
 
 views:
-  #------------------------------------------------------------------------------
-  # Templates directory
-  #------------------------------------------------------------------------------
   static:
     dir: ./static
     path: /static
-
-#------------------------------------------------------------------------------
-# Redis server (used for rate limiting)
-#------------------------------------------------------------------------------
 redis:
   host: localhost
   port: 6379
