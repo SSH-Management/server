@@ -20,6 +20,7 @@ func init() {
 
 func Execute(c *container.Container, v *viper.Viper) {
 	rootCmd.AddCommand(httpServerCommand(c, v))
+	rootCmd.AddCommand(queueWorkerCommand(c, v))
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal().Err(err).Msg("Error while running command")

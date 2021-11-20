@@ -21,3 +21,4 @@ bin/
 logs/
 home/
 ssh_management.yml
+keys/

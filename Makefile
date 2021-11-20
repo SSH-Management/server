@@ -29,7 +29,7 @@ endif
 
 .PHONY: run
 run:
-	CXX=g++ CC=gcc go run  ./cmd/*.go
+	CXX=g++ CC=gcc go run ./cmd/*.go
 
 #.PHONY: copy-files
 #copy-files: config.yml
