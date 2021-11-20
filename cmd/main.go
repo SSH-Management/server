@@ -1,14 +1,13 @@
 package main
 
 import (
-	"fmt"
-	"net"
+	"errors"
 	"os"
 
-	"github.com/gofiber/fiber/v2"
 	zerologlog "github.com/rs/zerolog/log"
 
-	"github.com/SSH-Management/server/cmd/http/routes"
+	signer "github.com/SSH-Management/request-signer/v3"
+	"github.com/SSH-Management/server/cmd/cli"
 	"github.com/SSH-Management/server/pkg/config"
 	"github.com/SSH-Management/server/pkg/container"
 	"github.com/SSH-Management/server/pkg/log"
@@ -35,7 +34,7 @@ func main() {
 	}
 
 	// Generate Key Pair
-	if err := c.GetKeyGenerator().Generate(); err != nil {
+	if err := c.GetKeyGenerator().Generate(); err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
 		zerologlog.
 			Fatal().
 			Err(err).
@@ -44,41 +43,5 @@ func main() {
 
 	defer c.Close()
 
-	app := fiber.New(fiber.Config{
-		StrictRouting: true,
-		AppName:       "Mokey V2",
-		ViewsLayout:   "layout",
-	})
-
-	app.Static(
-		v.GetString("views.static.path"),
-		v.GetString("views.static.dir"),
-		fiber.Static{
-			Browse:    false,
-			Compress:  false,
-			ByteRange: true,
-		},
-	)
-
-	routes.Register(c, app.Group(v.GetString("path_prefix")))
-
-	addr := fmt.Sprintf("%s:%d", v.GetString("bind"), v.GetInt("port"))
-
-	listener, err := net.Listen("tcp4", addr)
-
-	if err != nil {
-		zerologlog.
-			Fatal().
-			Err(err).
-			Msg("Error while creating net.Listener")
-	}
-
-	err = app.Listener(listener)
-
-	if err != nil {
-		zerologlog.
-			Fatal().
-			Err(err).
-			Msg("Cannot start Fiber HTTP Server")
-	}
+	cli.Execute(c, v)
 }

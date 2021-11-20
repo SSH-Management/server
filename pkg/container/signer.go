@@ -11,31 +11,18 @@ func (c *Container) GetSigner() signer.Signer {
 	if c.signer == nil {
 		var err error
 
-		privateKey := c.Config.GetString("crypto.ed25519.private")
-
-		_, err = utils.CreateDirectoryFromFile(privateKey, 0o644)
-
-		if err != nil {
-			c.Logger.Fatal().
-				Str("private_key_path", privateKey).
-				Err(err).
-				Msg("Failed to create path to keys")
-		}
-
 		generator := c.GetKeyGenerator()
 
 		if err := generator.Generate(); err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
 			c.Logger.Fatal().
-				Str("private_key_path", privateKey).
 				Err(err).
 				Msg("Failed to generate ed25519 keys")
 		}
 
-		c.signer, err = signer.NewSigner(privateKey)
+		c.signer, err = signer.NewSigner(c.Config.GetString("crypto.ed25519.private"))
 
 		if err != nil {
 			c.Logger.Fatal().
-				Str("private_key_path", privateKey).
 				Err(err).
 				Msg("Error while creating request signer")
 		}
@@ -50,19 +37,29 @@ func (c *Container) GetKeyGenerator() signer.KeyGenerator {
 	publicKey := c.Config.GetString("crypto.ed25519.public")
 	privateKey := c.Config.GetString("crypto.ed25519.private")
 
-	_, err = utils.CreateDirectoryFromFile(publicKey, 0o644)
+	_, err = utils.CreateDirectoryFromFile(publicKey, 0o744)
 
 	if err != nil {
 		c.Logger.Fatal().
 			Str("public_key_path", publicKey).
 			Str("private_key_path", privateKey).
 			Err(err).
-			Msg("Failed to create path to keys")
+			Msg("Failed to create path to public key")
+	}
+
+	_, err = utils.CreateDirectoryFromFile(privateKey, 0o644)
+
+	if err != nil {
+		c.Logger.Fatal().
+			Str("public_key_path", publicKey).
+			Str("private_key_path", privateKey).
+			Err(err).
+			Msg("Failed to create path to private key")
 	}
 
 	generator, err := signer.NewKeyGenerator(privateKey, publicKey)
 
-	if err != nil {
+	if err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
 		c.Logger.Fatal().
 			Str("public_key_path", publicKey).
 			Str("private_key_path", privateKey).

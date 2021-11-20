@@ -68,6 +68,8 @@ func (s Service) Create(ctx context.Context, u dto.User) (models.User, []byte, e
 		s.deleteUserFromSystem(ctx, user.Username)
 	}
 
+	// TODO: Notify all servers that new user has been created
+
 	return user, publicKey, err
 }
 
@@ -77,7 +79,6 @@ func (s Service) deleteUserFromDb(ctx context.Context, user models.User) {
 		Err(err).
 		Uint64("userId", user.ID).
 		Msg("Cannot delete newly created user from the database")
-
 }
 
 func (s Service) deleteUserFromSystem(ctx context.Context, userName string) {
