@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./ssh_management "$COMMAND"
+./ssh_management --env production "$COMMAND"
