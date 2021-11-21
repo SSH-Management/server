@@ -4,7 +4,7 @@ database:
   username: ssh_management
   password: password
   database: ssh_management
-  host: mariadb:3306
+  host: mysql:3306
   collation: utf8mb4_unicode_ci
   conn_max_idle_time: 30s
   conn_max_lifetime: 5m
@@ -34,8 +34,16 @@ views:
   static:
     dir: ./static
     path: /static
+
 redis:
-  host: localhost
+  host: redis
   port: 6379
   username: ''
   password: ''
+
+queue:
+  concurrency: 10
+  logging:
+    file: /var/log/ssh_management/queue.log
+    level: info
+    console: true

@@ -10,6 +10,8 @@ FROM alpine:3.13
 
 WORKDIR /app
 
+ENV COMMAND=serve
+
 COPY ./docker/entrypoint.sh .
 COPY --from=build /app/bin .
 

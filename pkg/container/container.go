@@ -3,11 +3,12 @@ package container
 import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/hibiken/asynq"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 
 	linux_user "github.com/SSH-Management/linux-user"
-	"github.com/SSH-Management/request-signer/v3"
+	signer "github.com/SSH-Management/request-signer/v3"
 
 	"github.com/SSH-Management/server/pkg/log"
 	"github.com/SSH-Management/server/pkg/repositories/group"
@@ -19,9 +20,12 @@ import (
 
 type Container struct {
 	systemGroups map[string]string
-	Logger       *log.Logger
 	Config       *viper.Viper
 	db           *gorm.DB
+
+	defaultLoggerName string
+
+	loggers map[string]*log.Logger
 
 	userService     user.Interface
 	unixUserService linux_user.UnixInterface
@@ -35,30 +39,26 @@ type Container struct {
 
 	validator  *validator.Validate
 	translator ut.Translator
+
+	queue *asynq.Client
 }
 
-func New(config *viper.Viper) (*Container, error) {
-	logger, err := log.New(
-		config.GetString("logging.file"),
-		config.GetString("logging.level"),
-		config.GetBool("logging.console"),
-		config.GetUint32("logging.sample"),
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
+func New(defaultLoggerName string, config *viper.Viper) *Container {
 	return &Container{
-		Logger:       logger,
 		Config:       config,
+		defaultLoggerName: defaultLoggerName,
+		loggers:      make(map[string]*log.Logger, 1),
 		systemGroups: config.GetStringMapString("system_groups"),
-	}, nil
+	}
 }
 
 func (c *Container) Close() error {
-	if c.Logger != nil {
-		_ = c.Logger.Close()
+	for _, logger := range c.loggers {
+		_ = logger.Close()
+	}
+
+	if c.queue != nil {
+		_ = c.queue.Close()
 	}
 
 	return nil

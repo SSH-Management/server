@@ -16,7 +16,7 @@ func (c *Container) GetValidator() *validator.Validate {
 		c.validator = validator.New()
 
 		if err := entranslations.RegisterDefaultTranslations(c.validator, c.translator); err != nil {
-			c.Logger.Fatal().Err(err).Msg("Error while registering english translations")
+			c.GetDefaultLogger().Fatal().Err(err).Msg("Error while registering english translations")
 		}
 	}
 

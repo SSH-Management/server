@@ -7,30 +7,33 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	"github.com/SSH-Management/server/cmd/http/routes"
-	"github.com/SSH-Management/server/pkg/container"
 )
 
-func httpServerCommand(c *container.Container, v *viper.Viper) *cobra.Command {
+func httpServerCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "serve",
 		Short: "Start HTTP Server",
-		Run:   runHttpServer(c, v),
+		PersistentPreRunE: loadConfig,
+		Run:   runHttpServer(),
 	}
 }
 
-func runHttpServer(c *container.Container, v *viper.Viper) func(cmd *cobra.Command, args []string) {
+func runHttpServer() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
+		c := getContainer("logging")
+
+		defer c.Close()
+
 		app := fiber.New(fiber.Config{
 			StrictRouting: true,
 			AppName:       "SSH Server Management",
 		})
 
 		app.Static(
-			v.GetString("views.static.path"),
-			v.GetString("views.static.dir"),
+			c.Config.GetString("views.static.path"),
+			c.Config.GetString("views.static.dir"),
 			fiber.Static{
 				Browse:    false,
 				Compress:  false,
@@ -38,9 +41,9 @@ func runHttpServer(c *container.Container, v *viper.Viper) func(cmd *cobra.Comma
 			},
 		)
 
-		routes.Register(c, app.Group(v.GetString("path_prefix")))
+		routes.Register(c, app.Group(c.Config.GetString("path_prefix")))
 
-		addr := fmt.Sprintf("%s:%d", v.GetString("bind"), v.GetInt("port"))
+		addr := fmt.Sprintf("%s:%d", c.Config.GetString("bind"), c.Config.GetInt("port"))
 
 		listener, err := net.Listen("tcp4", addr)
 

@@ -1,6 +1,8 @@
 package config
 
 import (
+	"strings"
+
 	"github.com/spf13/viper"
 )
 
@@ -11,6 +13,19 @@ const (
 	Development
 	Production
 )
+
+func ParseEnvironment(env string) Env {
+	switch strings.ToLower(env) {
+	case "prod", "production":
+		return Production
+	case "dev", "develop", "development":
+		return Development
+	case "testing", "test":
+		return Testing
+	default:
+		return Production
+	}
+}
 
 func New(env Env) (*viper.Viper, error) {
 	v := viper.New()

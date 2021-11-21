@@ -9,10 +9,26 @@ services:
       - net
     volumes:
       - './logs:/var/log/ssh_management'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+    environment:
+      COMMAND: serve
+  queue:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    networks:
+      - net
+    volumes:
+      - './logs:/var/log/ssh_management'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+    environment:
+      COMMAND: queue:worker
   redis:
     image: 'redis:6-alpine'
     networks:
       - net
+    ports:
+      - '6379:6379'
   mysql:
     image: 'mariadb:10.7.1-focal'
     ports:
@@ -26,6 +42,13 @@ services:
       MARIADB_PASSWORD: server
     volumes:
       - mysql:/var/lib/mysql
+  queuemon:
+    image: hibiken/asynqmon
+    command: /asynqmon ---redis-addr=redis:6379 --redis-db=5
+    ports:
+      - '6000:8080'
+    networks:
+      - net
 networks:
   net:
     driver: bridge

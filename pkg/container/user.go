@@ -7,7 +7,7 @@ import (
 
 func (c *Container) GetUserService() user.Interface {
 	if c.userService == nil {
-		c.userService = user.New(c.GetUserRepository(), c.GetUnixUserService(), c.Logger)
+		c.userService = user.New(c.GetUserRepository(), c.GetUnixUserService(), c.GetDefaultLogger())
 	}
 
 	return c.userService
@@ -17,7 +17,7 @@ func (c *Container) GetUserRepository() userrepo.Interface {
 	if c.userRepository == nil {
 		c.userRepository = userrepo.New(
 			c.GetDbConnection(),
-			c.Logger,
+			c.GetDefaultLogger(),
 			c.GetRoleRepository(),
 		)
 	}

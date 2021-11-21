@@ -14,7 +14,7 @@ func (c *Container) GetSigner() signer.Signer {
 		generator := c.GetKeyGenerator()
 
 		if err := generator.Generate(); err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
-			c.Logger.Fatal().
+			c.GetDefaultLogger().Fatal().
 				Err(err).
 				Msg("Failed to generate ed25519 keys")
 		}
@@ -22,7 +22,7 @@ func (c *Container) GetSigner() signer.Signer {
 		c.signer, err = signer.NewSigner(c.Config.GetString("crypto.ed25519.private"))
 
 		if err != nil {
-			c.Logger.Fatal().
+			c.GetDefaultLogger().Fatal().
 				Err(err).
 				Msg("Error while creating request signer")
 		}
@@ -40,7 +40,7 @@ func (c *Container) GetKeyGenerator() signer.KeyGenerator {
 	_, err = utils.CreateDirectoryFromFile(publicKey, 0o744)
 
 	if err != nil {
-		c.Logger.Fatal().
+		c.GetDefaultLogger().Fatal().
 			Str("public_key_path", publicKey).
 			Str("private_key_path", privateKey).
 			Err(err).
@@ -50,7 +50,7 @@ func (c *Container) GetKeyGenerator() signer.KeyGenerator {
 	_, err = utils.CreateDirectoryFromFile(privateKey, 0o644)
 
 	if err != nil {
-		c.Logger.Fatal().
+		c.GetDefaultLogger().Fatal().
 			Str("public_key_path", publicKey).
 			Str("private_key_path", privateKey).
 			Err(err).
@@ -60,7 +60,7 @@ func (c *Container) GetKeyGenerator() signer.KeyGenerator {
 	generator, err := signer.NewKeyGenerator(privateKey, publicKey)
 
 	if err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
-		c.Logger.Fatal().
+		c.GetDefaultLogger().Fatal().
 			Str("public_key_path", publicKey).
 			Str("private_key_path", privateKey).
 			Err(err).

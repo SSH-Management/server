@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./ssh_management
+./ssh_management "$COMMAND"

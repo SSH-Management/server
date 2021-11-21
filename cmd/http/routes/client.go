@@ -10,7 +10,7 @@ import (
 func registerClientRoutes(c *container.Container, router fiber.Router) {
 	router.Post("/client/new", handlers.CreateNewClientHandler(
 		c.Config.GetString("crypto.ed25519.public"),
-		c.Logger,
+		c.GetDefaultLogger(),
 		c.GetServerRepository(),
 		c.GetUserRepository(),
 	))

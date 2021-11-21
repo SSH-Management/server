@@ -1,28 +1,57 @@
 package cli
 
 import (
-	"github.com/rs/zerolog/log"
+	"errors"
+
+	signer "github.com/SSH-Management/request-signer/v3"
+	"github.com/SSH-Management/server/pkg/container"
+	zerologlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/SSH-Management/server/pkg/container"
 )
 
-var rootCmd *cobra.Command
+var (
+	rootCmd *cobra.Command
 
-func init() {
+	viperConfig *viper.Viper
+
+	Environment string
+	LoggingLevel string
+)
+
+func getContainer(logger string) *container.Container {
+	c := container.New("logging", viperConfig)
+
+	// Generate Key Pair
+	if err := c.GetKeyGenerator().Generate(); err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
+		zerologlog.
+			Fatal().
+			Err(err).
+			Msg("Error while generating ed25519 key pair")
+	}
+
+	return c
+}
+
+func Execute() {
+	cobra.OnInitialize(func() {
+
+	})
+
 	rootCmd = &cobra.Command{
 		Use:   "server",
 		Short: "SSH Server",
 		Long:  `SSH Server Manager - Manages users on instances across clouds`,
+		PersistentPreRunE: loadConfig,
 	}
-}
 
-func Execute(c *container.Container, v *viper.Viper) {
-	rootCmd.AddCommand(httpServerCommand(c, v))
-	rootCmd.AddCommand(queueWorkerCommand(c, v))
+	rootCmd.PersistentFlags().StringVarP(&LoggingLevel, "logging-level", "l", "info", "Global Logging level")
+	rootCmd.PersistentFlags().StringVarP(&Environment, "env", "e", "production", "Running Environment (Production|Development|Testing")
+
+	rootCmd.AddCommand(httpServerCommand())
+	rootCmd.AddCommand(queueWorkerCommand())
 
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal().Err(err).Msg("Error while running command")
+		zerologlog.Fatal().Err(err).Msg("Error while running command")
 	}
 }

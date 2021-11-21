@@ -8,7 +8,7 @@ import (
 
 func (c *Container) GetGroupRepository() group.Interface {
 	if c.groupRepository == nil {
-		c.groupRepository = group.New(c.GetDbConnection(), c.Logger)
+		c.groupRepository = group.New(c.GetDbConnection(), c.GetDefaultLogger())
 	}
 
 	return c.groupRepository
@@ -18,7 +18,7 @@ func (c *Container) GetServerRepository() server.Interface {
 	if c.serverRepository == nil {
 		c.serverRepository = server.New(
 			c.GetDbConnection(),
-			c.Logger,
+			c.GetDefaultLogger(),
 			c.GetGroupRepository(),
 		)
 	}
@@ -28,7 +28,7 @@ func (c *Container) GetServerRepository() server.Interface {
 
 func (c *Container) GetRoleRepository() role.Interface {
 	if c.roleRepository == nil {
-		c.roleRepository = role.New(c.GetDbConnection(), c.Logger)
+		c.roleRepository = role.New(c.GetDbConnection(), c.GetDefaultLogger())
 	}
 
 	return c.roleRepository
