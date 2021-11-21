@@ -14,7 +14,7 @@ type LoggerConfig struct {
 }
 
 func (c *Container) GetDefaultLogger() *log.Logger {
-	return c.GetDefaultLogger()
+	return c.GetLogger(c.defaultLoggerName)
 }
 
 func (c *Container) GetLogger(name string) *log.Logger {
