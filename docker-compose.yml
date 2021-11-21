@@ -42,13 +42,13 @@ services:
       MARIADB_PASSWORD: server
     volumes:
       - mysql:/var/lib/mysql
-  queuemon:
-    image: hibiken/asynqmon
-    command: /asynqmon ---redis-addr=redis:6379 --redis-db=5
-    ports:
-      - '6000:8080'
-    networks:
-      - net
+  # queuemon:
+  #   image: hibiken/asynqmon
+  #   command: /asynqmon --redis-addr redis:6379 --redis-db 5
+  #   ports:
+  #     - '8000:8080'
+  #   networks:
+  #     - net
 networks:
   net:
     driver: bridge
