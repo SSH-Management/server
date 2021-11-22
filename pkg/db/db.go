@@ -31,7 +31,24 @@ func GetDbConnection(c config.Config) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	return gorm.Open(dialect, &gorm.Config{
+	db, err := gorm.Open(dialect, &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{},
 	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	sqlDb, err := db.DB()
+
+	if err != nil {
+		return nil, err
+	}
+
+	sqlDb.SetConnMaxIdleTime(c.MaxIdleTime)
+	sqlDb.SetConnMaxLifetime(c.ConnMaxLifetime)
+	sqlDb.SetMaxIdleConns(c.ConnMaxIdle)
+	sqlDb.SetMaxOpenConns(c.ConnMaxOpen)
+
+	return db, nil
 }

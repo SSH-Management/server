@@ -1,8 +1,8 @@
 ---
 database:
   driver: mysql
-  username: ssh_management
-  password: password
+  username: server
+  password: server
   database: ssh_management
   host: mysql:3306
   collation: utf8mb4_unicode_ci

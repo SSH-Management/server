@@ -8,17 +8,34 @@ import (
 )
 
 func (c *Container) GetValidator() *validator.Validate {
-	if c.validator == nil && c.translator == nil {
-		english := en.New()
-		uni := ut.New(english, english)
-
-		c.translator, _ = uni.GetTranslator("en")
+	if c.validator == nil {
 		c.validator = validator.New()
 
-		if err := entranslations.RegisterDefaultTranslations(c.validator, c.translator); err != nil {
-			c.GetDefaultLogger().Fatal().Err(err).Msg("Error while registering english translations")
+		if err := entranslations.RegisterDefaultTranslations(c.validator, c.GetTranslator()); err != nil {
+			c.GetDefaultLogger().
+				Fatal().
+				Err(err).
+				Msg("Error while registering english translations")
 		}
 	}
 
 	return c.validator
+}
+
+
+func (c *Container) GetTranslator() ut.Translator {
+	if c.translator == nil {
+		english := en.New()
+		uni := ut.New(english, english)
+
+		translator, found := uni.GetTranslator("en")
+
+		if !found {
+			c.GetDefaultLogger().Fatal().Msgf("Locale is not found: en")
+		}
+
+		c.translator = translator
+	}
+
+	return c.translator
 }

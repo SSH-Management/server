@@ -7,7 +7,7 @@ DOCKER ?= 0
 TAG ?= 1.0.0
 PLATFORMS ?= linux/arm64,linux/amd64
 
-DATABASE_URL="mysql://server:server@tcp(localhost:3306)/ssh_management?charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
+DATABASE_URL="mysql://server:server@tcp(mysql:3306)/ssh_management?charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
 
 CC = gcc
 CXX = g++

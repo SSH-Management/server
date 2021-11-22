@@ -2,14 +2,17 @@ package user
 
 import (
 	"context"
+	"fmt"
 
 	user "github.com/SSH-Management/linux-user"
 	ssh "github.com/SSH-Management/ssh"
+	"github.com/hibiken/asynq"
 
 	"github.com/SSH-Management/server/pkg/dto"
 	"github.com/SSH-Management/server/pkg/log"
 	"github.com/SSH-Management/server/pkg/models"
 	userepo "github.com/SSH-Management/server/pkg/repositories/user"
+	"github.com/SSH-Management/server/pkg/tasks"
 )
 
 type (
@@ -17,33 +20,53 @@ type (
 		userRepo        userepo.Interface
 		unixUserService user.UnixInterface
 
-		logger          *log.Logger
+		logger *log.Logger
+		queue  *asynq.Client
 	}
 
 	Interface interface {
-		Create(context.Context, dto.User) (models.User, []byte, error)
+		Create(context.Context, dto.CreateUser) (models.User, []byte, error)
 	}
 )
 
-func New(userRepo userepo.Interface, unixUserService user.UnixInterface, logger *log.Logger) Service {
+func New(
+	userRepo userepo.Interface,
+	unixUserService user.UnixInterface,
+	logger *log.Logger,
+	queue *asynq.Client,
+) Service {
 	return Service{
 		userRepo:        userRepo,
 		unixUserService: unixUserService,
 		logger:          logger,
+		queue:           queue,
 	}
 }
 
-func (s Service) Create(ctx context.Context, u dto.User) (models.User, []byte, error) {
-	user, err := s.userRepo.Create(ctx, u)
+func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []byte, error) {
+	user, err := s.userRepo.Create(ctx, u.User)
 
 	if err != nil {
 		return models.User{}, nil, err
 	}
 
-	unixUser, err := s.unixUserService.Create(ctx, u)
+	unixUser, err := s.unixUserService.Create(ctx, u.User)
 
 	if err != nil {
 		s.deleteUserFromDb(ctx, user)
+		return models.User{}, nil, err
+	}
+
+	err = ssh.AddToAuthorizedKeys(
+		fmt.Sprintf("%s/.ssh/authorized_keys", unixUser.HomeFolder),
+		u.PublicSSHKey,
+		unixUser.UserId,
+		unixUser.GroupId,
+	)
+
+	if err != nil {
+		s.deleteUserFromDb(ctx, user)
+		s.deleteUserFromSystem(ctx, user.Username)
 		return models.User{}, nil, err
 	}
 
@@ -68,7 +91,19 @@ func (s Service) Create(ctx context.Context, u dto.User) (models.User, []byte, e
 		s.deleteUserFromSystem(ctx, user.Username)
 	}
 
-	// TODO: Notify all servers that new user has been created
+	task, err := tasks.NewUserNotification(u.User, string(publicKey))
+
+	if err != nil {
+		s.deleteUserFromDb(ctx, user)
+		s.deleteUserFromSystem(ctx, user.Username)
+	}
+
+	_, err = s.queue.Enqueue(task)
+
+	if err != nil {
+		s.deleteUserFromDb(ctx, user)
+		s.deleteUserFromSystem(ctx, user.Username)
+	}
 
 	return user, publicKey, err
 }

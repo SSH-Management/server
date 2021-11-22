@@ -22,15 +22,20 @@ func (c *Container) GetLogger(name string) *log.Logger {
 		return logger
 	}
 
+	file := c.Config.GetString(fmt.Sprintf("%s.file", name))
+
 	logger, err := log.New(
-		c.Config.GetString(fmt.Sprintf("%s:file", name)),
-		c.Config.GetString(fmt.Sprintf("%s:level", name)),
-		c.Config.GetBool(fmt.Sprintf("%s:console", name)),
+		file,
+		c.Config.GetString(fmt.Sprintf("%s.level", name)),
+		c.Config.GetBool(fmt.Sprintf("%s.console", name)),
 		0,
 	)
 
 	if err != nil {
-		zerologlog.Fatal().Err(err).Str("name", name).Msg("Error while creating logger")
+		zerologlog.Fatal().
+			Err(err).
+			Str("name", name).
+			Msg("Error while creating logger")
 	}
 
 	c.loggers[name] = logger

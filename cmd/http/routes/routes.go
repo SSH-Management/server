@@ -2,7 +2,6 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/csrf"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -25,18 +24,18 @@ func Register(c *container.Container, router fiber.Router) {
 	router.Use(recover.New())
 	router.Use(middleware.Context)
 
-	router.Use(csrf.New(csrf.Config{
-		KeyLookup:  "cookie:csrf_cookie",
-		ContextKey: CsrfTokenKey,
-		CookieName: CsrfTokenCookie,
-		//Storage:        c.GetStorage(0),
-		//CookieDomain:   c.Config.Csrf.CookieDomain,
-		//CookieSecure:   c.Config.Csrf.Secure,
-		CookieHTTPOnly: true,
-		KeyGenerator: func() string {
-			return utils.RandomString(32)
-		},
-	}))
+	// router.Use(csrf.New(csrf.Config{
+	// 	KeyLookup:  "cookie:csrf_cookie",
+	// 	ContextKey: CsrfTokenKey,
+	// 	CookieName: CsrfTokenCookie,
+	// 	//Storage:        c.GetStorage(0),
+	// 	//CookieDomain:   c.Config.Csrf.CookieDomain,
+	// 	//CookieSecure:   c.Config.Csrf.Secure,
+	// 	CookieHTTPOnly: true,
+	// 	KeyGenerator: func() string {
+	// 		return utils.RandomString(32)
+	// 	},
+	// }))
 
 	router.Use(requestid.New(requestid.Config{
 		Generator: func() string {
@@ -45,7 +44,8 @@ func Register(c *container.Container, router fiber.Router) {
 		ContextKey: RequestIdKey,
 	}))
 
-	router.Get("/monitor", monitor.New())
+	router.Get("/", monitor.New())
 
 	registerClientRoutes(c, router)
+	registerUserRoutes(c, router.Group("/users"))
 }

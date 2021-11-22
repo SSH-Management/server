@@ -72,7 +72,8 @@ func (r Repository) Create(ctx context.Context, dto dto.User) (models.User, erro
 		RoleID:   roleModel.ID,
 	}
 
-	result := r.db.WithContext(ctx).
+	result := r.db.
+		WithContext(ctx).
 		Create(&user)
 
 	err = result.Error

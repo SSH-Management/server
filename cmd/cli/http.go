@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
+	"github.com/SSH-Management/server/cmd/http/handlers"
 	"github.com/SSH-Management/server/cmd/http/routes"
 )
 
@@ -29,6 +30,10 @@ func runHttpServer() func(cmd *cobra.Command, args []string) {
 		app := fiber.New(fiber.Config{
 			StrictRouting: true,
 			AppName:       "SSH Server Management",
+			ErrorHandler: handlers.Error(
+				c.GetDefaultLogger().Logger,
+				c.GetTranslator(),
+			),
 		})
 
 		app.Static(

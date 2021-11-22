@@ -3,11 +3,13 @@ package cli
 import (
 	"errors"
 
-	signer "github.com/SSH-Management/request-signer/v3"
-	"github.com/SSH-Management/server/pkg/container"
 	zerologlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	signer "github.com/SSH-Management/request-signer/v3"
+
+	"github.com/SSH-Management/server/pkg/container"
 )
 
 var (

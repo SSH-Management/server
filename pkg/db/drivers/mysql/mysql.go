@@ -1,7 +1,10 @@
 package mysql
 
 import (
+	gormmysql "gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"github.com/go-sql-driver/mysql"
 
 	"github.com/SSH-Management/server/pkg/db/config"
 	"github.com/SSH-Management/server/pkg/db/connector"
@@ -16,32 +19,19 @@ func New() connector.Interface {
 }
 
 func (mySql) Connect(v config.Config) (gorm.Dialector, error) {
+	config := mysql.NewConfig()
 
-	// config := mysql.NewConfig()
+	config.Collation = v.Collation
+	config.User = v.Username
+	config.Passwd = v.Password
+	config.DBName = v.Database
+	config.ParseTime = true
+	config.MultiStatements = true
+	config.CheckConnLiveness = true
+	config.Net = "tcp"
+	config.Addr = v.Host
 
-	// config.Collation = v.Collation
-	// config.User = v.Username
-	// config.Passwd = v.Password
-	// config.DBName = v.Database
-	// config.ParseTime = true
-	// config.MultiStatements = true
-	// config.CheckConnLiveness = true
-	// config.Addr = fmt.Sprintf("tcp(%s)", v.Host)
+	connStr := config.FormatDSN()
 
-	// connStr := config.FormatDSN()
-
-	// db, err := sql.Open("mysql", connStr)
-
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// db.SetConnMaxIdleTime(v.MaxIdleTime)
-	// db.SetConnMaxLifetime(v.ConnMaxLifetime)
-	// db.SetMaxIdleConns(v.ConnMaxIdle)
-	// db.SetMaxOpenConns(v.ConnMaxOpen)
-
-	// return db, nil
-
-	return nil, nil
+	return gormmysql.Open(connStr), nil
 }

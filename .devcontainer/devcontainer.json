@@ -5,12 +5,9 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": {
-			// Update the VARIANT arg to pick a version of Go: 1, 1.16, 1.17
-			// Append -bullseye or -buster to pin to an OS version.
-			// Use -bullseye variants on local arm64/Apple Silicon.
 			"VARIANT": "1.17-bullseye",
-			// Options
-			"NODE_VERSION": "none"
+			"NODE_VERSION": "none",
+			"MIGRATE_TAG": "v4.15.1"
 		}
 	},
 	"runArgs": [
@@ -21,7 +18,43 @@
 		"go.toolsManagement.checkForUpdates": "local",
 		"go.useLanguageServer": true,
 		"go.gopath": "/go",
-		"go.goroot": "/usr/local/go"
+		"go.goroot": "/usr/local/go",
+		"go.testEnvVars": {
+			"CC": "gcc",
+			"CXX": "g++"
+		},
+		"go.toolsEnvVars": {
+			"CC": "gcc",
+			"CXX": "g++"
+		},
+		"go.autocompleteUnimportedPackages": true,
+		"go.gotoSymbol.includeImports": true,
+		"go.inferGopath": true,
+		"go.gotoSymbol.includeGoroot": true,
+		"go.coverOnSave": true,
+		"go.vetOnSave": "workspace",
+		"go.coverMode": "atomic",
+		"go.addTags": {
+			"tags": "json,bson,yaml",
+			"promptForTags": true
+		},
+		"go.formatTool": "goformat",
+		"go.coverOnSingleTest": true,
+		"go.coverOnSingleTestFile": true,
+		"go.coverShowCounts": true,
+		"go.enableCodeLens": {
+			"references": true,
+			"runtest": true
+		},
+		"gopls": {
+			"expandWorkspaceToModule": true,
+			"experimentalWorkspaceModule": true,
+			"gofumpt": true
+		},
+		"go.toolsManagement.autoUpdate": true,
+		"[go]": {
+			"editor.defaultFormatter": "golang.go"
+		},
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
@@ -33,7 +66,10 @@
 		"visualstudioexptteam.vscodeintellicode",
 		"christian-kohler.path-intellisense",
 		"wayou.vscode-todo-highlight",
-		"remisa.shellman"
+		"remisa.shellman",
+		"bungcip.better-toml",
+		"tamasfe.even-better-toml",
+		"eamodio.gitlens"
 	],
 	"features": {
 		"git": "latest",
