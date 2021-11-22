@@ -1,0 +1,21 @@
+FROM golang:1.17-alpine as build
+
+WORKDIR /app
+
+COPY . .
+
+RUN apk add make && make VERSION=v0.0.1 build
+
+FROM alpine:3.13
+
+WORKDIR /app
+
+COPY --from=build /app/bin .
+
+RUN apk update \
+    && apk add bash \
+    && mkdir -p /var/log/ssh_management
+
+EXPOSE 8080
+
+CMD ["./ssh_management", "--env", "production", "serve" ]

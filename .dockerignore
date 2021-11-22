@@ -1,0 +1,10 @@
+.vscode/
+bin/
+frontend/
+keys/
+logs/
+.air.toml
+ssh_management.yml
+.devcontainer/
+migrations/
+README.md

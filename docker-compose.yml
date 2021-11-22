@@ -4,29 +4,28 @@ services:
   server:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./docker/server/Dockerfile
     networks:
       - net
+    restart: unless-stopped
     volumes:
       - './logs:/var/log/ssh_management'
       - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
-    environment:
-      COMMAND: serve
   queue:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./docker/queue/Dockerfile
     networks:
       - net
+    restart: unless-stopped
     volumes:
       - './logs:/var/log/ssh_management'
       - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
-    environment:
-      COMMAND: queue:worker
   redis:
     image: 'redis:6-alpine'
     networks:
       - net
+    restart: unless-stopped
     ports:
       - '6379:6379'
   mysql:
@@ -35,6 +34,7 @@ services:
       - '3306:3306'
     networks:
       - net
+    restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: password
       MARIADB_DATABASE: ssh_management
@@ -42,13 +42,13 @@ services:
       MARIADB_PASSWORD: server
     volumes:
       - mysql:/var/lib/mysql
-  # queuemon:
-  #   image: hibiken/asynqmon
-  #   command: /asynqmon --redis-addr redis:6379 --redis-db 5
-  #   ports:
-  #     - '8000:8080'
-  #   networks:
-  #     - net
+  queuemon:
+    image: hibiken/asynqmon
+    command: --redis-addr redis:6379 --redis-db 5
+    ports:
+      - '8000:8080'
+    networks:
+      - net
 networks:
   net:
     driver: bridge

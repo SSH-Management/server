@@ -4,8 +4,9 @@ ENV ?= development
 VERSION ?= dev
 GOPATH ?= ${HOME}/go
 DOCKER ?= 0
-TAG ?= 1.0.0
-PLATFORMS ?= linux/arm64,linux/amd64
+TAG ?= 0.0.1
+PLATFORM ?= linux/arm64
+ARCH ?= arm64
 
 DATABASE_URL="mysql://server:server@tcp(mysql:3306)/ssh_management?charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
 
@@ -89,4 +90,5 @@ endif
 
 .PHONY: buildx
 buildx:
-	docker buildx build --platform $(PLATFORMS) -t "malusevd99/ssh-management:server-$(TAG)" --push .
+	docker buildx build --platform "$(PLATFORM)" -t "malusevd99/ssh-management:server-$(TAG)-$(ARCH)" --push --file ./docker/server/Dockerfile .
+	docker buildx build --platform "$(PLATFORM)" -t "malusevd99/ssh-management:server-queue-$(TAG)-$(ARCH)" --push --file ./docker/queue/Dockerfile .
