@@ -71,6 +71,10 @@ func (r Repository) createGroupIfNotExists(ctx context.Context, name string) (mo
 		}
 	}
 
+	if len(groups) == 0 {
+		return models.Group{}, db.ErrNotFound
+	}
+
 	return groups[0], nil
 }
 

@@ -78,8 +78,18 @@ func (r Repository) Create(ctx context.Context, name string) (models.Group, erro
 	return g, nil
 }
 
-func (r Repository) Delete(ctx context.Context, u uint64) error {
-	panic("implement me")
+func (r Repository) Delete(ctx context.Context, id uint64) error {
+	result := r.db.Delete(&models.Group{Model: models.Model{ID: id }})
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return db.ErrNotFound
+		}
+
+		return result.Error
+	}
+
+	return nil
 }
 
 func New(db *gorm.DB, logger *log.Logger) Repository {
