@@ -78,7 +78,7 @@ func (r Repository) createGroupIfNotExists(ctx context.Context, name string) (mo
 			return g, err
 		}
 
-		return g, db.ErrNotFound
+		return g, nil
 	}
 
 	return groups[0], nil
