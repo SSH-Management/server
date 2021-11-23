@@ -60,7 +60,7 @@ func (r Repository) createGroupIfNotExists(ctx context.Context, name string) (mo
 	groups, err := r.groupRepo.FindByName(ctx, name)
 
 	if err != nil {
-		if errors.Is(err, db.ErrNotFound) || len(groups) == 0 {
+		if errors.Is(err, db.ErrNotFound) {
 			g, err = r.groupRepo.Create(ctx, name)
 
 			if err != nil {
@@ -72,7 +72,13 @@ func (r Repository) createGroupIfNotExists(ctx context.Context, name string) (mo
 	}
 
 	if len(groups) == 0 {
-		return models.Group{}, db.ErrNotFound
+		g, err = r.groupRepo.Create(ctx, name)
+
+		if err != nil {
+			return g, err
+		}
+
+		return g, db.ErrNotFound
 	}
 
 	return groups[0], nil
@@ -87,7 +93,7 @@ func (r Repository) Create(ctx context.Context, dto sdk.NewClientRequest) (model
 	g, err := r.createGroupIfNotExists(ctx, dto.Group)
 
 	if err != nil {
-		return models.Server{}, nil
+		return models.Server{}, err
 	}
 
 	server := models.Server{
