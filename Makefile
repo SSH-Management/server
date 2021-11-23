@@ -4,7 +4,7 @@ ENV ?= development
 VERSION ?= dev
 GOPATH ?= ${HOME}/go
 DOCKER ?= 0
-TAG ?= 0.0.2
+TAG ?= 0.0.3
 PLATFORM ?= linux/arm64,linux/amd64
 ARCH ?= arm64
 
