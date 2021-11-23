@@ -24,6 +24,7 @@ func (c *Container) GetUserRepository() userrepo.Interface {
 			c.GetDbConnection(),
 			c.GetDefaultLogger(),
 			c.GetRoleRepository(),
+			c.GetGroupRepository(),
 		)
 	}
 

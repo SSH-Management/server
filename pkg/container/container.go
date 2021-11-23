@@ -45,10 +45,10 @@ type Container struct {
 
 func New(defaultLoggerName string, config *viper.Viper) *Container {
 	return &Container{
-		Config:       config,
+		Config:            config,
 		defaultLoggerName: defaultLoggerName,
-		loggers:      make(map[string]*log.Logger, 1),
-		systemGroups: config.GetStringMapString("system_groups"),
+		loggers:           make(map[string]*log.Logger, 1),
+		systemGroups:      config.GetStringMapString("system_groups"),
 	}
 }
 

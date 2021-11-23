@@ -9,4 +9,3 @@ func (c *Container) GetUnixUserService() user.UnixInterface {
 
 	return c.unixUserService
 }
-

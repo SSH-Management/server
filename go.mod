@@ -6,11 +6,12 @@ require (
 	github.com/SSH-Management/linux-user v0.1.1
 	github.com/SSH-Management/request-signer/v3 v3.0.1
 	github.com/SSH-Management/server-sdk v0.2.2
-	github.com/SSH-Management/ssh v1.0.0
+	github.com/SSH-Management/ssh v1.0.2
 	github.com/SSH-Management/utils/v2 v2.0.0
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gofiber/fiber/v2 v2.22.0
 	github.com/gofiber/storage/redis v0.0.0-20211117053443-4a3096149ebb
 	github.com/hibiken/asynq v0.19.0
@@ -20,18 +21,17 @@ require (
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.31.0
+	gorm.io/driver/mysql v1.2.0
 	gorm.io/gorm v1.22.3
 )
 
 require (
-	github.com/SSH-Management/utils v1.0.0 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-redis/redis/v8 v8.11.4 // indirect
-	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -60,5 +60,6 @@ require (
 	gopkg.in/ini.v1 v1.64.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	gorm.io/driver/mysql v1.2.0 // indirect
 )
+
+replace github.com/golang/protobuf v1.5.1 => google.golang.org/protobuf v1.27.1

@@ -12,9 +12,31 @@ import (
 	"github.com/SSH-Management/server/pkg/db"
 	"github.com/SSH-Management/server/pkg/dto"
 	"github.com/SSH-Management/server/pkg/log"
+	"github.com/SSH-Management/server/pkg/models"
 	"github.com/SSH-Management/server/pkg/repositories/server"
 	userrepo "github.com/SSH-Management/server/pkg/repositories/user"
 )
+
+func mapUsers(users []models.User) []sdk.CreateUser {
+	userMap := make([]sdk.CreateUser, 0, len(users))
+
+	for _, user := range users {
+		userMap = append(userMap, dto.CreateUser{
+			User: dto.User{
+				Name:         user.Name,
+				Surname:      user.Surname,
+				Username:     user.Username,
+				Email:        user.Email,
+				Password:     user.Password,
+				Shell:        user.Shell,
+				SystemGroups: []string{"sudo"},
+			},
+			PublicSSHKey: user.PublicSSHKey,
+		})
+	}
+
+	return userMap
+}
 
 func CreateNewClientHandler(
 	publicKeyPath string,
@@ -57,6 +79,12 @@ func CreateNewClientHandler(
 		if err != nil {
 			if err == db.ErrNotFound {
 				s, err = serverRepository.Create(ctx, req)
+
+				if err != nil {
+					return c.Status(http.StatusInternalServerError).JSON(ErrorResponse{
+						Message: "Error while creating server",
+					})
+				}
 			} else {
 				return c.Status(http.StatusInternalServerError).JSON(ErrorResponse{
 					Message: "Error while creating server",
@@ -64,40 +92,25 @@ func CreateNewClientHandler(
 			}
 		}
 
-		if err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(ErrorResponse{
-				Message: "Error while creating server",
-			})
-		}
-
 		users, err := userRepository.FindByGroup(ctx, s.GroupID)
 
 		if err != nil {
+			err = serverRepository.Delete(ctx, s.ID)
+			if err != nil {
+				logger.
+					Error().
+					Err(err).
+					Msg("Error while deleting server")
+			}
 			return c.Status(http.StatusInternalServerError).JSON(ErrorResponse{
 				Message: "Error while creating server",
-			})
-		}
-
-		userMap := make([]dto.CreateUser, 0, len(users))
-
-		for _, user := range users {
-			userMap = append(userMap, dto.CreateUser{
-				User: dto.User{
-					Name:         user.Name,
-					Surname:      user.Surname,
-					Username:     user.Username,
-					Email:        user.Email,
-					Password:     user.Password,
-					Shell:        user.Shell,
-					SystemGroups: []string{"sudo"},
-				},
-				PublicSSHKey: user.PublicSSHKey,
 			})
 		}
 
 		return c.Status(http.StatusCreated).JSON(sdk.NewClientResponse{
 			Id:        s.ID,
 			PublicKey: publicKey,
+			Users:     mapUsers(users),
 		})
 	}
 }

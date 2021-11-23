@@ -17,7 +17,7 @@ var (
 
 	viperConfig *viper.Viper
 
-	Environment string
+	Environment  string
 	LoggingLevel string
 )
 
@@ -41,9 +41,9 @@ func Execute() {
 	})
 
 	rootCmd = &cobra.Command{
-		Use:   "server",
-		Short: "SSH Server",
-		Long:  `SSH Server Manager - Manages users on instances across clouds`,
+		Use:               "server",
+		Short:             "SSH Server",
+		Long:              `SSH Server Manager - Manages users on instances across clouds`,
 		PersistentPreRunE: loadConfig,
 	}
 

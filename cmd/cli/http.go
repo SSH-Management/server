@@ -14,10 +14,10 @@ import (
 
 func httpServerCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "serve",
-		Short: "Start HTTP Server",
+		Use:               "serve",
+		Short:             "Start HTTP Server",
 		PersistentPreRunE: loadConfig,
-		Run:   runHttpServer(),
+		Run:               runHttpServer(),
 	}
 }
 

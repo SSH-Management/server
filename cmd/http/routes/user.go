@@ -7,7 +7,6 @@ import (
 	"github.com/SSH-Management/server/pkg/container"
 )
 
-
 func registerUserRoutes(c *container.Container, router fiber.Router) {
 	router.Post("/create", handlers.CreateUserHandler(
 		c.GetUserService(),

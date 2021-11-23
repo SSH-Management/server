@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/SSH-Management/server/pkg/db"
+	"github.com/SSH-Management/server/pkg/repositories/group"
 	"github.com/SSH-Management/server/pkg/repositories/role"
 
 	"gorm.io/gorm"
@@ -20,29 +21,33 @@ type (
 		logger *log.Logger
 
 		roleRepo role.Interface
+		groupRepo group.Interface
 	}
 
 	Interface interface {
-		FindByGroup(ctx context.Context, id uint64) ([]models.User, error)
-		Create(ctx context.Context, dto dto.User) (models.User, error)
+		FindByGroup(context.Context, uint64) ([]models.User, error)
+		Create(context.Context, dto.User, string) (models.User, error)
 		Delete(context.Context, uint64) error
 	}
 )
 
-func New(db *gorm.DB, logger *log.Logger, roleRepo role.Interface) Repository {
+func New(db *gorm.DB, logger *log.Logger, roleRepo role.Interface, groupRepo group.Interface) Repository {
 	return Repository{
 		db:       db,
 		logger:   logger,
 		roleRepo: roleRepo,
+		groupRepo: groupRepo,
 	}
 }
 
 func (r Repository) FindByGroup(ctx context.Context, id uint64) ([]models.User, error) {
 	users := make([]models.User, 0, 10)
 
-	result := r.db.
-		WithContext(ctx).
-		Preload("Groups", "id = ?", id).
+	result := r.db.WithContext(ctx).
+		Model(&models.User{}).
+		Joins("inner join user_groups on users.id = user_groups.user_id").
+		Where("user_groups.group_id = ?", id).
+		Select("users.*").
 		Find(&users)
 
 	if result.Error != nil {
@@ -52,9 +57,9 @@ func (r Repository) FindByGroup(ctx context.Context, id uint64) ([]models.User, 
 	return users, nil
 }
 
-func (r Repository) Create(ctx context.Context, dto dto.User) (models.User, error) {
-	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
-	defer cancel()
+func (r Repository) Create(ctx context.Context, dto dto.User, publicKey string) (models.User, error) {
+	// ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
+	// defer cancel()
 
 	roleModel, err := r.roleRepo.FindByName(ctx, dto.Role)
 
@@ -63,13 +68,14 @@ func (r Repository) Create(ctx context.Context, dto dto.User) (models.User, erro
 	}
 
 	user := models.User{
-		Name:     dto.Name,
-		Surname:  dto.Surname,
-		Username: dto.Username,
-		Email:    dto.Email,
-		Password: dto.Password,
-		Shell:    dto.Shell,
-		RoleID:   roleModel.ID,
+		Name:         dto.Name,
+		Surname:      dto.Surname,
+		Username:     dto.Username,
+		Email:        dto.Email,
+		Password:     dto.Password,
+		Shell:        dto.Shell,
+		RoleID:       roleModel.ID,
+		PublicSSHKey: publicKey,
 	}
 
 	result := r.db.
@@ -82,6 +88,30 @@ func (r Repository) Create(ctx context.Context, dto dto.User) (models.User, erro
 		if err == gorm.ErrRecordNotFound {
 			return models.User{}, db.ErrNotFound
 		}
+		return models.User{}, err
+	}
+
+	groups, err := r.groupRepo.FindByName(ctx, dto.Groups...)
+
+	if err != nil {
+		if err := r.Delete(ctx, user.ID); err != nil {
+			return models.User{}, err
+		}
+
+		return models.User{}, err
+	}
+
+	err = r.db.
+		WithContext(ctx).
+		Model(&user).
+		Association("Groups").
+		Append(groups)
+
+	if err != nil {
+		if err := r.Delete(ctx, user.ID); err != nil {
+			return models.User{}, err
+		}
+
 		return models.User{}, err
 	}
 

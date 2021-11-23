@@ -11,7 +11,7 @@ type (
 
 	UserDeletedNotification struct {
 		Username string
-		Server struct {
+		Server   struct {
 			Name      string `json:"name,omitempty"`
 			IpAddress string `json:"ip,omitempty"`
 		} `json:"server,omitempty"`

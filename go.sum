@@ -52,8 +52,8 @@ github.com/SSH-Management/request-signer/v3 v3.0.1 h1:6gUtIm/lBsO23R8CmpyFuonwru
 github.com/SSH-Management/request-signer/v3 v3.0.1/go.mod h1:NH2m28fN3L6xF2/mbV6qiJzdZ/lFh6v+YwcU6ZElzHg=
 github.com/SSH-Management/server-sdk v0.2.2 h1:T+vTamLOxF5X67cew1yMbAUpC0N1+bHRNNu9CdXt9L8=
 github.com/SSH-Management/server-sdk v0.2.2/go.mod h1:j3j1gNY2UcG0s3NXVlECNEauQsU/Y1LeYdCN6lMi6z8=
-github.com/SSH-Management/ssh v1.0.0 h1:Be2C5xWcjgviNfqcuIXJX6fdlavtmq8rXbAzyBNV4Kc=
-github.com/SSH-Management/ssh v1.0.0/go.mod h1:daYOKFgY7OrTyqd0KGYXX5CHB5JqbjOJZtZKRmYbaho=
+github.com/SSH-Management/ssh v1.0.2 h1:TULT8GV8WEZx57EPvce2kCSlikk+Q56gfhpm+imyteE=
+github.com/SSH-Management/ssh v1.0.2/go.mod h1:tm6KxK1oCB3VBx/+WMmnEaMZvXRCcX7s8AoQCO/23Ug=
 github.com/SSH-Management/utils v1.0.0 h1:BNx5PU6QOt6+WfseGXridEvqI8aDDLKktN+cvohJaOo=
 github.com/SSH-Management/utils v1.0.0/go.mod h1:HIj/g0gLMNmU/9JEhJNtA/hRmls1cxW8fPk/hZPQMcE=
 github.com/SSH-Management/utils/v2 v2.0.0 h1:y+QEu0eUtn49KVQZ7lAzby+9efKtXyVScsIh1KlBH5o=
@@ -160,7 +160,6 @@ github.com/golang/protobuf v1.4.1/go.mod h1:U8fpvMrcmy5pZrNK1lt4xCsGvpyWQ/VVv6QD
 github.com/golang/protobuf v1.4.2/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw735rRwI=
 github.com/golang/protobuf v1.4.3/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw735rRwI=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
-github.com/golang/protobuf v1.5.1/go.mod h1:DopwsBzvsk0Fs44TXzsVbJyPhcCPeIwnvohx4u74HPM=
 github.com/golang/protobuf v1.5.2 h1:ROPKBNFfQgOUMifHyP+KYbvpjbdoFNs+aK7DXlji0Tw=
 github.com/golang/protobuf v1.5.2/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=
 github.com/golang/snappy v0.0.3/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=

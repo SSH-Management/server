@@ -22,7 +22,6 @@ func (c *Container) GetValidator() *validator.Validate {
 	return c.validator
 }
 
-
 func (c *Container) GetTranslator() ut.Translator {
 	if c.translator == nil {
 		english := en.New()

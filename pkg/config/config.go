@@ -60,8 +60,8 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("database.database", "ssh_management")
 	v.SetDefault("database.host", "localhost:3306")
 	v.SetDefault("database.collation", "utf8mb4_unicode_ci")
-	v.SetDefault("database.conn_max_idle_time", time.Duration(30 * time.Second))
-	v.SetDefault("database.conn_max_lifetime", time.Duration(5 * time.Minute))
+	v.SetDefault("database.conn_max_idle_time", time.Duration(30*time.Second))
+	v.SetDefault("database.conn_max_lifetime", time.Duration(5*time.Minute))
 	v.SetDefault("database.conn_max_idle", 10)
 	v.SetDefault("database.conn_max_opened", 10)
 

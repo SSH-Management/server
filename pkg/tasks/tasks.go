@@ -36,7 +36,7 @@ func NewNotifyServerForNewUser(server models.Server, user dto.CreateUser) (*asyn
 			Name      string "json:\"name,omitempty\""
 			IpAddress string "json:\"ip,omitempty\""
 		}{
-			Name: server.Name,
+			Name:      server.Name,
 			IpAddress: server.IpAddress,
 		},
 	})
@@ -59,7 +59,7 @@ func NewNotifyServerForDeletedUser(server models.Server, username string) (*asyn
 			Name      string "json:\"name,omitempty\""
 			IpAddress string "json:\"ip,omitempty\""
 		}{
-			Name: server.Name,
+			Name:      server.Name,
 			IpAddress: server.IpAddress,
 		},
 	})

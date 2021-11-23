@@ -6,6 +6,7 @@ import (
 
 	user "github.com/SSH-Management/linux-user"
 	ssh "github.com/SSH-Management/ssh"
+	"github.com/SSH-Management/utils/v2"
 	"github.com/hibiken/asynq"
 
 	"github.com/SSH-Management/server/pkg/dto"
@@ -44,16 +45,9 @@ func New(
 }
 
 func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []byte, error) {
-	user, err := s.userRepo.Create(ctx, u.User)
-
-	if err != nil {
-		return models.User{}, nil, err
-	}
-
 	unixUser, err := s.unixUserService.Create(ctx, u.User)
 
 	if err != nil {
-		s.deleteUserFromDb(ctx, user)
 		return models.User{}, nil, err
 	}
 
@@ -64,34 +58,41 @@ func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []b
 		unixUser.GroupId,
 	)
 
+	username := u.GetUser().GetUsername()
+
 	if err != nil {
-		s.deleteUserFromDb(ctx, user)
-		s.deleteUserFromSystem(ctx, user.Username)
+		s.deleteUserFromSystem(ctx, username)
 		return models.User{}, nil, err
 	}
 
 	key, err := ssh.New(unixUser.UserId, unixUser.GroupId, unixUser.HomeFolder)
 
 	if err != nil {
-		s.deleteUserFromDb(ctx, user)
-		s.deleteUserFromSystem(ctx, user.Username)
+		s.deleteUserFromSystem(ctx, username)
 		return models.User{}, nil, err
 	}
 
 	if err := key.Write(); err != nil {
-		s.deleteUserFromDb(ctx, user)
-		s.deleteUserFromSystem(ctx, user.Username)
+		s.deleteUserFromSystem(ctx, username)
 		return models.User{}, nil, err
 	}
 
 	publicKey, err := key.GetPublicKey()
 
 	if err != nil {
-		s.deleteUserFromDb(ctx, user)
-		s.deleteUserFromSystem(ctx, user.Username)
+		s.deleteUserFromSystem(ctx, username)
 	}
 
-	task, err := tasks.NewUserNotification(u.User, string(publicKey))
+	publicKeyString := utils.UnsafeString(publicKey)
+
+	user, err := s.userRepo.Create(ctx, u.User, publicKeyString)
+
+	if err != nil {
+		s.deleteUserFromSystem(ctx, username)
+		return models.User{}, nil, err
+	}
+
+	task, err := tasks.NewUserNotification(u.User, publicKeyString)
 
 	if err != nil {
 		s.deleteUserFromDb(ctx, user)

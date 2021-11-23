@@ -149,7 +149,6 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 	return nil
 }
 
-
 func (n *NotifyServerForNewUser) ProcessTask(ctx context.Context, task *asynq.Task) error {
 	payload := task.Payload()
 

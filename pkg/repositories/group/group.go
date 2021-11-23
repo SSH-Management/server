@@ -2,9 +2,11 @@ package group
 
 import (
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 
+	"github.com/SSH-Management/server/pkg/db"
 	"github.com/SSH-Management/server/pkg/log"
 	"github.com/SSH-Management/server/pkg/models"
 )
@@ -17,8 +19,8 @@ type (
 
 	Interface interface {
 		Find(context.Context, uint64) (models.Group, error)
-		FindByName(context.Context, string) (models.Group, error)
-		Create(context.Context) (models.Group, error)
+		FindByName(ctx context.Context, name ...string) ([]models.Group, error)
+		Create(context.Context, string) (models.Group, error)
 		Delete(context.Context, uint64) error
 	}
 )
@@ -32,29 +34,48 @@ func (r Repository) Find(ctx context.Context, id uint64) (models.Group, error) {
 		First(&group)
 
 	if result.Error != nil {
-		return group, result.Error
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return models.Group{}, db.ErrNotFound
+		}
+
+		return models.Group{}, result.Error
 	}
 
 	return group, nil
 }
 
-func (r Repository) FindByName(ctx context.Context, name string) (models.Group, error) {
-	var group models.Group
+func (r Repository) FindByName(ctx context.Context, name ...string) ([]models.Group, error) {
+	groups := make([]models.Group, 0, 20)
 
 	result := r.db.WithContext(ctx).
-		Where("name = ?", name).
-		Limit(1).
-		First(&group)
+		Where("name IN ?", name).
+		Find(&groups)
 
 	if result.Error != nil {
-		return group, result.Error
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, db.ErrNotFound
+		}
+
+		return nil, result.Error
 	}
 
-	return group, nil
+	return groups, nil
 }
 
-func (r Repository) Create(ctx context.Context) (models.Group, error) {
-	panic("implement me")
+func (r Repository) Create(ctx context.Context, name string) (models.Group, error) {
+	g := models.Group{
+		Name: name,
+	}
+
+	result := r.db.
+		WithContext(ctx).
+		Create(&g)
+
+	if result.Error != nil {
+		return models.Group{}, result.Error
+	}
+
+	return g, nil
 }
 
 func (r Repository) Delete(ctx context.Context, u uint64) error {

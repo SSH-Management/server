@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"gorm.io/gorm"
 
@@ -39,7 +40,7 @@ func (r Repository) FindByPrivateIP(ctx context.Context, ip string) (models.Serv
 
 	result := r.db.
 		WithContext(ctx).
-		Where("private_ip = ?", ip).
+		Where("ip = ?", ip).
 		Limit(1).
 		First(&s)
 
@@ -54,16 +55,35 @@ func (r Repository) FindByPrivateIP(ctx context.Context, ip string) (models.Serv
 	return s, nil
 }
 
+func (r Repository) createGroupIfNotExists(ctx context.Context, name string) (models.Group, error) {
+	var g models.Group
+	groups, err := r.groupRepo.FindByName(ctx, name)
+
+	if err != nil {
+		if errors.Is(err, db.ErrNotFound) || len(groups) == 0 {
+			g, err = r.groupRepo.Create(ctx, name)
+
+			if err != nil {
+				return g, err
+			}
+		} else {
+			return g, err
+		}
+	}
+
+	return groups[0], nil
+}
+
 func (r Repository) Create(ctx context.Context, dto sdk.NewClientRequest) (models.Server, error) {
 	publicIpSql := sql.NullString{
 		String: dto.PublicIp,
 		Valid:  dto.PublicIp != "",
 	}
 
-	g, err := r.groupRepo.FindByName(ctx, dto.Group)
+	g, err := r.createGroupIfNotExists(ctx, dto.Group)
 
 	if err != nil {
-		return models.Server{}, err
+		return models.Server{}, nil
 	}
 
 	server := models.Server{
@@ -85,7 +105,19 @@ func (r Repository) Create(ctx context.Context, dto sdk.NewClientRequest) (model
 }
 
 func (r Repository) Delete(ctx context.Context, id uint64) error {
-	panic("implement me")
+	result := r.db.
+		WithContext(ctx).
+		Delete(&models.Server{Model: models.Model{ID: id}})
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return db.ErrNotFound
+		}
+
+		return result.Error
+	}
+
+	return nil
 }
 
 func New(db *gorm.DB, logger *log.Logger, groupRepo group.Interface) Repository {

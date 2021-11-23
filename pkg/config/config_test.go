@@ -10,8 +10,8 @@ func TestParseEnvironment(t *testing.T) {
 	t.Parallel()
 	assert := require.New(t)
 
-	type theory struct{
-		value string
+	type theory struct {
+		value    string
 		expected Env
 	}
 
