@@ -88,6 +88,15 @@ ifneq ($(findstring migrate,$(shell ls $(GOPATH)/bin)),migrate)
 	go build -tags 'postgres sqlite3 mysql github file' -ldflags="-X main.Version=${MIGRATE_TAG}" -o $(GOPATH)/bin/migrate ${GOPATH}/src/github.com/golang-migrate/migrate/cmd/migrate
 endif
 
+.PHONY: protoc-go
+protoc-go:
+	mkdir -p proto/server
+	protoc -I server-proto --go_out=proto/server \
+		--go_opt=paths=source_relative \
+		--go-grpc_out=proto/server \
+		--go-grpc_opt=paths=source_relative $(shell find server-proto proto -iname "*.proto")
+
+
 .PHONY: buildx
 buildx:
 	docker buildx build --platform "$(PLATFORM)" -t "malusevd99/ssh-management:server-$(TAG)" --push --file ./docker/server/Dockerfile .
