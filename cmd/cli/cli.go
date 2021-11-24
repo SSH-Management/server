@@ -36,10 +36,6 @@ func getContainer(logger string) *container.Container {
 }
 
 func Execute() {
-	cobra.OnInitialize(func() {
-
-	})
-
 	rootCmd = &cobra.Command{
 		Use:               "server",
 		Short:             "SSH Server",

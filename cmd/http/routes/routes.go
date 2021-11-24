@@ -28,7 +28,7 @@ func Register(c *container.Container, router fiber.Router) {
 	// 	KeyLookup:  "cookie:csrf_cookie",
 	// 	ContextKey: CsrfTokenKey,
 	// 	CookieName: CsrfTokenCookie,
-	// 	//Storage:        c.GetStorage(0),
+	// 	Storage:        c.GetStorage(0),
 	// 	//CookieDomain:   c.Config.Csrf.CookieDomain,
 	// 	//CookieSecure:   c.Config.Csrf.Secure,
 	// 	CookieHTTPOnly: true,

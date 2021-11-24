@@ -16,6 +16,8 @@ import (
 	"github.com/SSH-Management/server/pkg/tasks"
 )
 
+var _ Interface = &Service{}
+
 type (
 	Service struct {
 		userRepo        userepo.Interface
@@ -26,6 +28,7 @@ type (
 	}
 
 	Interface interface {
+		Get(context.Context) ([]models.User, error)
 		Create(context.Context, dto.CreateUser) (models.User, []byte, error)
 	}
 )
@@ -42,6 +45,10 @@ func New(
 		logger:          logger,
 		queue:           queue,
 	}
+}
+
+func (s Service) Get(ctx context.Context) ([]models.User, error) {
+	return s.userRepo.Find(ctx)
 }
 
 func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []byte, error) {

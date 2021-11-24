@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/SSH-Management/server/pkg/db"
@@ -15,6 +16,8 @@ import (
 	"github.com/SSH-Management/server/pkg/models"
 )
 
+var _ Interface = &Repository{}
+
 type (
 	Repository struct {
 		db     *gorm.DB
@@ -25,6 +28,7 @@ type (
 	}
 
 	Interface interface {
+		Find(context.Context) ([]models.User, error)
 		FindByGroup(context.Context, uint64) ([]models.User, error)
 		Create(context.Context, dto.User, string) (models.User, error)
 		Delete(context.Context, uint64) error
@@ -38,6 +42,22 @@ func New(db *gorm.DB, logger *log.Logger, roleRepo role.Interface, groupRepo gro
 		roleRepo: roleRepo,
 		groupRepo: groupRepo,
 	}
+}
+
+func (r Repository) Find(ctx context.Context) ([]models.User, error) {
+	users := make([]models.User, 0, 10)
+
+	result := r.db.Find(&users)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, db.ErrNotFound
+		}
+
+		return nil, result.Error
+	}
+
+	return users, nil
 }
 
 func (r Repository) FindByGroup(ctx context.Context, id uint64) ([]models.User, error) {

@@ -15,6 +15,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.22.0
 	github.com/gofiber/storage/redis v0.0.0-20211117053443-4a3096149ebb
 	github.com/hibiken/asynq v0.19.0
+	github.com/leebenson/conform v1.2.2
 	github.com/rs/zerolog v1.26.0
 	github.com/rzajac/zltest v0.10.0
 	github.com/spf13/cobra v1.2.1
@@ -30,6 +31,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/etgryphon/stringUp v0.0.0-20121020160746-31534ccd8cac // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-redis/redis/v8 v8.11.4 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect

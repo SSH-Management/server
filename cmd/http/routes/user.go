@@ -8,7 +8,14 @@ import (
 )
 
 func registerUserRoutes(c *container.Container, router fiber.Router) {
-	router.Post("/create", handlers.CreateUserHandler(
+	router.Get("/", handlers.GetUsers(
 		c.GetUserService(),
 	))
+
+	router.Post("/create", handlers.CreateUserHandler(
+		c.GetUserService(),
+		c.GetValidator(),
+	))
+
+	router.Delete("/:id", handlers.DeleteUser(c.GetUserService()))
 }
