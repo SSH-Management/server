@@ -16,13 +16,19 @@ import (
 
 const DateTimeFormat = "2006-01-02 15:04:05"
 
-type Logger struct {
-	zerolog.Logger
-	Level zerolog.Level
+type (
+	Logger struct {
+		zerolog.Logger
+		Level zerolog.Level
 
-	FilePath string
-	File     *os.File
-}
+		FilePath string
+		File     *os.File
+	}
+
+	UnixServiceLogger struct {
+		Logger *Logger
+	}
+)
 
 func Parse(level string) zerolog.Level {
 	level = strings.ToLower(level)
@@ -49,6 +55,12 @@ func Parse(level string) zerolog.Level {
 
 func (l Logger) Close() error {
 	return l.File.Close()
+}
+
+func (l UnixServiceLogger) Print(msg string, data ...interface{}) {
+	l.Logger.
+		Error().
+		Msgf(msg, data...)
 }
 
 func ConfigureDefaultLogger(level string, writer io.Writer) {

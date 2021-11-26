@@ -8,16 +8,15 @@ COPY . .
 
 RUN apk add make && make VERSION=${VERSION} ENV=production build
 
-FROM alpine:3.13
+FROM ubuntu:21.10
 
 WORKDIR /app
 
 COPY --from=build /app/bin .
 
-RUN apk update \
-    && apk add bash \
+RUN apt update \
+    && apt upgrade -y \
     && mkdir -p /var/log/ssh_management
-
 EXPOSE 8080
 
 CMD ["./ssh_management", "--env", "production", "serve" ]
