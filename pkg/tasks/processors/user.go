@@ -113,6 +113,7 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 	payload := task.Payload()
 
 	err := json.Unmarshal(payload, &notification)
+
 	if err != nil {
 		return err
 	}
@@ -121,8 +122,7 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 
 	wg.Add(len(notification.Groups))
 
-	errCh := make(chan error, 100)
-	defer close(errCh)
+	errCh := make(chan error, len(notification.Groups))
 
 	n.mutext.RLock()
 
@@ -141,6 +141,7 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 					notification.User,
 					notification.PublicSSHKey,
 				)
+
 				if err != nil {
 					errCh <- err
 					return
@@ -150,6 +151,7 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 
 				if err != nil {
 					errCh <- err
+					return
 				}
 
 				n.logger.Debug().
@@ -162,18 +164,22 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 
 	wg.Wait()
 	n.mutext.RUnlock()
+	close(errCh)
 
-	select {
-	case err := <-errCh:
+	for err := range errCh {
 		if err != nil {
-			n.logger.Error().Err(err).Msg("Error while sending into another queue")
-			return err
+			n.logger.Error().
+				Err(err).
+				Msg("Error while sending into another queue")
 		}
-	case <-ctx.Done():
-		return errors.New("timeout...")
 	}
 
-	return nil
+	select {
+	case <-ctx.Done():
+		return errors.New("timeout...")
+	default:
+		return nil
+	}
 }
 
 func (n *NotifyServerForNewUser) getConnectionToClient(ip string) (users.UserServiceClient, error) {
