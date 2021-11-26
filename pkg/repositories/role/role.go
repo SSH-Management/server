@@ -24,7 +24,7 @@ type (
 )
 
 func (r Repository) Find(ctx context.Context, u uint64) (models.Role, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
@@ -44,12 +44,12 @@ func (r Repository) FindByName(ctx context.Context, name string) (models.Role, e
 }
 
 func (r Repository) Create(ctx context.Context) (models.Role, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (r Repository) Delete(ctx context.Context, u uint64) error {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 

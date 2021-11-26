@@ -1,10 +1,10 @@
-FROM golang:1.17-alpine as build
+FROM golang:1.17.3-alpine as build
 
 WORKDIR /app
 
 COPY . .
 
-RUN apk add make && make VERSION=v0.0.1 build
+RUN apk add make && make VERSION=v0.0.3 ENV=production build
 
 FROM alpine:3.13
 

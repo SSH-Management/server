@@ -31,7 +31,6 @@ func CreateUserHandler(userService user.Interface, validator *validator.Validate
 		}
 
 		_, _, err := userService.Create(c.UserContext(), userDto)
-
 		if err != nil {
 			return err
 		}
@@ -41,11 +40,9 @@ func CreateUserHandler(userService user.Interface, validator *validator.Validate
 	}
 }
 
-
 func GetUsers(userService user.Interface) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		users, err := userService.Get(c.UserContext())
-
 		if err != nil {
 			return err
 		}
@@ -53,7 +50,6 @@ func GetUsers(userService user.Interface) fiber.Handler {
 		return c.Status(http.StatusOK).JSON(users)
 	}
 }
-
 
 func DeleteUser(userService user.Interface) fiber.Handler {
 	return func(c *fiber.Ctx) error {

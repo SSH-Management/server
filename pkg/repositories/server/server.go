@@ -58,7 +58,6 @@ func (r Repository) FindByPrivateIP(ctx context.Context, ip string) (models.Serv
 func (r Repository) createGroupIfNotExists(ctx context.Context, name string) (models.Group, error) {
 	var g models.Group
 	groups, err := r.groupRepo.FindByName(ctx, name)
-
 	if err != nil {
 		if errors.Is(err, db.ErrNotFound) {
 			g, err = r.groupRepo.Create(ctx, name)
@@ -91,7 +90,6 @@ func (r Repository) Create(ctx context.Context, dto sdk.NewClientRequest) (model
 	}
 
 	g, err := r.createGroupIfNotExists(ctx, dto.Group)
-
 	if err != nil {
 		return models.Server{}, err
 	}

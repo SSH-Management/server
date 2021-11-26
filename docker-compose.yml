@@ -1,26 +1,49 @@
 version: '3.6'
 
 services:
-  # server:
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/server/Dockerfile
-  #   networks:
-  #     - net
-  #   restart: unless-stopped
-  #   volumes:
-  #     - './logs:/var/log/ssh_management'
-  #     - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
-  # queue:
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/queue/Dockerfile
-  #   networks:
-  #     - net
-  #   restart: unless-stopped
-  #   volumes:
-  #     - './logs:/var/log/ssh_management'
-  #     - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+  client:
+    image: malusevd99/ssh-management:client-v0.1.1
+    ports:
+      - '9999:9999'
+    environment:
+      MASTER_SERVER: 'http://server:8080'
+      SERVER_NAME: 'test_client'
+      SERVER_GROUP: 'test_group'
+    networks:
+      - net
+    restart: unless-stopped
+    depends_on:
+      - server
+      - queue
+    volumes:
+      - ./logs/client:/var/log/ssh_management
+  server:
+    build:
+      context: .
+      dockerfile: ./docker/server/Dockerfile
+    networks:
+      - net
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - './logs:/var/log/ssh_management'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+  queue:
+    build:
+      context: .
+      dockerfile: ./docker/queue/Dockerfile
+    networks:
+      - net
+    restart: unless-stopped
+    depends_on:
+      - server
+      - mysql
+      - redis
+    volumes:
+      - './logs:/var/log/ssh_management'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
   redis:
     image: 'redis:6-alpine'
     networks:
@@ -49,6 +72,9 @@ services:
       - '8000:8080'
     networks:
       - net
+    restart: unless-stopped
+    depends_on:
+      - redis
 networks:
   net:
     driver: bridge

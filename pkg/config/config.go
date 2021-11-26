@@ -45,7 +45,6 @@ func New(env Env) (*viper.Viper, error) {
 	}
 
 	err := v.ReadInConfig()
-
 	if err != nil {
 		return nil, err
 	}

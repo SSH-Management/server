@@ -92,3 +92,11 @@ endif
 buildx:
 	docker buildx build --platform "$(PLATFORM)" -t "malusevd99/ssh-management:server-$(TAG)" --push --file ./docker/server/Dockerfile .
 	docker buildx build --platform "$(PLATFORM)" -t "malusevd99/ssh-management:queue-$(TAG)" --push --file ./docker/queue/Dockerfile .
+
+.PHONY: lint
+lint:
+	@golangci-lint run
+
+.PHONY: fmt
+fmt:
+	@gofumpt -l -w .

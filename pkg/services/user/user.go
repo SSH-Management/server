@@ -53,7 +53,6 @@ func (s Service) Get(ctx context.Context) ([]models.User, error) {
 
 func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []byte, error) {
 	unixUser, err := s.unixUserService.Create(ctx, u.User)
-
 	if err != nil {
 		return models.User{}, nil, err
 	}
@@ -73,7 +72,6 @@ func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []b
 	}
 
 	key, err := ssh.New(unixUser.UserId, unixUser.GroupId, unixUser.HomeFolder)
-
 	if err != nil {
 		s.deleteUserFromSystem(ctx, username)
 		return models.User{}, nil, err
@@ -85,7 +83,6 @@ func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []b
 	}
 
 	publicKey, err := key.GetPublicKey()
-
 	if err != nil {
 		s.deleteUserFromSystem(ctx, username)
 	}
@@ -93,14 +90,12 @@ func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []b
 	publicKeyString := utils.UnsafeString(publicKey)
 
 	user, err := s.userRepo.Create(ctx, u.User, publicKeyString)
-
 	if err != nil {
 		s.deleteUserFromSystem(ctx, username)
 		return models.User{}, nil, err
 	}
 
 	task, err := tasks.NewUserNotification(u.User, publicKeyString)
-
 	if err != nil {
 		s.deleteUserFromDb(ctx, user)
 		s.deleteUserFromSystem(ctx, user.Username)

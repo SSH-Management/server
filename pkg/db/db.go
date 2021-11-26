@@ -26,7 +26,6 @@ func GetDbConnection(c config.Config) (*gorm.DB, error) {
 	}
 
 	dialect, err := connector.Connect(c)
-
 	if err != nil {
 		return nil, err
 	}
@@ -34,13 +33,11 @@ func GetDbConnection(c config.Config) (*gorm.DB, error) {
 	db, err := gorm.Open(dialect, &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{},
 	})
-
 	if err != nil {
 		return nil, err
 	}
 
 	sqlDb, err := db.DB()
-
 	if err != nil {
 		return nil, err
 	}

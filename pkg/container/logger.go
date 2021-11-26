@@ -30,7 +30,6 @@ func (c *Container) GetLogger(name string) *log.Logger {
 		c.Config.GetBool(fmt.Sprintf("%s.console", name)),
 		0,
 	)
-
 	if err != nil {
 		zerologlog.Fatal().
 			Err(err).

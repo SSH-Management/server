@@ -23,7 +23,7 @@ type (
 		db     *gorm.DB
 		logger *log.Logger
 
-		roleRepo role.Interface
+		roleRepo  role.Interface
 		groupRepo group.Interface
 	}
 
@@ -37,9 +37,9 @@ type (
 
 func New(db *gorm.DB, logger *log.Logger, roleRepo role.Interface, groupRepo group.Interface) Repository {
 	return Repository{
-		db:       db,
-		logger:   logger,
-		roleRepo: roleRepo,
+		db:        db,
+		logger:    logger,
+		roleRepo:  roleRepo,
 		groupRepo: groupRepo,
 	}
 }
@@ -82,7 +82,6 @@ func (r Repository) Create(ctx context.Context, dto dto.User, publicKey string) 
 	// defer cancel()
 
 	roleModel, err := r.roleRepo.FindByName(ctx, dto.Role)
-
 	if err != nil {
 		return models.User{}, err
 	}
@@ -112,7 +111,6 @@ func (r Repository) Create(ctx context.Context, dto dto.User, publicKey string) 
 	}
 
 	groups, err := r.groupRepo.FindByName(ctx, dto.Groups...)
-
 	if err != nil {
 		if err := r.Delete(ctx, user.ID); err != nil {
 			return models.User{}, err

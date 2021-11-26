@@ -13,7 +13,6 @@ func loadConfig(cmd *cobra.Command, args []string) error {
 	log.ConfigureDefaultLogger(LoggingLevel, os.Stdout)
 
 	v, err := config.New(config.ParseEnvironment(Environment))
-
 	if err != nil {
 		return err
 	}

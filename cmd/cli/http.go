@@ -51,7 +51,6 @@ func runHttpServer() func(cmd *cobra.Command, args []string) {
 		addr := fmt.Sprintf("%s:%d", c.Config.GetString("bind"), c.Config.GetInt("port"))
 
 		listener, err := net.Listen("tcp4", addr)
-
 		if err != nil {
 			log.
 				Fatal().

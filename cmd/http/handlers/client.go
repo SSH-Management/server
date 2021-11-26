@@ -45,7 +45,6 @@ func CreateNewClientHandler(
 	userRepository userrepo.Interface,
 ) fiber.Handler {
 	path, err := utils.GetAbsolutePath(publicKeyPath)
-
 	if err != nil {
 		logger.Fatal().
 			Err(err).
@@ -54,7 +53,6 @@ func CreateNewClientHandler(
 	}
 
 	bytes, err := os.ReadFile(path)
-
 	if err != nil {
 		logger.Fatal().
 			Err(err).
@@ -75,7 +73,6 @@ func CreateNewClientHandler(
 		}
 
 		s, err := serverRepository.FindByPrivateIP(ctx, req.Ip)
-
 		if err != nil {
 			if err == db.ErrNotFound {
 				s, err = serverRepository.Create(ctx, req)
@@ -93,7 +90,6 @@ func CreateNewClientHandler(
 		}
 
 		users, err := userRepository.FindByGroup(ctx, s.GroupID)
-
 		if err != nil {
 			err = serverRepository.Delete(ctx, s.ID)
 			if err != nil {
@@ -118,7 +114,6 @@ func CreateNewClientHandler(
 func DeleteClient(serverRepository server.Interface) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		id, err := ctx.ParamsInt("id")
-
 		if err != nil {
 			return ctx.Status(http.StatusBadRequest).
 				JSON(ErrorResponse{Message: "Invalid Server ID"})

@@ -60,4 +60,8 @@ func registerQueueHandlers(c *container.Container, mux *asynq.ServeMux) {
 		c.GetQueueClient(),
 		c.GetDefaultLogger(),
 	))
+
+	mux.Handle(tasks.TypeNotifyServerForNewUser, processors.NewNotifyServerForNewUser(
+		c.GetDefaultLogger(),
+	))
 }

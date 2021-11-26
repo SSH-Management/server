@@ -4,10 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/hibiken/asynq"
+	"google.golang.org/grpc"
 	"gorm.io/gorm"
+
+	"github.com/SSH-Management/protobuf/client/users"
 
 	"github.com/SSH-Management/server/pkg/dto"
 	"github.com/SSH-Management/server/pkg/log"
@@ -17,6 +21,7 @@ import (
 
 var (
 	_ asynq.Handler = &NewUserCreated{}
+	_ asynq.Handler = &NotifyServerForNewUser{}
 )
 
 type (
@@ -31,17 +36,32 @@ type (
 	}
 
 	NotifyServerForNewUser struct {
+		port            uint16
+		mutext          sync.RWMutex
+		grpcConnections map[string]*grpc.ClientConn
+
+		logger *log.Logger
 	}
 )
 
 func NewUserCreatedProcessor(db *gorm.DB, queue *asynq.Client, logger *log.Logger) *NewUserCreated {
 	return &NewUserCreated{
 		once:    sync.Once{},
-		servers: make(map[string][]models.Server, 0),
+		servers: make(map[string][]models.Server),
 		mutext:  sync.RWMutex{},
 
 		db:     db,
 		queue:  queue,
+		logger: logger,
+	}
+}
+
+func NewNotifyServerForNewUser(logger *log.Logger) *NotifyServerForNewUser {
+	return &NotifyServerForNewUser{
+		port:            9999,
+		mutext:          sync.RWMutex{},
+		grpcConnections: make(map[string]*grpc.ClientConn),
+
 		logger: logger,
 	}
 }
@@ -88,32 +108,40 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 		return err
 	}
 
-	var user dto.CreateUser
+	var notification dto.NewUserNotification
 
 	payload := task.Payload()
 
-	err := json.Unmarshal(payload, &user)
-
+	err := json.Unmarshal(payload, &notification)
 	if err != nil {
 		return err
 	}
 
 	var wg sync.WaitGroup
 
-	wg.Add(len(user.User.Groups))
+	wg.Add(len(notification.Groups))
 
 	errCh := make(chan error, 100)
 	defer close(errCh)
 
 	n.mutext.RLock()
 
-	for _, group := range user.User.Groups {
-		servers := n.servers[group]
+	for _, group := range notification.Groups {
+		servers, ok := n.servers[group]
+
+		if !ok {
+			continue
+		}
 
 		go func(wg *sync.WaitGroup, server []models.Server) {
 			defer wg.Done()
 			for _, server := range servers {
-				task, err := tasks.NewNotifyServerForNewUser(server, user)
+				task, err := tasks.NewNotifyServerForNewUser(
+					server,
+					notification.User,
+					notification.PublicSSHKey,
+				)
+
 				if err != nil {
 					errCh <- err
 					return
@@ -149,16 +177,71 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 	return nil
 }
 
+func (n *NotifyServerForNewUser) getConnectionToClient(ip string) (users.UserServiceClient, error) {
+	n.mutext.RLock()
+	if conn, ok := n.grpcConnections[ip]; ok {
+		n.mutext.RUnlock()
+		return users.NewUserServiceClient(conn), nil
+	}
+
+	n.mutext.RUnlock()
+	conn, err := grpc.Dial(
+		fmt.Sprintf("%s:%d", ip, n.port),
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	n.mutext.Lock()
+	defer n.mutext.Unlock()
+
+	n.grpcConnections[ip] = conn
+
+	return users.NewUserServiceClient(conn), nil
+}
+
 func (n *NotifyServerForNewUser) ProcessTask(ctx context.Context, task *asynq.Task) error {
 	payload := task.Payload()
 
-	var notification dto.NewUserNotification
+	var notification dto.NewUserForClientsNotification
 
 	if err := json.Unmarshal(payload, &notification); err != nil {
 		return err
 	}
 
-	// TODO: Add Client SDK
+	client, err := n.getConnectionToClient(notification.Server.IpAddress)
+	if err != nil {
+		return err
+	}
+
+	_, err = client.Create(ctx, &users.CreateUserRequest{
+		User:      notification.User,
+		PublicKey: notification.PublicSSHKey,
+	})
+
+	if err != nil {
+		n.logger.Error().
+			Str("server", notification.Server.IpAddress).
+			Err(err).
+			Msg("Error while creating new user on the client")
+	}
+
+	return nil
+}
+
+func (n *NotifyServerForNewUser) Close() error {
+	n.mutext.Lock()
+	defer n.mutext.Unlock()
+
+	for server, conn := range n.grpcConnections {
+		if err := conn.Close(); err != nil {
+			n.logger.Error().
+				Err(err).
+				Str("server", server).
+				Msg("Error while closing the connection")
+		}
+	}
 
 	return nil
 }

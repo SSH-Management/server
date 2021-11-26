@@ -62,7 +62,6 @@ func ConfigureDefaultLogger(level string, writer io.Writer) {
 
 func New(fp, level string, toConsole bool, sample uint32) (*Logger, error) {
 	file, err := utils.CreateLogFile(fp)
-
 	if err != nil {
 		zerologlog.Error().Err(err).Msgf("Error while creating %s log", fp)
 		return nil, err
@@ -87,9 +86,8 @@ func New(fp, level string, toConsole bool, sample uint32) (*Logger, error) {
 			With().
 			Timestamp().
 			Logger().
-			//Sample(&zerolog.BasicSampler{N: sample}).
+			// Sample(&zerolog.BasicSampler{N: sample}).
 			Level(Parse(level))
-
 	}
 
 	return &Logger{

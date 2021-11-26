@@ -79,7 +79,7 @@ func (r Repository) Create(ctx context.Context, name string) (models.Group, erro
 }
 
 func (r Repository) Delete(ctx context.Context, id uint64) error {
-	result := r.db.Delete(&models.Group{Model: models.Model{ID: id }})
+	result := r.db.Delete(&models.Group{Model: models.Model{ID: id}})
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
