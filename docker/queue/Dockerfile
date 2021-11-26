@@ -1,10 +1,12 @@
+ARG VERSION=
+
 FROM golang:1.17.3-alpine as build
 
 WORKDIR /app
 
 COPY . .
 
-RUN apk update && apk add make gcc && make VERSION=v0.0.3 ENV=production  build
+RUN apk update && apk add make gcc && make VERSION=${VERSION} ENV=production  build
 
 FROM alpine:3.13
 

@@ -10,7 +10,7 @@ type (
 		PublicSSHKey string           `json:"public_key,omitempty"`
 		Groups       []string         `json:"groups,omitempty"`
 	}
-	
+
 	NewUserForClientsNotification struct {
 		User         *users.LinuxUser `json:"user,omitempty"`
 		PublicSSHKey string           `json:"public_key,omitempty"`

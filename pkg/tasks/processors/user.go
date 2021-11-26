@@ -141,7 +141,6 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 					notification.User,
 					notification.PublicSSHKey,
 				)
-
 				if err != nil {
 					errCh <- err
 					return

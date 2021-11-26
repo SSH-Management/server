@@ -27,7 +27,6 @@ func NewUserNotification(user dto.User, publicKey string) (*asynq.Task, error) {
 		PublicSSHKey: publicKey,
 		Groups:       user.Groups,
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +40,7 @@ func NewUserNotification(user dto.User, publicKey string) (*asynq.Task, error) {
 
 func NewNotifyServerForNewUser(server models.Server, user *users.LinuxUser, publicKey string) (*asynq.Task, error) {
 	bytes, err := json.Marshal(dto.NewUserForClientsNotification{
-		User: user,
+		User:         user,
 		PublicSSHKey: publicKey,
 		Server: struct {
 			Name      string "json:\"name,omitempty\""
