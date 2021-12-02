@@ -14,3 +14,4 @@ func (c CreateUser) GetUser() sdk.User {
 func (c CreateUser) GetPublicKey() string {
 	return c.PublicSSHKey
 }
+

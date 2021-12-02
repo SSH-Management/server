@@ -13,6 +13,7 @@ import (
 	"github.com/SSH-Management/server/pkg/log"
 	"github.com/SSH-Management/server/pkg/models"
 	userepo "github.com/SSH-Management/server/pkg/repositories/user"
+	"github.com/SSH-Management/server/pkg/services/password"
 	"github.com/SSH-Management/server/pkg/tasks"
 )
 
@@ -22,6 +23,7 @@ type (
 	Service struct {
 		userRepo        userepo.Interface
 		unixUserService user.UnixInterface
+		hasher          password.Hasher
 
 		logger *log.Logger
 		queue  *asynq.Client
@@ -38,12 +40,14 @@ func New(
 	unixUserService user.UnixInterface,
 	logger *log.Logger,
 	queue *asynq.Client,
+	hasher password.Hasher,
 ) Service {
 	return Service{
 		userRepo:        userRepo,
 		unixUserService: unixUserService,
 		logger:          logger,
 		queue:           queue,
+		hasher:          hasher,
 	}
 }
 
@@ -85,11 +89,18 @@ func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []b
 	publicKey, err := key.GetPublicKey()
 	if err != nil {
 		s.deleteUserFromSystem(ctx, username)
+		return models.User{}, nil, err
 	}
 
 	publicKeyString := utils.UnsafeString(publicKey)
 
-	user, err := s.userRepo.Create(ctx, u.User, publicKeyString)
+	passwordHash, err := s.hasher.Hash(u.User.Password)
+	if err != nil {
+		s.deleteUserFromSystem(ctx, username)
+		return models.User{}, nil, err
+	}
+
+	user, err := s.userRepo.Create(ctx, u.User.WithPassword(passwordHash), publicKeyString)
 	if err != nil {
 		s.deleteUserFromSystem(ctx, username)
 		return models.User{}, nil, err

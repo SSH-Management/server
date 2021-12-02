@@ -29,7 +29,10 @@ crypto:
     private: './keys/private.key'
   auth_key: ''
   enc_key: ''
-
+  password:
+    driver: bcrypt
+    bcrypt:
+      cost: 10
 views:
   static:
     dir: ./static

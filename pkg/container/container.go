@@ -15,6 +15,7 @@ import (
 	"github.com/SSH-Management/server/pkg/repositories/role"
 	"github.com/SSH-Management/server/pkg/repositories/server"
 	userrepo "github.com/SSH-Management/server/pkg/repositories/user"
+	password "github.com/SSH-Management/server/pkg/services/password"
 	"github.com/SSH-Management/server/pkg/services/user"
 )
 
@@ -26,6 +27,8 @@ type Container struct {
 	defaultLoggerName string
 
 	loggers map[string]*log.Logger
+
+	hasher password.Hasher
 
 	userService     user.Interface
 	unixUserService linux_user.UnixInterface

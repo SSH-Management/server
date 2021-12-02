@@ -55,3 +55,17 @@ func (u User) GetDefaultShell() string {
 func (u User) GetUsername() string {
 	return u.Username
 }
+
+func (u User) WithPassword(password string) User {
+	return User{
+		Name: u.Name,
+		Surname: u.Surname,
+		Username: u.Username,
+		Email: u.Email,
+		Password: password,
+		Shell: u.Shell,
+		Role: u.Role,
+		Groups: u.Groups,
+		SystemGroups: u.SystemGroups,
+	}
+}

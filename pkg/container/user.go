@@ -12,6 +12,7 @@ func (c *Container) GetUserService() user.Interface {
 			c.GetUnixUserService(),
 			c.GetDefaultLogger(),
 			c.GetQueueClient(),
+			c.GetPasswordHasher(),
 		)
 	}
 
