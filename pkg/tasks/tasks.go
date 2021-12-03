@@ -19,7 +19,6 @@ const (
 func NewUserNotification(user dto.User, publicKey string) (*asynq.Task, error) {
 	bytes, err := json.Marshal(dto.NewUserNotification{
 		User: &users.LinuxUser{
-			Password:     user.Password,
 			Shell:        user.Shell,
 			Username:     user.Username,
 			SystemGroups: user.SystemGroups,

@@ -8,7 +8,7 @@ COPY . .
 
 RUN apk update && apk add make gcc && make VERSION=${VERSION} ENV=production  build
 
-FROM ubuntu:21.10
+FROM ubuntu:20.04
 
 WORKDIR /app
 
