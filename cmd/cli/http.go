@@ -17,26 +17,35 @@ import (
 	"github.com/SSH-Management/server/cmd/http/handlers"
 	"github.com/SSH-Management/server/cmd/http/routes"
 	"github.com/SSH-Management/server/pkg/container"
+	"github.com/SSH-Management/server/pkg/services/grpc/middleware"
 )
+
+var signals = [4]os.Signal{
+	syscall.SIGTERM,
+	syscall.SIGINT,
+	syscall.SIGUSR1,
+	syscall.SIGUSR2,
+}
 
 func httpServerCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:               "serve",
-		Short:             "Start HTTP Server",
+		Short:             "Start HTTP and GRPC Server",
 		PersistentPreRunE: command.LoadConfig,
 		RunE:              runHttpServer,
 	}
 }
 
+
+
 func runHttpServer(cmd *cobra.Command, args []string) error {
 	c := command.GetContainer()
-
 	defer c.Close()
 
-	done := make(chan os.Signal, 4)
+	done := make(chan os.Signal, len(signals))
 	defer close(done)
 
-	signal.Notify(done, syscall.SIGINT, syscall.SIGUSR1, syscall.SIGUSR2)
+	signal.Notify(done, signals[:]...)
 
 	app := fiber.New(fiber.Config{
 		StrictRouting: true,
@@ -61,8 +70,7 @@ func runHttpServer(cmd *cobra.Command, args []string) error {
 
 	go runFiberHTTPServer(c, app)
 
-	grpcServer := grpc.NewServer()
-
+	grpcServer := grpc.NewServer(middleware.Register(c)...)
 
 	go runGRPCServer(c, grpcServer)
 

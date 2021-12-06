@@ -66,6 +66,11 @@ func (c *Container) SetPublicKey(publicKey string) {
 }
 
 func (c *Container) GetPublicKey() string {
+	if c.publicKey == "" {
+		c.GetDefaultLogger().
+			Fatal().
+			Msg("Public key has not been set, call container.SetPublicKey() method")
+	}
 	return c.publicKey
 }
 

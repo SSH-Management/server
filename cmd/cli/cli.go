@@ -12,9 +12,6 @@ import (
 
 var (
 	rootCmd *cobra.Command
-
-	Environment  string
-	LoggingLevel string
 )
 
 func Execute() {
@@ -27,8 +24,8 @@ func Execute() {
 
 	flags := rootCmd.PersistentFlags()
 
-	flags.StringVarP(&LoggingLevel, "logging-level", "l", "info", "Global Logging level")
-	flags.StringVarP(&Environment, "env", "e", "production", "Running Environment (Production|Development|Testing")
+	flags.StringVarP(&command.Environment, "logging-level", "l", "info", "Global Logging level")
+	flags.StringVarP(&command.Environment, "env", "e", "production", "Running Environment (Production|Development|Testing")
 
 	rootCmd.AddCommand(httpServerCommand())
 	rootCmd.AddCommand(queueWorkerCommand())

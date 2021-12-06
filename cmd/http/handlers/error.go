@@ -31,11 +31,13 @@ func Error(logger zerolog.Logger, translator ut.Translator) fiber.ErrorHandler {
 		}
 
 		if _, ok := err.(*validator.InvalidValidationError); ok {
-			return ctx.Status(fiber.StatusUnprocessableEntity).JSON(message{Message: "Data is invalid"})
+			return ctx.Status(fiber.StatusUnprocessableEntity).
+				JSON(message{Message: "Data is invalid"})
 		}
 
 		if err, ok := err.(validator.ValidationErrors); ok {
-			return ctx.Status(fiber.StatusUnprocessableEntity).JSON(err.Translate(translator))
+			return ctx.Status(fiber.StatusUnprocessableEntity).
+				JSON(err.Translate(translator))
 		}
 
 		if errors.Is(err, db.ErrNotFound) {
