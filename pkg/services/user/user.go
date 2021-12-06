@@ -17,7 +17,7 @@ import (
 	"github.com/SSH-Management/server/pkg/tasks"
 )
 
-var _ Interface = &Service{}
+var _ Interface = &Service{} // NOOP
 
 type (
 	Service struct {

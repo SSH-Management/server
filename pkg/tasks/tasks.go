@@ -3,9 +3,9 @@ package tasks
 import (
 	"encoding/json"
 
+	"github.com/SSH-Management/protobuf/common"
 	"github.com/hibiken/asynq"
 
-	"github.com/SSH-Management/protobuf/client/users"
 	"github.com/SSH-Management/server/pkg/dto"
 	"github.com/SSH-Management/server/pkg/models"
 )
@@ -18,7 +18,7 @@ const (
 
 func NewUserNotification(user dto.User, publicKey string) (*asynq.Task, error) {
 	bytes, err := json.Marshal(dto.NewUserNotification{
-		User: &users.LinuxUser{
+		User: &common.LinuxUser{
 			Shell:        user.Shell,
 			Username:     user.Username,
 			SystemGroups: user.SystemGroups,
@@ -37,7 +37,7 @@ func NewUserNotification(user dto.User, publicKey string) (*asynq.Task, error) {
 	), nil
 }
 
-func NewNotifyServerForNewUser(server models.Server, user *users.LinuxUser, publicKey string) (*asynq.Task, error) {
+func NewNotifyServerForNewUser(server models.Server, user *common.LinuxUser, publicKey string) (*asynq.Task, error) {
 	bytes, err := json.Marshal(dto.NewUserForClientsNotification{
 		User:         user,
 		PublicSSHKey: publicKey,

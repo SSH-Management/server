@@ -81,10 +81,14 @@ github.com/SSH-Management/linux-user v0.2.0 h1:iO+p7al6hngHiB6P9UwCM/okGSDe/uYU0
 github.com/SSH-Management/linux-user v0.2.0/go.mod h1:9Z8m66Wa+3ImBAI/Eqt7TLL7KHufJnUWL2iRvhvzhzI=
 github.com/SSH-Management/linux-user v0.3.0 h1:SMdhN6zNwsQ3rmPwyliT96w7ArBe3DdOXkepLhdcrnw=
 github.com/SSH-Management/linux-user v0.3.0/go.mod h1:9Z8m66Wa+3ImBAI/Eqt7TLL7KHufJnUWL2iRvhvzhzI=
+github.com/SSH-Management/linux-user v0.4.0 h1:D7Twj5KNKSr9ooM+EsBYJCeXua0dF08f+wA7/E12DyE=
+github.com/SSH-Management/linux-user v0.4.0/go.mod h1:9Z8m66Wa+3ImBAI/Eqt7TLL7KHufJnUWL2iRvhvzhzI=
 github.com/SSH-Management/protobuf v0.0.4 h1:+S7Gb9Osd/QoBdyU88369L8zHvh3Qiu6QWAS8Sme2ow=
 github.com/SSH-Management/protobuf v0.0.4/go.mod h1:sJRhT6bMvMcuF6RqylxuRP6W/S4L10LxPufxkJSP/MU=
 github.com/SSH-Management/protobuf v0.1.0 h1:XEmG3WeNPyA3dUfB08I7xXXiLnyTMQV/0NSpvCT7uVQ=
 github.com/SSH-Management/protobuf v0.1.0/go.mod h1:Qydd36DYcWM9736oiYO9zEEvf1Hi1uw95/MQxy2fFyo=
+github.com/SSH-Management/protobuf v0.2.0 h1:5wOZhX5wTAG8fsY4hWJvlWLCHN4QbPyhyZqSmaFEBFE=
+github.com/SSH-Management/protobuf v0.2.0/go.mod h1:Qydd36DYcWM9736oiYO9zEEvf1Hi1uw95/MQxy2fFyo=
 github.com/SSH-Management/request-signer/v3 v3.0.1 h1:6gUtIm/lBsO23R8CmpyFuonwruROhicEhAxrtKQ4Jqk=
 github.com/SSH-Management/request-signer/v3 v3.0.1/go.mod h1:NH2m28fN3L6xF2/mbV6qiJzdZ/lFh6v+YwcU6ZElzHg=
 github.com/SSH-Management/server-sdk v0.2.2 h1:T+vTamLOxF5X67cew1yMbAUpC0N1+bHRNNu9CdXt9L8=
@@ -285,6 +289,8 @@ github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg78
 github.com/godbus/dbus/v5 v5.0.4/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/gofiber/fiber/v2 v2.22.0 h1:+iyKK4ooDH6z0lAHdaWO1AFIB/DZ9AVo6vz8VZIA0EU=
 github.com/gofiber/fiber/v2 v2.22.0/go.mod h1:MR1usVH3JHYRyQwMe2eZXRSZHRX38fkV+A7CPB+DlDQ=
+github.com/gofiber/storage/memory v0.0.0-20211117053443-4a3096149ebb h1:OYt9/ACMDEnaUbtkMubPG1jgP0+pGJATxfGIQGFPVzI=
+github.com/gofiber/storage/memory v0.0.0-20211117053443-4a3096149ebb/go.mod h1:7aJr9KTG0EoLVCqJ8Pnr2LpRGn2DrcO5euzmpw/GB00=
 github.com/gofiber/storage/redis v0.0.0-20211117053443-4a3096149ebb h1:62Y5Q1IWZ9lAn4dVCgrKQ8pV1B7+3kYrFccHlgNpSjg=
 github.com/gofiber/storage/redis v0.0.0-20211117053443-4a3096149ebb/go.mod h1:Ld3u23Fm4CzWXfVQLf1PhHFr0mif4jeHQMVy53LD4NE=
 github.com/gofiber/utils v0.1.2 h1:1SH2YEz4RlNS0tJlMJ0bGwO0JkqPqvq6TbHK9tXZKtk=
@@ -702,6 +708,8 @@ github.com/searKing/golang v1.0.173/go.mod h1:0NyG/Fw2Vm/DQL0g+QE3ECLIrgnb71YoP5
 github.com/searKing/golang/tools/cmd/protoc-gen-go-tag v0.0.0-20210618061541-6f9001ab7f06 h1:GnfjBtdjSc/c1vZe9u63MXAr+lQHpOj/8L7+l5ScLlg=
 github.com/searKing/golang/tools/cmd/protoc-gen-go-tag v0.0.0-20210618061541-6f9001ab7f06/go.mod h1:hi3xGzKSy1BiWke8yyMf5Jlmwhij9OWjktYlKySKrkY=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
+github.com/sethvargo/go-password v0.2.0 h1:BTDl4CC/gjf/axHMaDQtw507ogrXLci6XRiLc7i/UHI=
+github.com/sethvargo/go-password v0.2.0/go.mod h1:Ym4Mr9JXLBycr02MFuVQ/0JHidNetSgbzutTr3zsYXE=
 github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24/go.mod h1:M+9NzErvs504Cn4c5DxATwIqPbtswREoFCre64PpcG4=
 github.com/shopspring/decimal v0.0.0-20200227202807-02e2044944cc/go.mod h1:DKyhrW/HYNuLGql+MJL6WCR6knT2jwCFRcu2hWCYk4o=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
@@ -947,6 +955,8 @@ golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9 h1:0qxwC5n+ttVOINCBeRHO0nq9X
 golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
 golang.org/x/net v0.0.0-20211201190559-0a0e4e1bb54c h1:WtYZ93XtWSO5KlOMgPZu7hXY9WhMZpprvlm5VwvAl8c=
 golang.org/x/net v0.0.0-20211201190559-0a0e4e1bb54c/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+golang.org/x/net v0.0.0-20211205041911-012df41ee64c h1:7SfqwP5fxEtl/P02w5IhKc86ziJ+A25yFrkVgoy2FT8=
+golang.org/x/net v0.0.0-20211205041911-012df41ee64c/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
 golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
 golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
 golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
@@ -1053,6 +1063,8 @@ golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf/go.mod h1:oPkhp1MJrh7nUepCBc
 golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211124211545-fe61309f8881 h1:TyHqChC80pFkXWraUUf6RuB5IqFdQieMLwwCJokV2pc=
 golang.org/x/sys v0.0.0-20211124211545-fe61309f8881/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.0.0-20211204120058-94396e421777 h1:QAkhGVjOxMa+n4mlsAWeAU+BMZmimQAaNiMu+iUi94E=
+golang.org/x/sys v0.0.0-20211204120058-94396e421777/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 h1:v+OssWQX+hTHEmOBgwxdZxK4zHq3yOs8F9J7mk0PY8E=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 golang.org/x/text v0.0.0-20160726164857-2910a502d2bf/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
@@ -1248,6 +1260,8 @@ google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1 h1:b9mVrqYfq3P4bCd
 google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1/go.mod h1:5CzLGKJ67TSI2B9POpiiyGha0AjJvZIUgRMt1dSmuhc=
 google.golang.org/genproto v0.0.0-20211129164237-f09f9a12af12 h1:DN5b3HU13J4sMd/QjDx34U6afpaexKTDdop+26pdjdk=
 google.golang.org/genproto v0.0.0-20211129164237-f09f9a12af12/go.mod h1:5CzLGKJ67TSI2B9POpiiyGha0AjJvZIUgRMt1dSmuhc=
+google.golang.org/genproto v0.0.0-20211203200212-54befc351ae9 h1:fU3FNfL/oBU2D5DvGqiuyVqqn40DdxvaTFHq7aivA3k=
+google.golang.org/genproto v0.0.0-20211203200212-54befc351ae9/go.mod h1:5CzLGKJ67TSI2B9POpiiyGha0AjJvZIUgRMt1dSmuhc=
 google.golang.org/grpc v1.19.0/go.mod h1:mqu4LbDTu4XGKhr4mRzUsmM4RtVoemTSY81AxZiDr8c=
 google.golang.org/grpc v1.20.1/go.mod h1:10oTOabMzJvdu6/UiuZezV6QK5dSlG84ov/aaiqXj38=
 google.golang.org/grpc v1.21.1/go.mod h1:oYelfM1adQP15Ek0mdvEgi9Df8B9CZIaU1084ijfRaM=

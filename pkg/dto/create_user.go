@@ -3,7 +3,7 @@ package dto
 import sdk "github.com/SSH-Management/server-sdk"
 
 type CreateUser struct {
-	User         User   `json:"user,omitempty"  validate:"required"`
+	User         User   `json:"user,omitempty" validate:"required"`
 	PublicSSHKey string `json:"public_key,omitempty" conform:"trim" validate:"required"`
 }
 
@@ -14,4 +14,3 @@ func (c CreateUser) GetUser() sdk.User {
 func (c CreateUser) GetPublicKey() string {
 	return c.PublicSSHKey
 }
-

@@ -7,13 +7,15 @@ import (
 
 	"gorm.io/gorm"
 
-	sdk "github.com/SSH-Management/server-sdk"
+	"github.com/SSH-Management/protobuf/server/clients"
 
 	"github.com/SSH-Management/server/pkg/db"
 	"github.com/SSH-Management/server/pkg/log"
 	"github.com/SSH-Management/server/pkg/models"
 	"github.com/SSH-Management/server/pkg/repositories/group"
 )
+
+var _ Interface = &Repository{}
 
 type (
 	Repository struct {
@@ -26,7 +28,7 @@ type (
 	Interface interface {
 		FindByPrivateIP(context.Context, string) (models.Server, error)
 		Find(context.Context, uint64) (models.Server, error)
-		Create(context.Context, sdk.NewClientRequest) (models.Server, error)
+		Create(context.Context, *clients.CreateClientRequest) (models.Server, error)
 		Delete(context.Context, uint64) error
 	}
 )
@@ -83,10 +85,10 @@ func (r Repository) createGroupIfNotExists(ctx context.Context, name string) (mo
 	return groups[0], nil
 }
 
-func (r Repository) Create(ctx context.Context, dto sdk.NewClientRequest) (models.Server, error) {
+func (r Repository) Create(ctx context.Context, dto *clients.CreateClientRequest) (models.Server, error) {
 	publicIpSql := sql.NullString{
-		String: dto.PublicIp,
-		Valid:  dto.PublicIp != "",
+		String: "",
+		Valid:  false,
 	}
 
 	g, err := r.createGroupIfNotExists(ctx, dto.Group)

@@ -56,3 +56,15 @@ func DeleteUser(userService user.Interface) fiber.Handler {
 		return c.SendStatus(http.StatusNoContent)
 	}
 }
+
+func GetUser(userService user.Interface) fiber.Handler {
+	return func (c *fiber.Ctx) error  {
+		return c.SendStatus(http.StatusOK)
+	}
+}
+
+func UpdateUser(userService user.Interface) fiber.Handler {
+	return func (c *fiber.Ctx) error  {
+		return c.SendStatus(http.StatusOK)
+	}
+}

@@ -7,13 +7,14 @@ import (
 
 func (c *Container) GetUserService() user.Interface {
 	if c.userService == nil {
-		c.userService = user.New(
+		s := user.New(
 			c.GetUserRepository(),
 			c.GetUnixUserService(),
 			c.GetDefaultLogger(),
 			c.GetQueueClient(),
 			c.GetPasswordHasher(),
 		)
+		c.userService = s
 	}
 
 	return c.userService

@@ -11,8 +11,10 @@ database:
   conn_max_idle: 10
   conn_max_opened: 10
 
-bind: '0.0.0.0'
-port: 8080
+http:
+  bind: '0.0.0.0'
+  port: 8080
+  domain: localhost
 
 logging:
   file: /var/log/ssh_management/server.log
@@ -33,6 +35,7 @@ crypto:
     driver: bcrypt
     bcrypt:
       cost: 10
+
 views:
   static:
     dir: ./static
@@ -43,6 +46,41 @@ redis:
   port: 6379
   username: ''
   password: ''
+  session:
+    db: 1
+  csrf:
+    db: 2
+  queue:
+    db: 3
+
+session:
+  expiration: 1h
+  lookup: ssh_management_id
+  cookie_path: /
+  secure: false
+  same_site: Lax
+
+csrf:
+  expiration: 1h
+  lookup: ssh_management_csrf
+  cookie_path: /
+  secure: false
+  same_site: Lax
+
+cors:
+  headers:
+    - Content-Type
+    - Accept
+  origins:
+    - localhost:8080
+    - locahost:3000
+  methods:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    - OPTIONS
 
 queue:
   concurrency: 10

@@ -3,6 +3,7 @@ package container
 import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/hibiken/asynq"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -15,7 +16,8 @@ import (
 	"github.com/SSH-Management/server/pkg/repositories/role"
 	"github.com/SSH-Management/server/pkg/repositories/server"
 	userrepo "github.com/SSH-Management/server/pkg/repositories/user"
-	password "github.com/SSH-Management/server/pkg/services/password"
+	"github.com/SSH-Management/server/pkg/services/auth"
+	"github.com/SSH-Management/server/pkg/services/password"
 	"github.com/SSH-Management/server/pkg/services/user"
 )
 
@@ -25,6 +27,7 @@ type Container struct {
 	db           *gorm.DB
 
 	defaultLoggerName string
+	publicKey string
 
 	loggers map[string]*log.Logger
 
@@ -40,10 +43,13 @@ type Container struct {
 
 	signer signer.Signer
 
+	loginService *auth.LoginService
+
 	validator  *validator.Validate
 	translator ut.Translator
 
-	queue *asynq.Client
+	queue   *asynq.Client
+	session *session.Store
 }
 
 func New(defaultLoggerName string, config *viper.Viper) *Container {
@@ -53,6 +59,14 @@ func New(defaultLoggerName string, config *viper.Viper) *Container {
 		loggers:           make(map[string]*log.Logger, 1),
 		systemGroups:      config.GetStringMapString("system_groups"),
 	}
+}
+
+func (c *Container) SetPublicKey(publicKey string) {
+	c.publicKey = publicKey
+}
+
+func (c *Container) GetPublicKey() string {
+	return c.publicKey
 }
 
 func (c *Container) Close() error {

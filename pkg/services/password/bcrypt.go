@@ -14,7 +14,8 @@ var (
 
 	ErrBcryptInvalidHash = errors.New("invalid bcrypt hash")
 )
-type BcryptPassword struct{
+
+type BcryptPassword struct {
 	cost int
 }
 
@@ -32,7 +33,6 @@ func (b BcryptPassword) Hash(password string) (string, error) {
 	passwordBytes := utils.UnsafeBytes(password)
 
 	hash, err := bcrypt.GenerateFromPassword(passwordBytes, b.cost)
-
 	if err != nil {
 		return "", err
 	}
@@ -57,10 +57,8 @@ func (b BcryptPassword) Verify(hash, password string) error {
 	return ErrInvalidHash
 }
 
-
 func (b BcryptPassword) NeedsRehashing(hash string) (bool, error) {
 	cost, err := bcrypt.Cost(utils.UnsafeBytes(hash))
-
 	if err != nil {
 		return false, ErrInvalidHash
 	}

@@ -69,7 +69,7 @@ migrate:
 migrate-down:
 	@migrate -source file://$(shell pwd)/migrations -database $(DATABASE_URL) down
 
-.PHONY: migrate-create
+.PHONY: migration-create
 migration-create:
 	@migrate -database $(DATABASE_URL) create -dir ./migrations -seq -ext sql $(M_NAME)
 

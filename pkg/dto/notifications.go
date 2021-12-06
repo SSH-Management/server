@@ -1,18 +1,18 @@
 package dto
 
 import (
-	"github.com/SSH-Management/protobuf/client/users"
+	"github.com/SSH-Management/protobuf/common"
 )
 
 type (
 	NewUserNotification struct {
-		User         *users.LinuxUser `json:"user,omitempty"`
+		User         *common.LinuxUser `json:"user,omitempty"`
 		PublicSSHKey string           `json:"public_key,omitempty"`
 		Groups       []string         `json:"groups,omitempty"`
 	}
 
 	NewUserForClientsNotification struct {
-		User         *users.LinuxUser `json:"user,omitempty"`
+		User         *common.LinuxUser `json:"user,omitempty"`
 		PublicSSHKey string           `json:"public_key,omitempty"`
 		Server       struct {
 			Name      string `json:"name,omitempty"`

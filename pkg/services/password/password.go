@@ -4,7 +4,7 @@ import "errors"
 
 var (
 	ErrPasswordMismatch = errors.New("password is invalid")
-	ErrInvalidHash = errors.New("invalid hash")
+	ErrInvalidHash      = errors.New("invalid hash")
 )
 
 type (

@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   client:
-    image: malusevd99/ssh-management:client-v0.2.1
+    image: malusevd99/ssh-management:client-v0.2.2
     ports:
       - '9999:9999'
     environment:
@@ -13,21 +13,21 @@ services:
       - net
     volumes:
       - ./logs/client:/var/log/ssh_management
-  server:
-    build:
-      context: .
-      dockerfile: ./docker/server/Dockerfile
-    networks:
-      - net
-    restart: unless-stopped
-    ports:
-      - '8080:8080'
-    depends_on:
-      - mysql
-      - redis
-    volumes:
-      - './logs:/var/log/ssh_management'
-      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+  # server:
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/server/Dockerfile
+  #   networks:
+  #     - net
+  #   restart: unless-stopped
+  #   ports:
+  #     - '8080:8080'
+  #   depends_on:
+  #     - mysql
+  #     - redis
+  #   volumes:
+  #     - './logs:/var/log/ssh_management'
+  #     - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
   # queue:
   #   build:
   #     context: .

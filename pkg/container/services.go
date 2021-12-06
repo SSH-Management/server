@@ -22,7 +22,6 @@ func (c *Container) GetUnixUserService() user.UnixInterface {
 	return c.unixUserService
 }
 
-
 func (c *Container) GetPasswordHasher() password.Hasher {
 	if c.hasher == nil {
 		driver := c.Config.GetString("crypto.password.driver")

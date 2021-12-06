@@ -113,7 +113,6 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 	payload := task.Payload()
 
 	err := json.Unmarshal(payload, &notification)
-
 	if err != nil {
 		return err
 	}
@@ -141,7 +140,6 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 					notification.User,
 					notification.PublicSSHKey,
 				)
-
 				if err != nil {
 					errCh <- err
 					return

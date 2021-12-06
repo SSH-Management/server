@@ -30,6 +30,7 @@ type (
 	Interface interface {
 		Find(context.Context) ([]models.User, error)
 		FindByGroup(context.Context, uint64) ([]models.User, error)
+		FindByEmail(context.Context, string) (models.User, error)
 		Create(context.Context, dto.User, string) (models.User, error)
 		Delete(context.Context, uint64) error
 	}
@@ -75,6 +76,26 @@ func (r Repository) FindByGroup(ctx context.Context, id uint64) ([]models.User, 
 	}
 
 	return users, nil
+}
+
+func (r Repository) FindByEmail(ctx context.Context, email string) (models.User, error) {
+	var u models.User
+
+	result := r.db.
+		WithContext(ctx).
+		Where("email = ?", email).
+		Limit(1).
+		First(&u)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return models.User{}, db.ErrNotFound
+		}
+
+		return models.User{}, result.Error
+	}
+
+	return u, nil
 }
 
 func (r Repository) Create(ctx context.Context, dto dto.User, publicKey string) (models.User, error) {

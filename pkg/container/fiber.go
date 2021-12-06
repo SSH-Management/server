@@ -1,8 +1,13 @@
 package container
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/storage/redis"
+
+	"github.com/SSH-Management/utils/v2"
 )
 
 func (c *Container) GetStorage(database int) fiber.Storage {
@@ -15,23 +20,22 @@ func (c *Container) GetStorage(database int) fiber.Storage {
 	})
 }
 
-//
-//func (c *Container) GetSession() *session.Store {
-//	if c.session == nil {
-//		c.session = session.New(session.Config{
-//			Storage:        c.GetStorage(0),
-//			CookieHTTPOnly: true,
-//			//Expiration:     c.Config.Session.Expiration,
-//			//KeyLookup:      c.Config.Session.CookieName,
-//			//CookieDomain:   c.Config.Session.CookieDomain,
-//			//CookiePath:     c.Config.Session.CookiePath,
-//			//CookieSecure:   c.Config.Session.Secure,
-//			CookieSameSite: "Lax",
-//			KeyGenerator: func() string {
-//				return utils.RandomString(16)
-//			},
-//		})
-//	}
-//
-//	return c.session
-//}
+func (c *Container) GetSession() *session.Store {
+	if c.session == nil {
+		c.session = session.New(session.Config{
+			Storage:        c.GetStorage(c.Config.GetInt("redis.session.db")),
+			CookieHTTPOnly: true,
+			Expiration:     c.Config.GetDuration("session.expiration"),
+			KeyLookup:      fmt.Sprintf("cookie:%s", c.Config.GetString("session.lookup")),
+			CookieDomain:   c.Config.GetString("http.domain"),
+			CookiePath:     c.Config.GetString("session.cookie_path"),
+			CookieSecure:   c.Config.GetBool("session.secure"),
+			CookieSameSite: c.Config.GetString("session.same_site"),
+			KeyGenerator: func() string {
+				return utils.RandomString(32)
+			},
+		})
+	}
+
+	return c.session
+}
