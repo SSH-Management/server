@@ -9,7 +9,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
+	zerologlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 
 	"github.com/SSH-Management/server/cmd/command"
 	"github.com/SSH-Management/server/cmd/http/handlers"
@@ -59,11 +61,19 @@ func runHttpServer(cmd *cobra.Command, args []string) error {
 
 	go runFiberHTTPServer(c, app)
 
+	grpcServer := grpc.NewServer()
+
+
+	go runGRPCServer(c, grpcServer)
+
 	status := <-done
+
+	grpcServer.GracefulStop()
 
 	if err := app.Shutdown(); err != nil {
 		log.Error().
 			Msg("Error while stopping GoFiber HTTP Server")
+
 		return err
 	}
 
@@ -72,14 +82,17 @@ func runHttpServer(cmd *cobra.Command, args []string) error {
 }
 
 func runFiberHTTPServer(c *container.Container, app *fiber.App) {
-	addr := fmt.Sprintf("%s:%d", c.Config.GetString("http.bind"), c.Config.GetInt("http.port"))
+	addr := fmt.Sprintf("%s:%d",
+		c.Config.GetString("http.bind"),
+		c.Config.GetInt("http.port"),
+	)
 
 	listener, err := net.Listen("tcp4", addr)
 	if err != nil {
 		log.
 			Fatal().
 			Err(err).
-			Msg("Error while creating net.Listener")
+			Msg("Error while creating net.Listener for HTTP Server")
 	}
 
 	err = app.Listener(listener)
@@ -89,5 +102,28 @@ func runFiberHTTPServer(c *container.Container, app *fiber.App) {
 			Fatal().
 			Err(err).
 			Msg("Cannot start Fiber HTTP Server")
+	}
+}
+
+func runGRPCServer(c *container.Container, grpcServer *grpc.Server) {
+	addr := fmt.Sprintf("%s:%d",
+		c.Config.GetString("http.grpc.bind"),
+		c.Config.GetInt("http.grpc.port"),
+	)
+
+	listener, err := net.Listen("tcp4", addr)
+	if err != nil {
+		log.
+			Fatal().
+			Err(err).
+			Msg("Error while creating net.Listener for GRPC")
+	}
+
+	err = grpcServer.Serve(listener)
+
+	if err != nil {
+		zerologlog.Fatal().
+			Err(err).
+			Msg("error while starting grpc server")
 	}
 }

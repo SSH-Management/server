@@ -15,6 +15,9 @@ http:
   bind: '0.0.0.0'
   port: 8080
   domain: localhost
+  grpc:
+    bind: '0.0.0.0'
+    port: 6543
 
 logging:
   file: /var/log/ssh_management/server.log
