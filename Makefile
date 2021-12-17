@@ -1,7 +1,7 @@
 MIGRATE_TAG = v4.15.1
 RACE ?= 0
 ENV ?= development
-VERSION ?= v0.1.0
+VERSION ?= v0.2.0
 GOPATH ?= ${HOME}/go
 PLATFORM ?= linux/arm64,linux/amd64
 DOCKER ?= 1
@@ -91,9 +91,15 @@ ifneq ($(findstring migrate,$(shell ls $(GOPATH)/bin)),migrate)
 endif
 
 .PHONY: buildx
-buildx:
+buildx: buildx-server buildx-queue
+
+.PHONY: buildx-server
+buildx-server:
 	@docker buildx build --target production --build-arg VERSION=$(VERSION) --platform "$(PLATFORM)" -t "malusevd99/ssh-management:server-$(VERSION)" --push --file ./docker/server/Dockerfile .
-	@docker buildx build --build-arg VERSION=$(VERSION) --platform "$(PLATFORM)" -t "malusevd99/ssh-management:queue-$(VERSION)" --push --file ./docker/queue/Dockerfile .
+
+.PHONY: buildx-queue
+buildx-queue:
+	@docker buildx build --target production --build-arg VERSION=$(VERSION) --platform "$(PLATFORM)" -t "malusevd99/ssh-management:queue-$(VERSION)" --push --file ./docker/queue/Dockerfile .
 
 .PHONY: lint
 lint:
