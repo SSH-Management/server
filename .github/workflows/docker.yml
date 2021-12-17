@@ -42,22 +42,26 @@ jobs:
         id: docker_build_server
         uses: docker/build-push-action@v2
         with:
+          file: docker/server/Dockerfile
+          context: .
           push: true
           pull: true
           platforms: linux/amd64,linux/arm64
           target: production
           tags: malusevd99/ssh-management:server-${{ steps.version_tag.outputs.tag }}
-          # cache-from: type=local,src=/tmp/.buildx-cache
-          # cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       -
         name: Build and push SSH Management Queue
         id: docker_build_queue
         uses: docker/build-push-action@v2
         with:
+          file: docker/queue/Dockerfile
+          context: .
           push: true
           pull: true
           platforms: linux/amd64,linux/arm64
           target: production
           tags: malusevd99/ssh-management:queue-${{ steps.version_tag.outputs.tag }}
-          # cache-from: type=local,src=/tmp/.buildx-cache
-          # cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
