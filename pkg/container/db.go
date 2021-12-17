@@ -1,6 +1,9 @@
 package container
 
 import (
+	"fmt"
+
+	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 
@@ -31,4 +34,21 @@ func (c *Container) GetDbConnection() *gorm.DB {
 	}
 
 	return c.db
+}
+
+func (c *Container) GetRedisClient(db int) *redis.Client {
+	if client, ok := c.redisClients[db]; ok {
+		return client
+	}
+
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%d", c.Config.GetString("redis.host"), c.Config.GetInt("redis.port")),
+		Password: c.Config.GetString("redis.password"),
+		Username: c.Config.GetString("redis.username"),
+		DB:       db,
+	})
+
+	c.redisClients[db] = rdb
+
+	return rdb
 }

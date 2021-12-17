@@ -24,7 +24,7 @@ func Execute() {
 
 	flags := rootCmd.PersistentFlags()
 
-	flags.StringVarP(&command.Environment, "logging-level", "l", "info", "Global Logging level")
+	flags.StringVarP(&command.LoggingLevel, "logging-level", "l", "info", "Global Logging level")
 	flags.StringVarP(&command.Environment, "env", "e", "production", "Running Environment (Production|Development|Testing")
 
 	rootCmd.AddCommand(httpServerCommand())

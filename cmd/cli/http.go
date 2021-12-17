@@ -12,11 +12,13 @@ import (
 	zerologlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	"github.com/SSH-Management/server/cmd/command"
 	"github.com/SSH-Management/server/cmd/http/handlers"
 	"github.com/SSH-Management/server/cmd/http/routes"
 	"github.com/SSH-Management/server/pkg/container"
+	services "github.com/SSH-Management/server/pkg/services/grpc"
 	"github.com/SSH-Management/server/pkg/services/grpc/middleware"
 )
 
@@ -71,6 +73,10 @@ func runHttpServer(cmd *cobra.Command, args []string) error {
 	go runFiberHTTPServer(c, app)
 
 	grpcServer := grpc.NewServer(middleware.Register(c)...)
+
+	services.RegisterServices(c, grpcServer)
+
+	reflection.Register(grpcServer)
 
 	go runGRPCServer(c, grpcServer)
 

@@ -26,8 +26,8 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.31.0
 	golang.org/x/crypto v0.0.0-20211202192323-5770296d904e
-	google.golang.org/genproto v0.0.0-20211206220100-3cb06788ce7f
-	google.golang.org/grpc v1.42.0
+	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa
+	google.golang.org/grpc v1.43.0
 	google.golang.org/protobuf v1.27.1
 	gorm.io/driver/mysql v1.2.1
 	gorm.io/gorm v1.22.4
@@ -62,8 +62,8 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/net v0.0.0-20211205041911-012df41ee64c // indirect
-	golang.org/x/sys v0.0.0-20211205182925-97ca703d548d // indirect
+	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect

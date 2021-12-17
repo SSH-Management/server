@@ -4,8 +4,13 @@ ENV ?= development
 VERSION ?= v0.1.0
 GOPATH ?= ${HOME}/go
 PLATFORM ?= linux/arm64,linux/amd64
+DOCKER ?= 1
 
-DATABASE_URL="mysql://server:server@tcp(mysql:3306)/ssh_management?charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
+ifeq ($(DOCKER),1)
+	DATABASE_URL="mysql://server:server@tcp(mysql:3306)/ssh_management?charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
+else
+	DATABASE_URL="mysql://server:server@tcp(localhost:3306)/ssh_management?charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
+endif
 
 CC = gcc
 CXX = g++
@@ -87,7 +92,7 @@ endif
 
 .PHONY: buildx
 buildx:
-	@docker buildx build --build-arg VERSION=$(VERSION) --platform "$(PLATFORM)" -t "malusevd99/ssh-management:server-$(VERSION)" --push --file ./docker/server/Dockerfile .
+	@docker buildx build --target production --build-arg VERSION=$(VERSION) --platform "$(PLATFORM)" -t "malusevd99/ssh-management:server-$(VERSION)" --push --file ./docker/server/Dockerfile .
 	@docker buildx build --build-arg VERSION=$(VERSION) --platform "$(PLATFORM)" -t "malusevd99/ssh-management:queue-$(VERSION)" --push --file ./docker/queue/Dockerfile .
 
 .PHONY: lint

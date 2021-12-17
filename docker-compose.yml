@@ -2,46 +2,55 @@ version: '3.6'
 
 services:
   client:
-    image: malusevd99/ssh-management:client-v0.2.2
+    image: malusevd99/ssh-management:client-v0.2.3
     ports:
       - '9999:9999'
     environment:
       MASTER_SERVER: 'http://server:8080'
       SERVER_NAME: 'test_client'
       SERVER_GROUP: 'test_group'
+    depends_on:
+      - server
+    restart: unless-stopped
     networks:
       - net
     volumes:
       - ./logs/client:/var/log/ssh_management
-  # server:
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/server/Dockerfile
-  #   networks:
-  #     - net
-  #   restart: unless-stopped
-  #   ports:
-  #     - '8080:8080'
-  #   depends_on:
-  #     - mysql
-  #     - redis
-  #   volumes:
-  #     - './logs:/var/log/ssh_management'
-  #     - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
-  # queue:
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/queue/Dockerfile
-  #   networks:
-  #     - net
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - server
-  #     - mysql
-  #     - redis
-  #   volumes:
-  #     - './logs:/var/log/ssh_management'
-  #     - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+  server:
+    build:
+      context: .
+      dockerfile: ./docker/server/Dockerfile
+      target: development
+      args:
+        MIGRATE_TAG: v4.15.1
+    networks:
+      - net
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - './logs:/var/log/ssh_management'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+      - '.:/app'
+  queue:
+    build:
+      context: .
+      dockerfile: ./docker/queue/Dockerfile
+      target: development
+    networks:
+      - net
+    restart: unless-stopped
+    depends_on:
+      - server
+      - mysql
+      - redis
+    volumes:
+      - './logs:/var/log/ssh_management'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+      - '.:/app'
   redis:
     image: 'redis:6-alpine'
     networks:

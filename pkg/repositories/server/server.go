@@ -26,12 +26,25 @@ type (
 	}
 
 	Interface interface {
+		FindAll(context.Context) ([]models.Server, error)
 		FindByPrivateIP(context.Context, string) (models.Server, error)
 		Find(context.Context, uint64) (models.Server, error)
 		Create(context.Context, *clients.CreateClientRequest) (models.Server, error)
 		Delete(context.Context, uint64) error
 	}
 )
+
+func (r Repository) FindAll(ctx context.Context) ([]models.Server, error) {
+	servers := make([]models.Server, 0, 100)
+
+	result := r.db.Find(&servers)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return servers, nil
+}
 
 func (r Repository) Find(ctx context.Context, id uint64) (models.Server, error) {
 	panic("implement me")

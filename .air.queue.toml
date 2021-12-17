@@ -4,7 +4,7 @@ tmp_dir = "tmp"
 [build]
 cmd = "CC=gcc CXX=g++ make build"
 bin = "bin/ssh_management"
-full_bin = "./bin/ssh_management --env dev --logging-level info serve"
+full_bin = "./bin/ssh_management --env production --logging-level info queue:worker"
 include_ext = ["go", "yml"]
 exclude_dir = ["public", "vendor", "log", "tmp"]
 include_dir = []
