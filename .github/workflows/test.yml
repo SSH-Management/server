@@ -1,0 +1,69 @@
+name: 'Testing'
+
+on:
+  workflow_call:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - dev
+jobs:
+  test:
+    services:
+      mysql:
+        image: mariadb:10-focal
+        ports:
+          - 3306:3306
+        env:
+          MARIADB_ROOT_PASSWORD: password
+          MARIADB_DATABASE: ssh_management
+          MARIADB_USER: server
+          MARIADB_PASSWORD: server
+      redis:
+        image: redis:6-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        go: [1.17.x]
+    runs-on: ${{ matrix.os }}
+    container: golang:1.17-bullseye
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Test ${{ matrix.go }}
+        run: |
+          cp ssh_management.example.yml ssh_management.yml
+          make RACE=1 ENV=development test
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.txt
+          flags: tests
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true
