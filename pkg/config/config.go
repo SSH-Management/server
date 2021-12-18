@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/SSH-Management/utils"
+	"github.com/SSH-Management/utils/v2"
 	"github.com/spf13/viper"
 )
 

@@ -68,7 +68,7 @@ func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []b
 		unixUser.GroupId,
 	)
 
-	username := u.GetUser().GetUsername()
+	username := u.User.GetUsername()
 
 	if err != nil {
 		s.deleteUserFromSystem(ctx, username)

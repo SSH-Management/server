@@ -81,8 +81,6 @@ github.com/SSH-Management/protobuf v0.2.0 h1:5wOZhX5wTAG8fsY4hWJvlWLCHN4QbPyhyZq
 github.com/SSH-Management/protobuf v0.2.0/go.mod h1:Qydd36DYcWM9736oiYO9zEEvf1Hi1uw95/MQxy2fFyo=
 github.com/SSH-Management/request-signer/v3 v3.0.1 h1:6gUtIm/lBsO23R8CmpyFuonwruROhicEhAxrtKQ4Jqk=
 github.com/SSH-Management/request-signer/v3 v3.0.1/go.mod h1:NH2m28fN3L6xF2/mbV6qiJzdZ/lFh6v+YwcU6ZElzHg=
-github.com/SSH-Management/server-sdk v0.2.2 h1:T+vTamLOxF5X67cew1yMbAUpC0N1+bHRNNu9CdXt9L8=
-github.com/SSH-Management/server-sdk v0.2.2/go.mod h1:j3j1gNY2UcG0s3NXVlECNEauQsU/Y1LeYdCN6lMi6z8=
 github.com/SSH-Management/ssh v1.0.2 h1:TULT8GV8WEZx57EPvce2kCSlikk+Q56gfhpm+imyteE=
 github.com/SSH-Management/ssh v1.0.2/go.mod h1:tm6KxK1oCB3VBx/+WMmnEaMZvXRCcX7s8AoQCO/23Ug=
 github.com/SSH-Management/utils v1.0.0 h1:BNx5PU6QOt6+WfseGXridEvqI8aDDLKktN+cvohJaOo=

@@ -6,9 +6,7 @@ require (
 	github.com/SSH-Management/linux-user v0.4.0
 	github.com/SSH-Management/protobuf v0.2.0
 	github.com/SSH-Management/request-signer/v3 v3.0.1
-	github.com/SSH-Management/server-sdk v0.2.2
 	github.com/SSH-Management/ssh v1.0.2
-	github.com/SSH-Management/utils v1.0.0
 	github.com/SSH-Management/utils/v2 v2.0.0
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0

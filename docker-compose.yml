@@ -2,11 +2,11 @@ version: '3.6'
 
 services:
   client:
-    image: malusevd99/ssh-management:client-v0.2.3
+    image: malusevd99/ssh-management:client-0.2.7
     ports:
       - '9999:9999'
     environment:
-      MASTER_SERVER: 'http://server:8080'
+      MASTER_SERVER: server:8080
       SERVER_NAME: 'test_client'
       SERVER_GROUP: 'test_group'
     depends_on:

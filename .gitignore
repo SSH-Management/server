@@ -22,3 +22,4 @@ home/
 ssh_management.yml
 keys/
 coverage.txt
+tmp/
