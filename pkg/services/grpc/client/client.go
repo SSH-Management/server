@@ -47,32 +47,64 @@ func New(
 }
 
 func (cl *ClientService) Create(ctx context.Context, req *clients.CreateClientRequest) (*clients.CreateClientResponse, error) {
+	cl.logger.Debug().
+		Str("name", req.Name).
+		Str("ip", req.Ip).
+		Str("group", req.Group).
+		Msg("Client Request")
+
 	if err := conform.Strings(&req); err != nil {
+		cl.logger.Error().Err(err).
+			Str("name", req.Name).
+			Str("ip", req.Ip).
+			Str("group", req.Group).
+			Msg("error while conforming strings")
 		return nil, err
 	}
 
 	if err := cl.validator.Struct(req); err != nil {
+		cl.logger.Error().Err(err).
+			Str("name", req.Name).
+			Str("ip", req.Ip).
+			Str("group", req.Group).
+			Msg("validation errors")
 		return nil, err
 	}
 
 	s, err := cl.serverRepository.FindByPrivateIP(ctx, req.Ip)
-
 	if err != nil {
 		if err == db.ErrNotFound {
 			s, err = cl.serverRepository.Create(ctx, req)
 
 			if err != nil {
+				cl.logger.Error().Err(err).
+					Str("name", req.Name).
+					Str("ip", req.Ip).
+					Str("group", req.Group).
+					Msg("Error while create server in database")
+
 				return nil, status.Error(codes.Internal, "Error while creating server")
 			}
 
 		} else {
+			cl.logger.Error().Err(err).
+				Str("name", req.Name).
+				Str("ip", req.Ip).
+				Str("group", req.Group).
+				Msg("error while fetching server from database")
+
 			return nil, status.Error(codes.Internal, "Error while creating server")
 		}
 	}
 
 	users, err := cl.userRepository.FindByGroup(ctx, s.GroupID)
-
 	if err != nil {
+		cl.logger.Error().Err(err).
+			Str("name", req.Name).
+			Str("ip", req.Ip).
+			Str("group", req.Group).
+			Msg("error while finding server group")
+
 		err = cl.serverRepository.Delete(ctx, s.ID)
 
 		if err != nil {
@@ -94,7 +126,6 @@ func (cl *ClientService) Create(ctx context.Context, req *clients.CreateClientRe
 
 func (cl *ClientService) Delete(ctx context.Context, req *clients.DeleteClientRequest) (*emptypb.Empty, error) {
 	err := cl.serverRepository.Delete(ctx, req.Id)
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Error while deleting server")
 	}

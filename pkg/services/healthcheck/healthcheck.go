@@ -78,15 +78,15 @@ func (c *ClientHealthCheckService) Check(ctx context.Context) {
 	})
 }
 
-func mapHealthCheckResponseToString(status health_check.HealthCheckResponse_ServingStatus) string {
+func mapHealthCheckResponseToString(status health_check.HealthCheckResponse_ServingStatus) models.ServerStatus {
 	switch status {
 	case health_check.HealthCheckResponse_NOT_SERVING:
-		return "not_serving"
+		return models.ServerStatusNotServing
 	case health_check.HealthCheckResponse_SERVICE_UNKNOWN:
-		return "service_unknown"
+		return models.ServerStatusUnknown
 	case health_check.HealthCheckResponse_SERVING:
-		return "ok"
+		return models.ServerStatusOk
 	default:
-		return "unknown"
+		return models.ServerStatusUnknown
 	}
 }

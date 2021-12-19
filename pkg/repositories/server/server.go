@@ -105,6 +105,7 @@ func (r Repository) Create(ctx context.Context, dto *clients.CreateClientRequest
 	}
 
 	g, err := r.createGroupIfNotExists(ctx, dto.Group)
+
 	if err != nil {
 		return models.Server{}, err
 	}
@@ -114,6 +115,7 @@ func (r Repository) Create(ctx context.Context, dto *clients.CreateClientRequest
 		IpAddress:       dto.Ip,
 		PublicIpAddress: publicIpSql,
 		GroupID:         g.ID,
+		Status:          models.ServerStatusUnknown,
 	}
 
 	result := r.db.

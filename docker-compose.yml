@@ -2,16 +2,15 @@ version: '3.6'
 
 services:
   client:
-    image: malusevd99/ssh-management:client-0.2.7
+    image: malusevd99/ssh-management:client-0.3.0
     ports:
       - '9999:9999'
     environment:
-      MASTER_SERVER: server:8080
+      MASTER_SERVER: server:6543
       SERVER_NAME: 'test_client'
       SERVER_GROUP: 'test_group'
     depends_on:
       - server
-    restart: unless-stopped
     networks:
       - net
     volumes:
@@ -28,6 +27,7 @@ services:
     restart: unless-stopped
     ports:
       - '8080:8080'
+      - '6543:6543'
     depends_on:
       - mysql
       - redis
