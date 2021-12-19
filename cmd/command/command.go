@@ -53,7 +53,6 @@ func GetContainer(logger ...string) *container.Container {
 	return c
 }
 
-
 func LoadConfig(cmd *cobra.Command, args []string) error {
 	log.ConfigureDefaultLogger(LoggingLevel, os.Stdout)
 

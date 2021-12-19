@@ -59,7 +59,7 @@ func New(defaultLoggerName string, config *viper.Viper) *Container {
 		Config:            config,
 		defaultLoggerName: defaultLoggerName,
 		loggers:           make(map[string]*log.Logger, 1),
-		redisClients: make(map[int]*redis.Client, 16),
+		redisClients:      make(map[int]*redis.Client, 16),
 		systemGroups:      config.GetStringMapString("system_groups"),
 	}
 }

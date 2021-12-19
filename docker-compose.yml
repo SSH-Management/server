@@ -11,6 +11,7 @@ services:
       SERVER_GROUP: 'test_group'
     depends_on:
       - server
+    restart: unless-stopped
     networks:
       - net
     volumes:
@@ -28,29 +29,36 @@ services:
     ports:
       - '8080:8080'
       - '6543:6543'
+      - '2345:2345'
     depends_on:
       - mysql
       - redis
     volumes:
+      - 'gocache:/root/.cache/go-build'
+      - 'gomodules_server:/go'
       - './logs:/var/log/ssh_management'
       - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
       - '.:/app'
-  queue:
-    build:
-      context: .
-      dockerfile: ./docker/queue/Dockerfile
-      target: development
-    networks:
-      - net
-    restart: unless-stopped
-    depends_on:
-      - server
-      - mysql
-      - redis
-    volumes:
-      - './logs:/var/log/ssh_management'
-      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
-      - '.:/app'
+#  queue:
+#    build:
+#      context: .
+#      dockerfile: ./docker/queue/Dockerfile
+#      target: development
+#    networks:
+#      - net
+#    restart: unless-stopped
+#    depends_on:
+#      - server
+#      - mysql
+#      - redis
+#    volumes:
+#      - 'gocache:/root/.cache/go-build'
+#      - 'gomodules_queue:/go'
+#      - './logs:/var/log/ssh_management'
+#      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+#      - '.:/app'
+#    environment:
+#      DEBUG: 1
   redis:
     image: 'redis:6-alpine'
     networks:
@@ -88,3 +96,6 @@ networks:
     name: ssh_server_net
 volumes:
   mysql:
+  gocache:
+  gomodules_server:
+  gomodules_queue:

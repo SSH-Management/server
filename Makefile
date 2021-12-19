@@ -22,9 +22,9 @@ all: clean build
 .PHONY: build
 build:
 ifeq ($(ENV),production)
-	@CGO_ENABLED=0 CXX=g++ CC=gcc go build -ldflags="-s -w -X 'main.Version=${VERSION}'" -o ./bin/ssh_management ./cmd/*.go
+	@CGO_ENABLED=0 CXX=g++ CC=gcc go build -ldflags="-s -w -X 'main.Version=${VERSION}'" -o ./bin/ssh_management ./*.go
 else ifeq ($(ENV),development)
-	@CXX=g++ CC=gcc go build -o ./bin/ssh_management ./cmd/*.go
+	@CXX=g++ CC=gcc go build -o ./bin/ssh_management -gcflags="all=-N -l" ./*.go
 else
 	@echo "Target ${ENV} is not supported"
 endif

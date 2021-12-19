@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"embed"
 	"fmt"
+	"github.com/SSH-Management/server/cmd/http/handlers"
 	"net"
 	"os"
 	"os/signal"
@@ -15,7 +17,6 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/SSH-Management/server/cmd/command"
-	"github.com/SSH-Management/server/cmd/http/handlers"
 	"github.com/SSH-Management/server/cmd/http/routes"
 	"github.com/SSH-Management/server/pkg/container"
 	services "github.com/SSH-Management/server/pkg/services/grpc"
@@ -29,70 +30,73 @@ var signals = [4]os.Signal{
 	syscall.SIGUSR2,
 }
 
-func httpServerCommand() *cobra.Command {
+func httpServerCommand(ui embed.FS) *cobra.Command {
 	return &cobra.Command{
 		Use:               "serve",
 		Short:             "Start HTTP and GRPC Server",
 		PersistentPreRunE: command.LoadConfig,
-		RunE:              runHttpServer,
+		RunE:              runHttpServer(ui),
 	}
 }
 
+func runHttpServer(ui embed.FS) func(cmd *cobra.Command, args []string) error {
+	return func(cmd *cobra.Command, args []string) error {
 
+		c := command.GetContainer()
+		defer c.Close()
 
-func runHttpServer(cmd *cobra.Command, args []string) error {
-	c := command.GetContainer()
-	defer c.Close()
+		done := make(chan os.Signal, len(signals))
+		defer close(done)
 
-	done := make(chan os.Signal, len(signals))
-	defer close(done)
+		signal.Notify(done, signals[:]...)
 
-	signal.Notify(done, signals[:]...)
+		staticConfig := fiber.Config{
+			StrictRouting: true,
+			AppName:       "SSH Server Management",
+			ErrorHandler: handlers.Error(
+				c.GetDefaultLogger().Logger,
+				c.GetTranslator(),
+			),
+		}
 
-	app := fiber.New(fiber.Config{
-		StrictRouting: true,
-		AppName:       "SSH Server Management",
-		ErrorHandler: handlers.Error(
-			c.GetDefaultLogger().Logger,
-			c.GetTranslator(),
-		),
-	})
+		app := fiber.New(staticConfig)
 
-	app.Static(
-		c.Config.GetString("views.static.path"),
-		c.Config.GetString("views.static.dir"),
-		fiber.Static{
-			Browse:    false,
-			Compress:  false,
-			ByteRange: true,
-		},
-	)
+		app.Static(
+			c.Config.GetString("views.static.path"),
+			c.Config.GetString("views.static.dir"),
+			fiber.Static{
+				Browse:    false,
+				Compress:  false,
+				ByteRange: true,
+			},
+		)
 
-	routes.Register(c, app.Group(c.Config.GetString("path_prefix")))
+		routes.Register(c, app.Group(c.Config.GetString("http.path_prefix")), ui)
 
-	go runFiberHTTPServer(c, app)
+		go runFiberHTTPServer(c, app)
 
-	grpcServer := grpc.NewServer(middleware.Register(c)...)
+		grpcServer := grpc.NewServer(middleware.Register(c)...)
 
-	services.RegisterServices(c, grpcServer)
+		services.RegisterServices(c, grpcServer)
 
-	reflection.Register(grpcServer)
+		reflection.Register(grpcServer)
 
-	go runGRPCServer(c, grpcServer)
+		go runGRPCServer(c, grpcServer)
 
-	status := <-done
+		status := <-done
 
-	grpcServer.GracefulStop()
+		grpcServer.GracefulStop()
 
-	if err := app.Shutdown(); err != nil {
-		log.Error().
-			Msg("Error while stopping GoFiber HTTP Server")
+		if err := app.Shutdown(); err != nil {
+			log.Error().
+				Msg("Error while stopping GoFiber HTTP Server")
 
-		return err
+			return err
+		}
+
+		log.Info().Msgf("Exiting the application: %d", status)
+		return nil
 	}
-
-	log.Info().Msgf("Exiting the application: %d", status)
-	return nil
 }
 
 func runFiberHTTPServer(c *container.Container, app *fiber.App) {

@@ -9,7 +9,6 @@ import (
 
 type UserService struct{}
 
-
 func (u *UserService) Create(ctx context.Context, dto *users.CreateUserRequest) (*emptypb.Empty, error) {
 	return &emptypb.Empty{}, nil
 }

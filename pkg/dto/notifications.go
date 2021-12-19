@@ -7,13 +7,13 @@ import (
 type (
 	NewUserNotification struct {
 		User         *common.LinuxUser `json:"user,omitempty"`
-		PublicSSHKey string           `json:"public_key,omitempty"`
-		Groups       []string         `json:"groups,omitempty"`
+		PublicSSHKey string            `json:"public_key,omitempty"`
+		Groups       []string          `json:"groups,omitempty"`
 	}
 
 	NewUserForClientsNotification struct {
 		User         *common.LinuxUser `json:"user,omitempty"`
-		PublicSSHKey string           `json:"public_key,omitempty"`
+		PublicSSHKey string            `json:"public_key,omitempty"`
 		Server       struct {
 			Name      string `json:"name,omitempty"`
 			IpAddress string `json:"ip,omitempty"`

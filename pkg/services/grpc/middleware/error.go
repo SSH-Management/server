@@ -13,7 +13,6 @@ import (
 	"github.com/SSH-Management/server/pkg/log"
 )
 
-
 type (
 	ErrorResponse struct {
 		Message string `json:"message,omitempty"`

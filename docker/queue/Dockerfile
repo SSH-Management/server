@@ -16,14 +16,11 @@ RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest \
 	&& go install github.com/go-delve/delve/cmd/dlv@master \
 	&& go install mvdan.cc/gofumpt@latest
 
-
 WORKDIR /app
-
 
 COPY . .
 
 CMD ["air", "-c", ".air.queue.toml"]
-
 
 FROM golang:1.17.3-alpine as build
 
@@ -31,7 +28,7 @@ WORKDIR /app
 
 COPY . .
 
-ARG VERSION=
+ARG VERSION=""
 
 RUN apk update && apk add make gcc && make "VERSION=${VERSION}" ENV=production  build
 

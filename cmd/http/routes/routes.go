@@ -1,13 +1,15 @@
 package routes
 
 import (
+	"embed"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"net/http"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/csrf"
-	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
@@ -43,7 +45,7 @@ func CsrfMiddleware(c *viper.Viper, storage fiber.Storage) fiber.Handler {
 	})
 }
 
-func Register(c *container.Container, router fiber.Router) {
+func Register(c *container.Container, router fiber.Router, ui embed.FS) {
 	router.Use(pprof.New())
 	router.Use(recover.New())
 	router.Use(middleware.Context)
@@ -68,13 +70,24 @@ func Register(c *container.Container, router fiber.Router) {
 		ContextKey: RequestIdKey,
 	}))
 
-	router.Get("/", monitor.New())
+	fs := filesystem.New(filesystem.Config{
+		Root:       http.FS(ui),
+		Browse:     true,
+		Index:      "index.html",
+		PathPrefix: "ui/build",
+	})
+
+	router.Use("/", fs)
+
+	router.Get("/monitor", monitor.New())
 
 	router.Get("/csrf-token", func(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusNoContent)
 	})
 
-	registerClientRoutes(c, router)
-	registerUserRoutes(c, router.Group("/users"))
-	registerAuthRoutes(c, router.Group("/auth"))
+	apiV1 := router.Group("/api/v1")
+
+	registerClientRoutes(c, apiV1)
+	registerAuthRoutes(c, apiV1.Group("/auth"))
+	registerUserRoutes(c, apiV1.Group("/users"))
 }

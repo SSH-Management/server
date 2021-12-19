@@ -14,7 +14,7 @@ func createUserCommand() *cobra.Command {
 		Use:               "create",
 		RunE:              createUser,
 		PersistentPreRunE: command.LoadConfig,
-		SilenceUsage: true,
+		SilenceUsage:      true,
 	}
 
 	flags := cmd.PersistentFlags()

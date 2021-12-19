@@ -17,7 +17,6 @@ func GetServers(serverRepo server.Interface) fiber.Handler {
 	}
 }
 
-
 func GetServer(serverRepo server.Interface) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := c.ParamsInt("id")

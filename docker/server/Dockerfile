@@ -20,6 +20,8 @@ WORKDIR /app
 
 COPY . .
 
+ENV DEBUG=""
+
 CMD ["air", "-c", ".air.server.toml"]
 
 FROM golang:1.17-alpine as build
@@ -28,7 +30,7 @@ WORKDIR /app
 
 COPY . .
 
-ARG VERSION=
+ARG VERSION=""
 
 RUN apk add make && make "VERSION=${VERSION}" ENV=production build
 
