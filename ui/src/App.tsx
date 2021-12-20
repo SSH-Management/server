@@ -1,26 +1,68 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { FC, lazy, Suspense } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-function App() {
+const Layout = lazy(() => import('./components/Layout'));
+const Login = lazy(() => import('./Pages/Login'));
+
+const App: FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={<>...</>}>
+              <Layout />
+            </Suspense>
+          }
+        ></Route>
+        <Route
+          path="/login"
+          element={
+            <Suspense fallback={<>...</>}>
+              <Login />
+            </Suspense>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+    // <div className="d-flex">
+    //   <Sidebar />
+    //   <div className="flex-grow-1">
+    //     <Navbar />
+    //     {/* <Login /> */}
+    //     {/* <Container> */}
+    //     {/* <Row>
+    //         <DataTable
+    //           direction={Direction.LTR}
+    //           expandOnRowClicked
+    //           fixedHeader
+    //           fixedHeaderScrollHeight="500px"
+    //           highlightOnHover
+    //           pagination
+    //           persistTableHead
+    //           responsive
+    //           selectableRows
+    //           selectableRowsHighlight
+    //           columns={[
+    //             {
+    //               name: 'Name',
+    //             },
+    //             {
+    //               name: 'Surname',
+    //             },
+    //             {
+    //               name: 'Email',
+    //             },
+    //           ]}
+    //           data={[]} // subHeaderAlign={Alignment.RIGHT}
+    //           // subHeaderWrap
+    //         />
+    //       </Row>
+    //     </Container> */}
+    //   </div>
+    // </div>
   );
-}
+};
 
 export default App;
