@@ -26,19 +26,19 @@ func LoginHandler(loginService *auth.LoginService, validator *validator.Validate
 			return err
 		}
 
-		session, err := store.Get(c)
+		sess, err := store.Get(c)
 		if err != nil {
 			return err
 		}
 
-		if !session.Fresh() {
-			if err := session.Regenerate(); err != nil {
+		if !sess.Fresh() {
+			if err := sess.Regenerate(); err != nil {
 				return err
 			}
 		}
 
 		defer func() {
-			_ = session.Save()
+			_ = sess.Save()
 		}()
 
 		user, err := loginService.Login(c.UserContext(), login.Email, login.Password)
@@ -46,7 +46,7 @@ func LoginHandler(loginService *auth.LoginService, validator *validator.Validate
 			return err
 		}
 
-		session.Set("user", user)
+		sess.Set("user", user)
 
 		return c.JSON(user)
 	}

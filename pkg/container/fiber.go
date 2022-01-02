@@ -30,7 +30,7 @@ func (c *Container) GetSession() *session.Store {
 			CookieDomain:   c.Config.GetString("http.domain"),
 			CookiePath:     c.Config.GetString("session.cookie_path"),
 			CookieSecure:   c.Config.GetBool("session.secure"),
-			CookieSameSite: c.Config.GetString("session.same_site"),
+			CookieSameSite: "strict",
 			KeyGenerator: func() string {
 				return utils.RandomString(32)
 			},

@@ -1,11 +1,12 @@
 package routes
 
 import (
+	"fmt"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"net/http"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/csrf"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
@@ -21,23 +22,22 @@ import (
 )
 
 const (
-	RequestIdKey    = "request_id"
-	CsrfTokenCookie = "csrf_cookie"
-	CsrfTokenKey    = "csrf_token"
+	RequestIdKey = "request_id"
+	CsrfTokenKey = "csrf_token"
 )
 
 func CsrfMiddleware(c *viper.Viper, storage fiber.Storage) fiber.Handler {
 	return csrf.New(csrf.Config{
-		KeyLookup:      "cookie:csrf_cookie",
+		KeyLookup:      fmt.Sprintf("%s:%s", c.GetString("csrf.lookup_method"), c.GetString("csrf.lookup_key")),
 		ContextKey:     CsrfTokenKey,
-		CookieName:     c.GetString("csrf.lookup"),
+		CookieName:     c.GetString("csrf.cookie_name"),
 		Storage:        storage,
 		CookieDomain:   c.GetString("http.domain"),
 		CookieSecure:   c.GetBool("csrf.secure"),
 		Expiration:     c.GetDuration("csrf.expiration"),
-		CookieHTTPOnly: true,
+		CookieHTTPOnly: false,
 		CookiePath:     c.GetString("csrf.cookie_path"),
-		CookieSameSite: c.GetString("csrf.same_site"),
+		CookieSameSite: "strict",
 		KeyGenerator: func() string {
 			return utils.RandomString(32)
 		},
@@ -67,7 +67,6 @@ func Register(c *container.Container, router fiber.Router) {
 	if !strings.HasSuffix("/", uiPath) {
 		uiPath = uiPath + "/"
 	}
-
 
 	router.Use(requestid.New(requestid.Config{
 		Generator: func() string {

@@ -61,33 +61,36 @@ redis:
     db: 3
 
 session:
-  expiration: 1h
+  expiration: 2h
   lookup: ssh_management_id
   cookie_path: /
   secure: false
-  same_site: Lax
 
 csrf:
-  expiration: 1h
-  lookup: ssh_management_csrf
+  expiration: 2h
+  lookup_method: header
+  lookup_key: X-XSRF-TOKEN
+  cookie_name: XSRF-TOKEN
   cookie_path: /
   secure: false
-  same_site: Lax
 
 cors:
   headers:
     - Content-Type
     - Accept
+    - X-Requested-With
+    - Authorization
+    - Content-Length
+    - X-XSRF-TOKEN
   origins:
-    - localhost:8080
-    - localhost:3000
+    - http://localhost:8080
+    - http://localhost:3000
+    - https://localhost:3000
   methods:
     - GET
     - POST
     - PUT
-    - PATCH
     - DELETE
-    - OPTIONS
 
 queue:
   concurrency: 10

@@ -6,7 +6,7 @@ type User struct {
 	Surname      string `gorm:"column:surname" json:"surname,omitempty"`
 	Username     string `gorm:"column:username" json:"username,omitempty"`
 	Email        string `gorm:"column:email" json:"email,omitempty"`
-	Password     string `gorm:"column:password" json:"password,omitempty"`
+	Password     string `gorm:"column:password" json:"-"`
 	Shell        string `gorm:"column:shell" json:"shell,omitempty"`
 	PublicSSHKey string `gorm:"column:public_ssh_key" json:"public_ssh_key"`
 

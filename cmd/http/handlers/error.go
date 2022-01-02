@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"github.com/SSH-Management/server/pkg/services/password"
 
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -28,6 +29,11 @@ func Error(logger zerolog.Logger, translator ut.Translator) fiber.ErrorHandler {
 			return ctx.Status(e.Code).JSON(message{
 				Message: e.Message,
 			})
+		}
+
+		if err == password.ErrPasswordMismatch {
+			return ctx.Status(fiber.StatusUnauthorized).
+				JSON(message{Message: "Invalid credentials"})
 		}
 
 		if _, ok := err.(*validator.InvalidValidationError); ok {
