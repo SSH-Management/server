@@ -1,18 +1,17 @@
 package routes
 
 import (
-	"embed"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"net/http"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/csrf"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+
 	"github.com/spf13/viper"
 
 	"github.com/SSH-Management/utils/v2"
@@ -45,7 +44,7 @@ func CsrfMiddleware(c *viper.Viper, storage fiber.Storage) fiber.Handler {
 	})
 }
 
-func Register(c *container.Container, router fiber.Router, ui embed.FS) {
+func Register(c *container.Container, router fiber.Router) {
 	router.Use(pprof.New())
 	router.Use(recover.New())
 	router.Use(middleware.Context)
@@ -63,23 +62,19 @@ func Register(c *container.Container, router fiber.Router, ui embed.FS) {
 		c.GetStorage(c.Config.GetInt("redis.csrf.db")),
 	))
 
+	uiPath := c.Config.GetString("http.ui.path")
+
+	if !strings.HasSuffix("/", uiPath) {
+		uiPath = uiPath + "/"
+	}
+
+
 	router.Use(requestid.New(requestid.Config{
 		Generator: func() string {
 			return utils.RandomString(32)
 		},
 		ContextKey: RequestIdKey,
 	}))
-
-	fs := filesystem.New(filesystem.Config{
-		Root:       http.FS(ui),
-		Browse:     true,
-		Index:      "index.html",
-		PathPrefix: "ui/build",
-	})
-
-	router.Use("/", fs)
-
-	router.Get("/monitor", monitor.New())
 
 	router.Get("/csrf-token", func(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusNoContent)
@@ -90,4 +85,21 @@ func Register(c *container.Container, router fiber.Router, ui embed.FS) {
 	registerClientRoutes(c, apiV1)
 	registerAuthRoutes(c, apiV1.Group("/auth"))
 	registerUserRoutes(c, apiV1.Group("/users"))
+
+	router.Get("/monitor", monitor.New())
+
+	router.Static("/", uiPath, fiber.Static{
+		Compress:  true,
+		ByteRange: true,
+	})
+
+	router.Use(func(ctx *fiber.Ctx) error {
+		if strings.HasPrefix(ctx.Get("Accept", "text/html"), "application/json") {
+			return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"message": "Route not found",
+			})
+		}
+
+		return ctx.SendFile(uiPath+"index.html", true)
+	})
 }

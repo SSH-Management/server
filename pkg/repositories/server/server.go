@@ -105,7 +105,6 @@ func (r Repository) Create(ctx context.Context, dto *clients.CreateClientRequest
 	}
 
 	g, err := r.createGroupIfNotExists(ctx, dto.Group)
-
 	if err != nil {
 		return models.Server{}, err
 	}

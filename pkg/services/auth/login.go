@@ -22,7 +22,6 @@ func NewLoginService(userRepo user.Interface, hasher password.Hasher) *LoginServ
 
 func (s LoginService) Login(ctx context.Context, email, password string) (models.User, error) {
 	u, err := s.userRepo.FindByEmail(ctx, email)
-
 	if err != nil {
 		return models.User{}, err
 	}

@@ -19,6 +19,9 @@ http:
   grpc:
     bind: '0.0.0.0'
     port: 6543
+  ui:
+    path: './ui/dist/'
+
 
 logging:
   file: /var/log/ssh_management/server.log

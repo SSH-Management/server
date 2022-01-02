@@ -27,7 +27,6 @@ func LoginHandler(loginService *auth.LoginService, validator *validator.Validate
 		}
 
 		session, err := store.Get(c)
-
 		if err != nil {
 			return err
 		}
@@ -43,7 +42,6 @@ func LoginHandler(loginService *auth.LoginService, validator *validator.Validate
 		}()
 
 		user, err := loginService.Login(c.UserContext(), login.Email, login.Password)
-
 		if err != nil {
 			return err
 		}

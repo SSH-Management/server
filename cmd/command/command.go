@@ -40,7 +40,6 @@ func GetContainer(logger ...string) *container.Container {
 
 	publicKeyPath := viperConfig.GetString("crypto.ed25519.public")
 	publicKey, err := config.LoadServerPublicSSHKey(publicKeyPath)
-
 	if err != nil {
 		zerologlog.
 			Fatal().

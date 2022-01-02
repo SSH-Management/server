@@ -1,13 +1,13 @@
 package cli
 
 import (
-	"embed"
 	"fmt"
-	"github.com/SSH-Management/server/cmd/http/handlers"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/SSH-Management/server/cmd/http/handlers"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
@@ -30,18 +30,17 @@ var signals = [4]os.Signal{
 	syscall.SIGUSR2,
 }
 
-func httpServerCommand(ui embed.FS) *cobra.Command {
+func httpServerCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:               "serve",
 		Short:             "Start HTTP and GRPC Server",
 		PersistentPreRunE: command.LoadConfig,
-		RunE:              runHttpServer(ui),
+		RunE:              runHttpServer(),
 	}
 }
 
-func runHttpServer(ui embed.FS) func(cmd *cobra.Command, args []string) error {
+func runHttpServer() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-
 		c := command.GetContainer()
 		defer c.Close()
 
@@ -71,7 +70,7 @@ func runHttpServer(ui embed.FS) func(cmd *cobra.Command, args []string) error {
 			},
 		)
 
-		routes.Register(c, app.Group(c.Config.GetString("http.path_prefix")), ui)
+		routes.Register(c, app.Group(c.Config.GetString("http.path_prefix")))
 
 		go runFiberHTTPServer(c, app)
 

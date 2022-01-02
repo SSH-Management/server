@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"embed"
 
 	zerologlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -11,11 +10,9 @@ import (
 	"github.com/SSH-Management/server/cmd/command"
 )
 
-var (
-	rootCmd *cobra.Command
-)
+var rootCmd *cobra.Command
 
-func Execute(ui embed.FS) {
+func Execute() {
 	rootCmd = &cobra.Command{
 		Use:               "server",
 		Short:             "SSH Server",
@@ -28,7 +25,7 @@ func Execute(ui embed.FS) {
 	flags.StringVarP(&command.LoggingLevel, "logging-level", "l", "info", "Global Logging level")
 	flags.StringVarP(&command.Environment, "env", "e", "production", "Running Environment (Production|Development|Testing")
 
-	rootCmd.AddCommand(httpServerCommand(ui))
+	rootCmd.AddCommand(httpServerCommand())
 	rootCmd.AddCommand(queueWorkerCommand())
 	rootCmd.AddCommand(user.UserCommand())
 

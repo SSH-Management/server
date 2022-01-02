@@ -107,7 +107,6 @@ func createUser(cmd *cobra.Command, args []string) error {
 	validator := c.GetValidator()
 
 	userDto, err := getCreateUserStruct(cmd)
-
 	if err != nil {
 		return err
 	}

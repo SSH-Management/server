@@ -8,7 +8,6 @@ import (
 func Auth(store *session.Store) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		s, err := store.Get(c)
-
 		if err != nil {
 			return err
 		}

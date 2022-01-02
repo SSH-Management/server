@@ -39,7 +39,6 @@ func ParseEnvironment(env string) Env {
 
 func LoadServerPublicSSHKey(publicKeyPath string) (string, error) {
 	path, err := utils.GetAbsolutePath(publicKeyPath)
-
 	if err != nil {
 		return "", ErrAbsolutePublicKeyPath
 	}
