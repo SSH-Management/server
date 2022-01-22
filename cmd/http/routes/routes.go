@@ -81,9 +81,9 @@ func Register(c *container.Container, router fiber.Router) {
 
 	apiV1 := router.Group("/api/v1")
 
-	registerClientRoutes(c, apiV1)
 	registerAuthRoutes(c, apiV1.Group("/auth"))
 	registerUserRoutes(c, apiV1.Group("/users"))
+	registerServerRoutes(c, apiV1.Group("/servers"))
 
 	router.Get("/monitor", monitor.New())
 
