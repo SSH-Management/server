@@ -108,7 +108,7 @@ func TestLogin_Success(t *testing.T) {
 
 	cookie := res.Cookies()[0]
 	assert.Equal(helpers.SessionCookieName, cookie.Name)
-	assert.Regexp(regexp.MustCompile(`^[a-zA-Z\\d_\-]+$`), cookie.Value)
+	assert.Regexp(regexp.MustCompile(`^[a-zA-Z\d_-]+$`), cookie.Value)
 
 	userRepoMock.AssertExpectations(t)
 	hasherMock.AssertExpectations(t)
