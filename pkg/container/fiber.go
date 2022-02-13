@@ -10,7 +10,7 @@ import (
 	"github.com/SSH-Management/utils/v2"
 )
 
-func (c *Container) GetStorage(database int) fiber.Storage {
+func (c *Container) GetRedisStorage(database int) fiber.Storage {
 	return redis.New(redis.Config{
 		Host:     c.Config.GetString("redis.host"),
 		Port:     c.Config.GetInt("redis.port"),
@@ -23,7 +23,7 @@ func (c *Container) GetStorage(database int) fiber.Storage {
 func (c *Container) GetSession() *session.Store {
 	if c.session == nil {
 		c.session = session.New(session.Config{
-			Storage:        c.GetStorage(c.Config.GetInt("redis.session.db")),
+			Storage:        c.GetRedisStorage(c.Config.GetInt("redis.session.db")),
 			CookieHTTPOnly: true,
 			Expiration:     c.Config.GetDuration("session.expiration"),
 			KeyLookup:      fmt.Sprintf("cookie:%s", c.Config.GetString("session.lookup")),

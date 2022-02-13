@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"google.golang.org/grpc/credentials/insecure"
+
 	"google.golang.org/grpc"
 	health_check "google.golang.org/grpc/health/grpc_health_v1"
 	"gorm.io/gorm"
@@ -31,7 +33,7 @@ func (c *ClientHealthCheckService) Check(ctx context.Context) {
 	c.db.WithContext(ctx).FindInBatches(&servers, 50, func(tx *gorm.DB, batch int) error {
 		go func(ctx context.Context, servers []models.Server, db *gorm.DB) {
 			for _, server := range servers {
-				conn, err := grpc.Dial(fmt.Sprintf("%s:9999", server.IpAddress), grpc.WithInsecure())
+				conn, err := grpc.Dial(fmt.Sprintf("%s:9999", server.IpAddress), grpc.WithTransportCredentials(insecure.NewCredentials()))
 				if err != nil {
 					c.logger.Error().
 						Err(err).

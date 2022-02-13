@@ -26,7 +26,7 @@ func (s LoginService) Login(ctx context.Context, email, password string) (models
 		return models.User{}, err
 	}
 
-	if err := s.hasher.Verify(u.Password, password); err != nil {
+	if err = s.hasher.Verify(u.Password, password); err != nil {
 		return models.User{}, err
 	}
 

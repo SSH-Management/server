@@ -18,20 +18,26 @@ func New() connector.Interface {
 	return mySql{}
 }
 
+func FormatDSN(v config.Config, withDb bool) string {
+	mysqlConfig := mysql.NewConfig()
+
+	mysqlConfig.Collation = v.Collation
+	mysqlConfig.User = v.Username
+	mysqlConfig.Passwd = v.Password
+
+	if withDb {
+		mysqlConfig.DBName = v.Database
+	}
+
+	mysqlConfig.ParseTime = true
+	mysqlConfig.MultiStatements = true
+	mysqlConfig.CheckConnLiveness = true
+	mysqlConfig.Net = "tcp"
+	mysqlConfig.Addr = v.Host
+
+	return mysqlConfig.FormatDSN()
+}
+
 func (mySql) Connect(v config.Config) (gorm.Dialector, error) {
-	config := mysql.NewConfig()
-
-	config.Collation = v.Collation
-	config.User = v.Username
-	config.Passwd = v.Password
-	config.DBName = v.Database
-	config.ParseTime = true
-	config.MultiStatements = true
-	config.CheckConnLiveness = true
-	config.Net = "tcp"
-	config.Addr = v.Host
-
-	connStr := config.FormatDSN()
-
-	return gormmysql.Open(connStr), nil
+	return gormmysql.Open(FormatDSN(v, true)), nil
 }

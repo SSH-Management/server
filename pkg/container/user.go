@@ -24,7 +24,6 @@ func (c *Container) GetUserRepository() userrepo.Interface {
 	if c.userRepository == nil {
 		c.userRepository = userrepo.New(
 			c.GetDbConnection(),
-			c.GetDefaultLogger(),
 			c.GetRoleRepository(),
 			c.GetGroupRepository(),
 		)

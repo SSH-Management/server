@@ -18,9 +18,9 @@ import (
 	userrepo "github.com/SSH-Management/server/pkg/repositories/user"
 )
 
-var _ clients.ClientServiceServer = &ClientService{}
+var _ clients.ClientServiceServer = &Service{}
 
-type ClientService struct {
+type Service struct {
 	clients.UnimplementedClientServiceServer
 	logger           *log.Logger
 	serverRepository server.Interface
@@ -36,8 +36,8 @@ func New(
 	serverRepository server.Interface,
 	userRepository userrepo.Interface,
 	validator *validator.Validate,
-) *ClientService {
-	return &ClientService{
+) *Service {
+	return &Service{
 		serverPublicKey:  serverPublicKey,
 		logger:           logger,
 		serverRepository: serverRepository,
@@ -46,7 +46,7 @@ func New(
 	}
 }
 
-func (cl *ClientService) Create(ctx context.Context, req *clients.CreateClientRequest) (*clients.CreateClientResponse, error) {
+func (cl *Service) Create(ctx context.Context, req *clients.CreateClientRequest) (*clients.CreateClientResponse, error) {
 	cl.logger.Debug().
 		Str("name", req.Name).
 		Str("ip", req.Ip).
@@ -124,7 +124,7 @@ func (cl *ClientService) Create(ctx context.Context, req *clients.CreateClientRe
 	}, nil
 }
 
-func (cl *ClientService) Delete(ctx context.Context, req *clients.DeleteClientRequest) (*emptypb.Empty, error) {
+func (cl *Service) Delete(ctx context.Context, req *clients.DeleteClientRequest) (*emptypb.Empty, error) {
 	err := cl.serverRepository.Delete(ctx, req.Id)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Error while deleting server")

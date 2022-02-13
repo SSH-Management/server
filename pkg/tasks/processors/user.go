@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"sync"
 
+	"google.golang.org/grpc/credentials/insecure"
+
 	"github.com/hibiken/asynq"
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
@@ -188,9 +190,10 @@ func (n *NotifyServerForNewUser) getConnectionToClient(ip string) (users.UserSer
 	}
 
 	n.mutext.RUnlock()
+
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%s:%d", ip, n.port),
-		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
 		return nil, err

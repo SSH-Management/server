@@ -19,7 +19,7 @@ func RegisterServices(c *container.Container, server grpc.ServiceRegistrar) {
 	pb_client.RegisterClientServiceServer(
 		server,
 		client.New(
-			c.GetPublicKey(),
+			c.Config.PublicKey,
 			c.GetDefaultLogger(),
 			c.GetServerRepository(),
 			c.GetUserRepository(),

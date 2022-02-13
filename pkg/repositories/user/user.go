@@ -12,7 +12,6 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/SSH-Management/server/pkg/dto"
-	"github.com/SSH-Management/server/pkg/log"
 	"github.com/SSH-Management/server/pkg/models"
 )
 
@@ -20,8 +19,7 @@ var _ Interface = &Repository{}
 
 type (
 	Repository struct {
-		db     *gorm.DB
-		logger *log.Logger
+		db *gorm.DB
 
 		roleRepo  role.Interface
 		groupRepo group.Interface
@@ -36,10 +34,9 @@ type (
 	}
 )
 
-func New(db *gorm.DB, logger *log.Logger, roleRepo role.Interface, groupRepo group.Interface) Repository {
+func New(db *gorm.DB, roleRepo role.Interface, groupRepo group.Interface) Repository {
 	return Repository{
 		db:        db,
-		logger:    logger,
 		roleRepo:  roleRepo,
 		groupRepo: groupRepo,
 	}
@@ -48,7 +45,7 @@ func New(db *gorm.DB, logger *log.Logger, roleRepo role.Interface, groupRepo gro
 func (r Repository) Find(ctx context.Context) ([]models.User, error) {
 	users := make([]models.User, 0, 10)
 
-	result := r.db.Find(&users)
+	result := r.db.WithContext(ctx).Find(&users)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -64,7 +61,8 @@ func (r Repository) Find(ctx context.Context) ([]models.User, error) {
 func (r Repository) FindByGroup(ctx context.Context, id uint64) ([]models.User, error) {
 	users := make([]models.User, 0, 10)
 
-	result := r.db.WithContext(ctx).
+	result := r.db.
+		WithContext(ctx).
 		Model(&models.User{}).
 		Joins("inner join user_groups on users.id = user_groups.user_id").
 		Where("user_groups.group_id = ?", id).
@@ -99,9 +97,6 @@ func (r Repository) FindByEmail(ctx context.Context, email string) (models.User,
 }
 
 func (r Repository) Create(ctx context.Context, dto dto.User, publicKey string) (models.User, error) {
-	// ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
-	// defer cancel()
-
 	roleModel, err := r.roleRepo.FindByName(ctx, dto.Role)
 	if err != nil {
 		return models.User{}, err

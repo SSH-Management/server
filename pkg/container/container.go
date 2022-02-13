@@ -1,16 +1,16 @@
 package container
 
 import (
+	"github.com/SSH-Management/server/pkg/config"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/hibiken/asynq"
-	"github.com/spf13/viper"
 	"gorm.io/gorm"
 
-	linux_user "github.com/SSH-Management/linux-user"
-	signer "github.com/SSH-Management/request-signer/v3"
+	linuxuser "github.com/SSH-Management/linux-user"
+	signer "github.com/SSH-Management/request-signer/v4"
 
 	"github.com/SSH-Management/server/pkg/log"
 	"github.com/SSH-Management/server/pkg/repositories/group"
@@ -23,12 +23,10 @@ import (
 )
 
 type Container struct {
-	systemGroups map[string]string
-	Config       *viper.Viper
-	db           *gorm.DB
+	Config *config.Config
+	db     *gorm.DB
 
 	defaultLoggerName string
-	publicKey         string
 
 	loggers      map[string]*log.Logger
 	redisClients map[int]*redis.Client
@@ -36,7 +34,7 @@ type Container struct {
 	hasher password.Hasher
 
 	userService     user.Interface
-	unixUserService linux_user.UnixInterface
+	unixUserService linuxuser.UnixInterface
 
 	userRepository   userrepo.Interface
 	groupRepository  group.Interface
@@ -54,27 +52,13 @@ type Container struct {
 	session *session.Store
 }
 
-func New(defaultLoggerName string, config *viper.Viper) *Container {
+func New(defaultLoggerName string, config *config.Config) *Container {
 	return &Container{
 		Config:            config,
 		defaultLoggerName: defaultLoggerName,
 		loggers:           make(map[string]*log.Logger, 1),
 		redisClients:      make(map[int]*redis.Client, 16),
-		systemGroups:      config.GetStringMapString("system_groups"),
 	}
-}
-
-func (c *Container) SetPublicKey(publicKey string) {
-	c.publicKey = publicKey
-}
-
-func (c *Container) GetPublicKey() string {
-	if c.publicKey == "" {
-		c.GetDefaultLogger().
-			Fatal().
-			Msg("Public key has not been set, call container.SetPublicKey() method")
-	}
-	return c.publicKey
 }
 
 func (c *Container) Close() error {

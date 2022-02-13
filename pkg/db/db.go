@@ -15,17 +15,15 @@ import (
 var ErrNotFound = errors.New("item is not found")
 
 func GetDbConnection(c config.Config) (*gorm.DB, error) {
-	var connector connector.Interface
+	var dbConnector connector.Interface
 	switch c.Driver {
 	case "mysql":
-		connector = mysql.New()
-	case "sqlite":
-
+		dbConnector = mysql.New()
 	default:
 		return nil, fmt.Errorf("Driver %s is not supported", c.Driver)
 	}
 
-	dialect, err := connector.Connect(c)
+	dialect, err := dbConnector.Connect(c)
 	if err != nil {
 		return nil, err
 	}

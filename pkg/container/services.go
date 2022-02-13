@@ -12,7 +12,7 @@ import (
 func (c *Container) GetUnixUserService() user.UnixInterface {
 	if c.unixUserService == nil {
 		c.unixUserService = user.NewUnixService(
-			c.systemGroups,
+			c.Config.GetStringMapString("system_groups"),
 			log.UnixServiceLogger{
 				Logger: c.GetDefaultLogger(),
 			},

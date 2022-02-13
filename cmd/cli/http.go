@@ -7,9 +7,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/SSH-Management/server/cmd/http/handlers"
-
-	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 	zerologlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -17,8 +14,10 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/SSH-Management/server/cmd/command"
-	"github.com/SSH-Management/server/cmd/http/routes"
 	"github.com/SSH-Management/server/pkg/container"
+	"github.com/SSH-Management/server/pkg/http"
+	"github.com/SSH-Management/server/pkg/http/handlers"
+	"github.com/SSH-Management/server/pkg/http/routes"
 	services "github.com/SSH-Management/server/pkg/services/grpc"
 	"github.com/SSH-Management/server/pkg/services/grpc/middleware"
 )
@@ -49,30 +48,21 @@ func runHttpServer() func(cmd *cobra.Command, args []string) error {
 
 		signal.Notify(done, signals[:]...)
 
-		staticConfig := fiber.Config{
-			StrictRouting: true,
-			AppName:       "SSH Server Management",
-			ErrorHandler: handlers.Error(
-				c.GetDefaultLogger().Logger,
-				c.GetTranslator(),
-			),
-		}
-
-		app := fiber.New(staticConfig)
-
-		app.Static(
-			c.Config.GetString("views.static.path"),
-			c.Config.GetString("views.static.dir"),
-			fiber.Static{
-				Browse:    false,
-				Compress:  false,
-				ByteRange: true,
-			},
+		errorHandler := handlers.Error(
+			c.GetDefaultLogger().Logger,
+			c.GetTranslator(),
 		)
 
-		routes.Register(c, app.Group(c.Config.GetString("http.path_prefix")))
+		app := http.CreateApplication(
+			c.Config.GetString("views.static.path"),
+			c.Config.GetString("views.static.dir"),
+			c.Config.Env,
+			errorHandler,
+		)
 
-		go runFiberHTTPServer(c, app)
+		routes.Register(c, app, c.Config.Env)
+
+		go http.RunServer(c.Config.GetString("http.bind"), c.Config.GetInt("http.port"), app)
 
 		grpcServer := grpc.NewServer(middleware.Register(c)...)
 
@@ -95,30 +85,6 @@ func runHttpServer() func(cmd *cobra.Command, args []string) error {
 
 		log.Info().Msgf("Exiting the application: %d", status)
 		return nil
-	}
-}
-
-func runFiberHTTPServer(c *container.Container, app *fiber.App) {
-	addr := fmt.Sprintf("%s:%d",
-		c.Config.GetString("http.bind"),
-		c.Config.GetInt("http.port"),
-	)
-
-	listener, err := net.Listen("tcp4", addr)
-	if err != nil {
-		log.
-			Fatal().
-			Err(err).
-			Msg("Error while creating net.Listener for HTTP Server")
-	}
-
-	err = app.Listener(listener)
-
-	if err != nil {
-		log.
-			Fatal().
-			Err(err).
-			Msg("Cannot start Fiber HTTP Server")
 	}
 }
 

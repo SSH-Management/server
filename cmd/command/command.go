@@ -4,18 +4,16 @@ import (
 	"errors"
 	"os"
 
-	signer "github.com/SSH-Management/request-signer/v3"
-	zerologlog "github.com/rs/zerolog/log"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-
+	signer "github.com/SSH-Management/request-signer/v4"
 	"github.com/SSH-Management/server/pkg/config"
 	"github.com/SSH-Management/server/pkg/container"
 	"github.com/SSH-Management/server/pkg/log"
+	zerologlog "github.com/rs/zerolog/log"
+	"github.com/spf13/cobra"
 )
 
 var (
-	viperConfig *viper.Viper
+	viperConfig *config.Config
 
 	Environment  string
 	LoggingLevel string
@@ -38,21 +36,10 @@ func GetContainer(logger ...string) *container.Container {
 			Msg("Error while generating ed25519 key pair")
 	}
 
-	publicKeyPath := viperConfig.GetString("crypto.ed25519.public")
-	publicKey, err := config.LoadServerPublicSSHKey(publicKeyPath)
-	if err != nil {
-		zerologlog.
-			Fatal().
-			Err(err).
-			Msg("Error while loading ed25519 public key")
-	}
-
-	c.SetPublicKey(publicKey)
-
 	return c
 }
 
-func LoadConfig(cmd *cobra.Command, args []string) error {
+func LoadConfig(*cobra.Command, []string) error {
 	log.ConfigureDefaultLogger(LoggingLevel, os.Stdout)
 
 	v, err := config.New(config.ParseEnvironment(Environment))

@@ -1,4 +1,6 @@
 ---
+environment: 'development'
+
 database:
   driver: mysql
   username: server
@@ -15,13 +17,12 @@ http:
   bind: '0.0.0.0'
   port: 8080
   domain: localhost
-  path_prefix: ''
   grpc:
     bind: '0.0.0.0'
     port: 6543
   ui:
     path: './ui/dist/'
-
+  enable_monitor: true
 
 logging:
   file: /var/log/ssh_management/server.log
@@ -33,9 +34,7 @@ system_groups:
   sudo: sudo
 
 crypto:
-  ed25519:
-    public: './keys/public.key'
-    private: './keys/private.key'
+  ed25519: './keys'
   auth_key: ''
   enc_key: ''
   password:
@@ -68,7 +67,6 @@ session:
 
 csrf:
   expiration: 2h
-  lookup_method: header
   lookup_key: X-XSRF-TOKEN
   cookie_name: XSRF-TOKEN
   cookie_path: /

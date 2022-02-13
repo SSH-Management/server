@@ -90,6 +90,14 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+    restart: unless-stopped
+    networks:
+      - net
 networks:
   net:
     driver: bridge

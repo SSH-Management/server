@@ -1,10 +1,9 @@
-MIGRATE_TAG = v4.15.1
 RACE ?= 0
 ENV ?= development
 VERSION ?= v0.2.0
 GOPATH ?= ${HOME}/go
 PLATFORM ?= linux/arm64,linux/amd64
-DOCKER ?= 1
+DOCKER ?= 0
 
 ifeq ($(DOCKER),1)
 	DATABASE_URL="mysql://server:server@tcp(mysql:3306)/ssh_management?charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
@@ -29,6 +28,7 @@ else
 	@echo "Target ${ENV} is not supported"
 endif
 	@cp ssh_management.example.yml ./bin/ssh_management.yml
+	@cp -R ./migrations/ ./bin/migrations/
 
 .PHONY: run
 run:
@@ -67,27 +67,31 @@ clean:
 	@rm -rf ./bin
 
 .PHONY: migrate
-migrate:
+migrate: install-migrate-cli
 	@migrate -source file://$(shell pwd)/migrations -database $(DATABASE_URL) up
 
+STEP ?= ""
+
 .PHONY: migrate-down
-migrate-down:
-	@migrate -source file://$(shell pwd)/migrations -database $(DATABASE_URL) down
+migrate-down: install-migrate-cli
+	@migrate -source file://$(shell pwd)/migrations -database $(DATABASE_URL) down $(STEP)
 
 .PHONY: migration-create
-migration-create:
+migration-create: install-migrate-cli
 	@migrate -database $(DATABASE_URL) create -dir ./migrations -seq -ext sql $(M_NAME)
 
+M_VERSION=""
+
+.PHONY: migration-force
+migration-force: install-migrate-cli
+	@migrate -database $(DATABASE_URL) -source file://$(shell pwd)/migrations force $(M_VERSION)
+
 .PHONY: install-migrate-cli
-install-migrate-cli:/
+install-migrate-cli:
 ifneq ($(findstring migrate,$(shell ls $(GOPATH)/bin)),migrate)
-	@CC=gcc CXX=g++ cd $(GOPATH) && \
-	rm -rf $(GOPATH)/src/github.com/golang-migrate/migrate && \
-	go get -u -d github.com/golang-migrate/migrate/cmd/migrate && \
-	cd $(GOPATH)/src/github.com/golang-migrate/migrate && \
-	git checkout $(MIGRATE_TAG) && \
-	cd cmd/migrate && \
-	go build -tags 'postgres sqlite3 mysql github file' -ldflags="-X main.Version=${MIGRATE_TAG}" -o $(GOPATH)/bin/migrate ${GOPATH}/src/github.com/golang-migrate/migrate/cmd/migrate
+	@CC=gcc CXX=g++ cd $(HOME) && go install \
+		-tags 'postgres sqlite3 mysql github file' \
+		github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 endif
 
 .PHONY: buildx
