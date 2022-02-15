@@ -61,6 +61,7 @@ services:
       MYSQL_DATABASE: ssh_management
       MYSQL_USER: server
       MYSQL_PASSWORD: server
+      MYSQL_ROOT_HOST: '%'
     volumes:
       - mysql:/var/lib/mysql
   queuemon:

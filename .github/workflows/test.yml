@@ -17,6 +17,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: ssh_management
+          MYSQL_ROOT_HOST: '%'
       redis:
         image: redis:6-alpine
         options: >-
