@@ -31,7 +31,7 @@ COPY . .
 
 ARG VERSION=""
 
-RUN apk add make && make "VERSION=${VERSION}" ENV=production build
+RUN apk add make && make VERSION="${VERSION}" ENV="production" build
 
 FROM ubuntu:20.04 as production
 
