@@ -4,9 +4,10 @@ import (
 	"strings"
 
 	user "github.com/SSH-Management/linux-user"
-	"github.com/SSH-Management/server/pkg/log"
+	zerologlog "github.com/rs/zerolog/log"
 
-	password "github.com/SSH-Management/server/pkg/services/password"
+	"github.com/SSH-Management/server/pkg/log"
+	"github.com/SSH-Management/server/pkg/services/password"
 )
 
 func (c *Container) GetUnixUserService() user.UnixInterface {
@@ -30,7 +31,7 @@ func (c *Container) GetPasswordHasher() password.Hasher {
 		case "bcrypt":
 			c.hasher = password.NewBcrypt(c.Config.GetInt("crypto.password.bcrypt.cost"))
 		default:
-			c.GetDefaultLogger().
+			zerologlog.
 				Fatal().
 				Str("driver", driver).
 				Msg("Invalid password hashing algorithm")

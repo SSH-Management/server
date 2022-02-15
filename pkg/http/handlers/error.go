@@ -24,7 +24,7 @@ func Error(logger zerolog.Logger, translator ut.Translator) fiber.ErrorHandler {
 
 		if e, ok := err.(*fiber.Error); ok {
 			return ctx.Status(e.Code).JSON(ErrorResponse{
-				Message: e.Message.(string),
+				Message: e.Message,
 			})
 		}
 

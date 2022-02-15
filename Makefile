@@ -70,17 +70,17 @@ clean:
 migrate: install-migrate-cli
 	@migrate -source file://$(shell pwd)/migrations -database $(DATABASE_URL) up
 
-STEP ?= ""
+M_STEP ?= ""
 
 .PHONY: migrate-down
 migrate-down: install-migrate-cli
-	@migrate -source file://$(shell pwd)/migrations -database $(DATABASE_URL) down $(STEP)
+	@migrate -source file://$(shell pwd)/migrations -database $(DATABASE_URL) down $(M_STEP)
 
 .PHONY: migration-create
 migration-create: install-migrate-cli
 	@migrate -database $(DATABASE_URL) create -dir ./migrations -seq -ext sql $(M_NAME)
 
-M_VERSION=""
+M_VERSION ?= ""
 
 .PHONY: migration-force
 migration-force: install-migrate-cli

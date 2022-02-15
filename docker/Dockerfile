@@ -3,9 +3,8 @@ FROM golang:1.17-bullseye as development
 RUN apt update && \
 	apt install iputils-ping mlocate -y && \
 	curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b /bin && \
-	updatedb
-
-RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest && \
+	updatedb && \
+    go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest && \
 	go install github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest && \
 	go install github.com/ramya-rao-a/go-outline@latest && \
 	go install github.com/cweill/gotests/gotests@latest && \
@@ -22,7 +21,7 @@ COPY . .
 
 ENV DEBUG=""
 
-CMD ["air", "-c", ".air.server.toml"]
+#CMD ["air", "-c", ".air.server.toml"]
 
 FROM golang:1.17-alpine as build
 
@@ -40,6 +39,11 @@ WORKDIR /app
 
 COPY --from=build /app/bin .
 
+EXPOSE 8080
+EXPOSE 6543
+EXPOSE 2345
+
 RUN apt update && apt upgrade -y && mkdir -p /var/log/ssh_management
 
-CMD ["./ssh_management", "--env", "production", "serve" ]
+# CMD ["./ssh_management", "--env", "production", "serve" ]
+# CMD ["./ssh_management", "--env", "production", "queue:worker" ]

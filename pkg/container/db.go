@@ -1,6 +1,7 @@
 package container
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/go-redis/redis/v8"
@@ -51,4 +52,17 @@ func (c *Container) GetRedisClient(db int) *redis.Client {
 	c.redisClients[db] = rdb
 
 	return rdb
+}
+
+func (c *Container) GetRawSQL() *sql.DB {
+	sqlDB, err := c.GetDbConnection().DB()
+
+	if err != nil {
+		log.
+			Fatal().
+			Err(err).
+			Msg("Cannot obtain instance of *sql.DB")
+	}
+
+	return sqlDB
 }

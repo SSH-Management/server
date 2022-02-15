@@ -13,18 +13,12 @@ jobs:
   test:
     services:
       mysql:
-        image: mariadb:10-focal
-        ports:
-          - 3306:3306
+        image: mysql/mysql-server:8
         env:
-          MARIADB_ROOT_PASSWORD: password
-          MARIADB_DATABASE: ssh_management
-          MARIADB_USER: server
-          MARIADB_PASSWORD: server
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: ssh_management
       redis:
         image: redis:6-alpine
-        ports:
-          - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
@@ -58,7 +52,14 @@ jobs:
       - name: Test ${{ matrix.go }}
         run: |
           cp ssh_management.example.yml ssh_management.yml
-          make RACE=1 ENV=development test
+          make ENV=development RACE=1 test
+        env:
+          MYSQL_USERNAME: root
+          MYSQL_PASSWORD: password
+          MYSQL_HOST: mysql
+          MYSQL_PORT: 3306
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

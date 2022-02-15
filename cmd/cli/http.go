@@ -56,6 +56,7 @@ func runHttpServer() func(cmd *cobra.Command, args []string) error {
 		app := http.CreateApplication(
 			c.Config.GetString("views.static.path"),
 			c.Config.GetString("views.static.dir"),
+			true,
 			c.Config.Env,
 			errorHandler,
 		)

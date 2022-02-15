@@ -70,7 +70,7 @@ func GetSession(app *fiber.App, store *session.Store) (*session.Session, func())
 }
 
 func CreateApplication() (*fiber.App, *session.Store) {
-	app := sshmanagementapp.CreateApplication("/static", "", config.Testing, nil)
+	app := sshmanagementapp.CreateApplication("/static", "", false, config.Testing, nil)
 
 	store := session.New(session.Config{
 		Storage:        memory.New(),

@@ -31,7 +31,7 @@ func migrateCommand(migrations embed.FS) *cobra.Command {
 }
 
 func createDatabase(cfg config.Config) error {
-	return helpers.CreateDatabase(mysql.FormatDSN(cfg, false), cfg.Database)
+	return helpers.CreateMySQLDatabase(mysql.FormatDSN(cfg, false), cfg.Database)
 }
 
 func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {

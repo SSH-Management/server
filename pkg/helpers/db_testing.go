@@ -81,7 +81,7 @@ func SetupDatabase() (*gorm.DB, func()) {
 
 	sqlDBConnectionStr := fmt.Sprintf("%s:%s@tcp(%s:%d)/?%s", username, password, host, port, connectionOptions)
 
-	if err := CreateDatabase(sqlDBConnectionStr, dbName); err != nil {
+	if err := CreateMySQLDatabase(sqlDBConnectionStr, dbName); err != nil {
 		panic(err)
 	}
 

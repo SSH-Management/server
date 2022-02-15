@@ -6,8 +6,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func CreateDatabase(connectionStr, dbName string) error {
+func CreateMySQLDatabase(connectionStr, dbName string) error {
 	sqlDB, err := sql.Open("mysql", connectionStr)
+
 	if err != nil {
 		return err
 	}
@@ -18,9 +19,5 @@ func CreateDatabase(connectionStr, dbName string) error {
 		return err
 	}
 
-	if err = sqlDB.Close(); err != nil {
-		return err
-	}
-
-	return nil
+	return sqlDB.Close()
 }

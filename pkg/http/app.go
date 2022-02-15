@@ -17,7 +17,7 @@ import (
 	"github.com/SSH-Management/server/pkg/http/middleware"
 )
 
-func CreateApplication(viewsPath, viewsDir string, environment config.Env, errorHandler fiber.ErrorHandler) *fiber.App {
+func CreateApplication(viewsPath, viewsDir string, static bool, environment config.Env, errorHandler fiber.ErrorHandler) *fiber.App {
 	staticConfig := fiber.Config{
 		StrictRouting: true,
 		AppName:       "SSH Server Management",
@@ -32,6 +32,20 @@ func CreateApplication(viewsPath, viewsDir string, environment config.Env, error
 	case config.Production:
 		app.Use(recover.New())
 	}
+	if static {
+		app.Static(
+			viewsPath,
+			viewsDir,
+			fiber.Static{
+				Browse:    false,
+				Compress:  true,
+				ByteRange: true,
+				MaxAge:    7200,
+				Download:  false,
+			},
+		)
+
+	}
 
 	app.Use(middleware.Context)
 	app.Use(requestid.New(requestid.Config{
@@ -40,16 +54,6 @@ func CreateApplication(viewsPath, viewsDir string, environment config.Env, error
 		},
 		ContextKey: constants.RequestIdKey,
 	}))
-
-	app.Static(
-		viewsPath,
-		viewsDir,
-		fiber.Static{
-			Browse:    false,
-			Compress:  false,
-			ByteRange: true,
-		},
-	)
 
 	return app
 }

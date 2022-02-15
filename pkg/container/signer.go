@@ -5,10 +5,11 @@ import (
 	"errors"
 	"os"
 
-	"github.com/SSH-Management/server/pkg/constants"
+	"github.com/SSH-Management/utils/v2"
+	zerologlog "github.com/rs/zerolog/log"
 
 	signer "github.com/SSH-Management/request-signer/v4"
-	"github.com/SSH-Management/utils/v2"
+	"github.com/SSH-Management/server/pkg/constants"
 )
 
 func (c *Container) GetSigner() signer.Signer {
@@ -21,7 +22,7 @@ func (c *Container) GetSigner() signer.Signer {
 	generator := c.GetKeyGenerator()
 
 	if err := generator.Generate(); err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
-		c.GetDefaultLogger().
+		zerologlog.
 			Fatal().
 			Err(err).
 			Msg("Failed to generate ed25519 keys")
@@ -32,7 +33,7 @@ func (c *Container) GetSigner() signer.Signer {
 	c.signer, err = signer.NewSignerWithNameAndOrder(keysFs, constants.PrivateKeyFileName, binary.LittleEndian)
 
 	if err != nil {
-		c.GetDefaultLogger().
+		zerologlog.
 			Fatal().
 			Err(err).
 			Msg("Error while creating request signer")
@@ -49,7 +50,7 @@ func (c *Container) GetKeyGenerator() signer.KeyGenerator {
 	_, err = utils.CreateDirectoryFromFile(keysDir, 0o744)
 
 	if err != nil {
-		c.GetDefaultLogger().
+		zerologlog.
 			Fatal().
 			Str("path", keysDir).
 			Err(err).
@@ -59,7 +60,7 @@ func (c *Container) GetKeyGenerator() signer.KeyGenerator {
 	generator, err := signer.NewKeyGenerator(keysDir+"/"+constants.PrivateKeyFileName, keysDir+"/"+constants.PublicKeyFileName)
 
 	if err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
-		c.GetDefaultLogger().
+		zerologlog.
 			Fatal().
 			Err(err).
 			Msg("Failed to create ed25519 key generator")

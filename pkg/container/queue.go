@@ -12,7 +12,7 @@ func (c *Container) GetQueueClient() *asynq.Client {
 			Addr:     fmt.Sprintf("%s:%d", c.Config.GetString("redis.host"), c.Config.GetInt("redis.port")),
 			Username: c.Config.GetString("redis.username"),
 			Password: c.Config.GetString("redis.password"),
-			DB:       5,
+			DB:       c.Config.GetInt("queue.redis.database"),
 		})
 	}
 

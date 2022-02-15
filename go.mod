@@ -13,7 +13,7 @@ require (
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/gofiber/fiber/v2 v2.26.0
+	github.com/gofiber/fiber/v2 v2.27.0
 	github.com/gofiber/storage/memory v0.0.0-20220210144513-cc5ccf062b5d
 	github.com/gofiber/storage/redis v0.0.0-20220210144513-cc5ccf062b5d
 	github.com/golang-migrate/migrate/v4 v4.15.1
@@ -26,7 +26,7 @@ require (
 	github.com/spf13/viper v1.10.1
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.33.0
-	golang.org/x/crypto v0.0.0-20220213190939-1e6e3497d506
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
 	google.golang.org/genproto v0.0.0-20220211171837-173942840c17
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1

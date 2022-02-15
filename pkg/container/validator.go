@@ -5,6 +5,7 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	entranslations "github.com/go-playground/validator/v10/translations/en"
+	zerologlog "github.com/rs/zerolog/log"
 )
 
 func (c *Container) GetValidator() *validator.Validate {
@@ -12,7 +13,7 @@ func (c *Container) GetValidator() *validator.Validate {
 		c.validator = validator.New()
 
 		if err := entranslations.RegisterDefaultTranslations(c.validator, c.GetTranslator()); err != nil {
-			c.GetDefaultLogger().
+			zerologlog.
 				Fatal().
 				Err(err).
 				Msg("Error while registering english translations")
@@ -30,7 +31,9 @@ func (c *Container) GetTranslator() ut.Translator {
 		translator, found := uni.GetTranslator("en")
 
 		if !found {
-			c.GetDefaultLogger().Fatal().Msgf("Locale is not found: en")
+			zerologlog.
+				Fatal().
+				Msg("Locale is not found: en")
 		}
 
 		c.translator = translator

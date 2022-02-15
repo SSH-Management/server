@@ -1,28 +1,12 @@
 version: '3.6'
 
 services:
-  client:
-    image: malusevd99/ssh-management:client-0.3.0
-    ports:
-      - '9999:9999'
-    environment:
-      MASTER_SERVER: server:6543
-      SERVER_NAME: 'test_client'
-      SERVER_GROUP: 'test_group'
-    depends_on:
-      - server
-    restart: unless-stopped
-    networks:
-      - net
-    volumes:
-      - ./logs/client:/var/log/ssh_management
   server:
     build:
       context: .
-      dockerfile: ./docker/server/Dockerfile
+      dockerfile: ./docker/Dockerfile
       target: development
-      args:
-        MIGRATE_TAG: v4.15.1
+    command: 'air -c .air.server.toml'
     networks:
       - net
     restart: unless-stopped
@@ -39,26 +23,25 @@ services:
       - './logs:/var/log/ssh_management'
       - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
       - '.:/app'
-#  queue:
-#    build:
-#      context: .
-#      dockerfile: ./docker/queue/Dockerfile
-#      target: development
-#    networks:
-#      - net
-#    restart: unless-stopped
-#    depends_on:
-#      - server
-#      - mysql
-#      - redis
-#    volumes:
-#      - 'gocache:/root/.cache/go-build'
-#      - 'gomodules_queue:/go'
-#      - './logs:/var/log/ssh_management'
-#      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
-#      - '.:/app'
-#    environment:
-#      DEBUG: 1
+  queue:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: development
+    command: 'air -c .air.queue.toml'
+    networks:
+      - net
+    restart: unless-stopped
+    depends_on:
+      - server
+      - mysql
+      - redis
+    volumes:
+      - 'gocache:/root/.cache/go-build'
+      - 'gomodules_queue:/go'
+      - './logs:/var/log/ssh_management'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+      - '.:/app'
   redis:
     image: 'redis:6-alpine'
     networks:
@@ -67,22 +50,22 @@ services:
     ports:
       - '6379:6379'
   mysql:
-    image: 'mariadb:10.7.1-focal'
+    image: 'mysql/mysql-server:8'
     ports:
       - '3306:3306'
     networks:
       - net
     restart: unless-stopped
     environment:
-      MARIADB_ROOT_PASSWORD: password
-      MARIADB_DATABASE: ssh_management
-      MARIADB_USER: server
-      MARIADB_PASSWORD: server
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: ssh_management
+      MYSQL_USER: server
+      MYSQL_PASSWORD: server
     volumes:
       - mysql:/var/lib/mysql
   queuemon:
     image: hibiken/asynqmon
-    command: --redis-addr redis:6379 --redis-db 5
+    command: --redis-addr redis:6379 --redis-db 3
     ports:
       - '8000:8080'
     networks:
@@ -98,6 +81,21 @@ services:
     restart: unless-stopped
     networks:
       - net
+  client:
+    image: malusevd99/ssh-management:client-0.3.0
+    ports:
+      - '9999:9999'
+    environment:
+      MASTER_SERVER: server:6543
+      SERVER_NAME: 'test_client'
+      SERVER_GROUP: 'test_group'
+    depends_on:
+      - server
+    restart: unless-stopped
+    networks:
+      - net
+    volumes:
+      - ./logs/client:/var/log/ssh_management
 networks:
   net:
     driver: bridge
