@@ -58,35 +58,6 @@ jobs:
           tags: malusevd99/ssh-management:server${{ "-" + steps.version_tag.outputs.tag }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-  queue:
-    runs-on: ubuntu-latest
-    needs: [ tests ]
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: main
-      - uses: olegtarasov/get-tag@v2.1
-        id: version_tag
-        if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          tagRegex: "v(.*)"
-          tagRegexGroup: 1
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push SSH Management Queue
         id: docker_build_queue
         uses: docker/build-push-action@v2
