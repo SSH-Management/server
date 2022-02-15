@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"time"
 
 	"github.com/SSH-Management/server/pkg/constants"
@@ -149,14 +148,6 @@ func WithBody(body interface{}) RequestModifier {
 	}
 }
 
-func WithQueryString(query url.Values) RequestModifier {
-	return func(req *http.Request) *http.Request {
-		req.URL.RawQuery = query.Encode()
-
-		return req
-	}
-}
-
 func WithCookies(cookies []*http.Cookie) RequestModifier {
 	return func(req *http.Request) *http.Request {
 		for _, cookie := range cookies {
@@ -178,13 +169,11 @@ func MakeRequest(method, uri string, modifiers ...RequestModifier) *http.Request
 	case http.MethodPost, http.MethodPut, http.MethodPatch:
 		defaults = []func(*http.Request) *http.Request{
 			WithHeaders(http.Header{}),
-			WithQueryString(url.Values{}),
 			WithBody(nil),
 		}
 	default:
 		defaults = []func(*http.Request) *http.Request{
 			WithHeaders(http.Header{}),
-			WithQueryString(url.Values{}),
 		}
 	}
 

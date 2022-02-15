@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/spf13/viper"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -42,20 +43,42 @@ func TestParseEnvironment(t *testing.T) {
 	}
 }
 
-// TODO: Test public key loading
-//t.Run("PublicKeyError", func(t *testing.T) {
-//	c, err := New(
-//		Testing,
-//		WithPath("./testdata"),
-//		WithConfigFileName("ssh_management_error"),
-//		WithConfigType("yaml"),
-//	)
-//
-//	assert.Error(err)
-//	_, ok := err.(*os.PathError)
-//	assert.True(ok)
-//	assert.Nil(c)
-//})
+func TestConfig_LoadServerPublicSSHKey(t *testing.T) {
+	t.Parallel()
+	assert := require.New(t)
+
+	t.Run("LoadsPublicKeySuccessfully", func(t *testing.T) {
+		c, err := New(
+			Testing,
+			WithPath("./testdata"),
+			WithConfigFileName("ssh_management_ok"),
+			WithConfigType("yaml"),
+		)
+
+		assert.NoError(err)
+		assert.NotNil(c)
+		publicKey, err := c.LoadServerPublicSSHKey()
+		assert.NoError(err)
+		assert.NotEmpty(publicKey)
+	})
+
+	t.Run("LoadsPublicKey", func(t *testing.T) {
+		c, err := New(
+			Testing,
+			WithPath("./testdata"),
+			WithConfigFileName("ssh_management_error"),
+			WithConfigType("yaml"),
+		)
+
+		assert.NoError(err)
+		assert.NotNil(c)
+		publicKey, err := c.LoadServerPublicSSHKey()
+		assert.Error(err)
+		_, ok := err.(*os.PathError)
+		assert.True(ok)
+		assert.Empty(publicKey)
+	})
+}
 
 func TestNew(t *testing.T) {
 	t.Parallel()
@@ -100,5 +123,14 @@ func TestNew(t *testing.T) {
 		_, ok := err.(viper.ConfigParseError)
 		assert.True(ok)
 		assert.Nil(c)
+	})
+
+	t.Run("Defaults", func(t *testing.T) {
+		defaults := DefaultModifiers[:]
+		defaults = append(defaults, WithPath("./testdata"))
+		c, err := New(Development, defaults...)
+
+		assert.NoError(err)
+		assert.NotNil(c)
 	})
 }

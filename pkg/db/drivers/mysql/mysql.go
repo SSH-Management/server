@@ -10,6 +10,8 @@ import (
 	"github.com/SSH-Management/server/pkg/db/connector"
 )
 
+var _ connector.Interface = mySql{}
+
 type (
 	mySql struct{}
 )

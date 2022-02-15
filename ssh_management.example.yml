@@ -25,7 +25,7 @@ http:
   enable_monitor: true
 
 logging:
-  file: /var/log/ssh_management/server.jsonl
+  file: /var/log/ssh_management.yml/server.jsonl
   level: info
   console: true
   sample: 0
@@ -93,7 +93,7 @@ cors:
 queue:
   concurrency: 10
   logging:
-    file: /var/log/ssh_management/queue.jsonl
+    file: /var/log/ssh_management.yml/queue.jsonl
     level: info
     console: true
   redis:

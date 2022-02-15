@@ -2,8 +2,6 @@ package command
 
 import (
 	"errors"
-	"os"
-
 	signer "github.com/SSH-Management/request-signer/v4"
 	"github.com/SSH-Management/server/pkg/config"
 	"github.com/SSH-Management/server/pkg/container"
@@ -40,9 +38,9 @@ func GetContainer(logger ...string) *container.Container {
 }
 
 func LoadConfig(*cobra.Command, []string) error {
-	log.ConfigureDefaultLogger(LoggingLevel, os.Stdout)
+	log.ConfigureDefaultLogger(LoggingLevel)
 
-	v, err := config.New(config.ParseEnvironment(Environment))
+	v, err := config.NewDefault(config.ParseEnvironment(Environment))
 	if err != nil {
 		return err
 	}

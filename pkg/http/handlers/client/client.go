@@ -24,11 +24,11 @@ func GetServer(serverRepo server.Interface) fiber.Handler {
 			return err
 		}
 
-		server, err := serverRepo.Find(c.UserContext(), uint64(id))
+		s, err := serverRepo.Find(c.UserContext(), uint64(id))
 		if err != nil {
 			return err
 		}
 
-		return c.JSON(server)
+		return c.JSON(s)
 	}
 }

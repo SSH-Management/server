@@ -16,7 +16,7 @@ type (
 
 	Config struct {
 		*viper.Viper
-		PublicKey string
+		publicKey string
 		Env       Env
 	}
 
@@ -43,8 +43,8 @@ func ParseEnvironment(env string) Env {
 }
 
 func (c *Config) LoadServerPublicSSHKey() (string, error) {
-	if c.PublicKey != "" {
-		return c.PublicKey, nil
+	if c.publicKey != "" {
+		return c.publicKey, nil
 	}
 
 	keysFs := os.DirFS(c.GetString("crypto.ed25519"))
@@ -55,9 +55,9 @@ func (c *Config) LoadServerPublicSSHKey() (string, error) {
 		return "", err
 	}
 
-	c.PublicKey = base64.RawURLEncoding.EncodeToString(contents)
+	c.publicKey = base64.RawURLEncoding.EncodeToString(contents)
 
-	return c.PublicKey, nil
+	return c.publicKey, nil
 }
 
 func WithConfigFileName(name string) Modifier {
@@ -97,26 +97,26 @@ func WithDefaultPaths() Modifier {
 		case Development:
 			v.AddConfigPath(".")
 		case Production:
-			v.AddConfigPath("/etc/ssh_management/")
+			v.AddConfigPath("/etc/ssh_management")
 		}
 
 		return v
 	}
 }
 
-var defaults = [4]Modifier{
+var DefaultModifiers = [4]Modifier{
 	WithConfigFileName("ssh_management"),
 	WithConfigType("yaml"),
 	WithDefaultPaths(),
 	WithEnvSupport(),
 }
 
+func NewDefault(env Env) (*Config, error) {
+	return New(env, DefaultModifiers[:]...)
+}
+
 func New(env Env, modifiers ...Modifier) (*Config, error) {
 	v := viper.New()
-
-	if len(modifiers) == 0 {
-		modifiers = defaults[:]
-	}
 
 	for _, modifier := range modifiers {
 		v = modifier(v, env)
@@ -131,6 +131,6 @@ func New(env Env, modifiers ...Modifier) (*Config, error) {
 	return &Config{
 		Env:       env,
 		Viper:     v,
-		PublicKey: "",
+		publicKey: "",
 	}, nil
 }

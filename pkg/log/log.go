@@ -63,7 +63,7 @@ func (l UnixServiceLogger) Print(msg string, data ...interface{}) {
 		Msgf(msg, data...)
 }
 
-func ConfigureDefaultLogger(level string, writer io.Writer) {
+func ConfigureDefaultLogger(level string) {
 	zerolog.SetGlobalLevel(Parse(level))
 	zerolog.TimeFieldFormat = DateTimeFormat
 	zerolog.DurationFieldUnit = time.Microsecond
@@ -98,7 +98,6 @@ func New(fp, level string, toConsole bool, sample uint32) (*Logger, error) {
 			With().
 			Timestamp().
 			Logger().
-			// Sample(&zerolog.BasicSampler{N: sample}).
 			Level(Parse(level))
 	}
 

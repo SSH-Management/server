@@ -28,7 +28,6 @@ else
 	@echo "Target ${ENV} is not supported"
 endif
 	@cp ssh_management.example.yml ./bin/ssh_management.yml
-	@cp -R ./migrations/ ./bin/migrations/
 
 .PHONY: run
 run:

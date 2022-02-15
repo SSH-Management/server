@@ -23,5 +23,5 @@ ssh_management.yml
 keys/
 coverage.txt
 tmp/
-!pkg/config/testdata/ssh_management_ok.yml
+!pkg/config/testdata/*.yml
 !pkg/config/testdata/keys

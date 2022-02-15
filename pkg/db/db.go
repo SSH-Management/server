@@ -4,12 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
-
 	"github.com/SSH-Management/server/pkg/db/config"
 	"github.com/SSH-Management/server/pkg/db/connector"
 	"github.com/SSH-Management/server/pkg/db/drivers/mysql"
+	"gorm.io/gorm"
 )
 
 var ErrNotFound = errors.New("item is not found")
@@ -20,22 +18,23 @@ func GetDbConnection(c config.Config) (*gorm.DB, error) {
 	case "mysql":
 		dbConnector = mysql.New()
 	default:
-		return nil, fmt.Errorf("Driver %s is not supported", c.Driver)
+		return nil, fmt.Errorf("driver '%s' is not supported", c.Driver)
 	}
 
 	dialect, err := dbConnector.Connect(c)
+
 	if err != nil {
 		return nil, err
 	}
 
-	db, err := gorm.Open(dialect, &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{},
-	})
+	db, err := gorm.Open(dialect, &gorm.Config{})
+
 	if err != nil {
 		return nil, err
 	}
 
 	sqlDb, err := db.DB()
+
 	if err != nil {
 		return nil, err
 	}

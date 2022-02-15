@@ -43,7 +43,7 @@ EXPOSE 8080
 EXPOSE 6543
 EXPOSE 2345
 
-RUN apt update && apt upgrade -y && mkdir -p /var/log/ssh_management
+RUN apt update && apt upgrade -y && mkdir -p /var/log/ssh_management.yml
 
-# CMD ["./ssh_management", "--env", "production", "serve" ]
-# CMD ["./ssh_management", "--env", "production", "queue:worker" ]
+# CMD ["./ssh_management.yml", "--env", "production", "serve" ]
+# CMD ["./ssh_management.yml", "--env", "production", "queue:worker" ]

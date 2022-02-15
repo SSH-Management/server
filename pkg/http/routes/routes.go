@@ -53,6 +53,7 @@ func Register(c *container.Container, router *fiber.App, environment config.Env)
 	registerAuthRoutes(c, apiV1.Group("/auth"))
 	registerUserRoutes(c, apiV1.Group("/users"))
 	registerServerRoutes(c, apiV1.Group("/servers"))
+	registerGroupRoutes(c, apiV1.Group("/groups"))
 
 	if c.Config.GetBool("http.enable_monitor") {
 		router.Get("/monitor", monitor.New())

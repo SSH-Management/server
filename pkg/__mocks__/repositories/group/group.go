@@ -16,7 +16,19 @@ type MockGroupRepository struct {
 	mock.Mock
 }
 
-func (m *MockGroupRepository) Find(ctx context.Context, id uint64) (models.Group, error) {
+func (m *MockGroupRepository) Find(ctx context.Context, systemGroups bool) ([]models.Group, error) {
+	args := m.Called(ctx, systemGroups)
+
+	err := args.Error(1)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return args.Get(0).([]models.Group), nil
+}
+
+func (m *MockGroupRepository) FindById(ctx context.Context, id uint64) (models.Group, error) {
 	args := m.Called(ctx, id)
 
 	return args.Get(0).(models.Group), args.Error(1)

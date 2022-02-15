@@ -20,8 +20,8 @@ services:
     volumes:
       - 'gocache:/root/.cache/go-build'
       - 'gomodules_server:/go'
-      - './logs:/var/log/ssh_management'
-      - './ssh_management.example.yml:/etc/ssh_management/ssh_management_ok.yml'
+      - './logs:/var/log/ssh_management.yml'
+      - './ssh_management.yml.example.yml:/etc/ssh_management.yml/ssh_management_ok.yml'
       - '.:/app'
   queue:
     build:
@@ -39,8 +39,8 @@ services:
     volumes:
       - 'gocache:/root/.cache/go-build'
       - 'gomodules_queue:/go'
-      - './logs:/var/log/ssh_management'
-      - './ssh_management.example.yml:/etc/ssh_management/ssh_management_ok.yml'
+      - './logs:/var/log/ssh_management.yml'
+      - './ssh_management.yml.example.yml:/etc/ssh_management.yml/ssh_management_ok.yml'
       - '.:/app'
   redis:
     image: 'redis:6-alpine'
@@ -58,7 +58,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: ssh_management
+      MYSQL_DATABASE: ssh_management.yml
       MYSQL_USER: server
       MYSQL_PASSWORD: server
       MYSQL_ROOT_HOST: '%'
@@ -96,7 +96,7 @@ services:
     networks:
       - net
     volumes:
-      - ./logs/client:/var/log/ssh_management
+      - ./logs/client:/var/log/ssh_management.yml
 networks:
   net:
     driver: bridge

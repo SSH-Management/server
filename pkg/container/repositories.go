@@ -8,7 +8,7 @@ import (
 
 func (c *Container) GetGroupRepository() group.Interface {
 	if c.groupRepository == nil {
-		c.groupRepository = group.New(c.GetDbConnection(), c.GetDefaultLogger())
+		c.groupRepository = group.New(c.GetDbConnection())
 	}
 
 	return c.groupRepository

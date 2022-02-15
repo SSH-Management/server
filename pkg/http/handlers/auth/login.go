@@ -51,7 +51,12 @@ func LoginHandler(loginService *auth.LoginService, validator *validator.Validate
 
 		defer func() {
 			err = sess.Save()
-			zerologlog.Error().Err(err).Msg("Failed to save")
+			if err != nil {
+				zerologlog.
+					Error().
+					Err(err).
+					Msg("Failed to save")
+			}
 		}()
 
 		sess.Set("user", user)
