@@ -50,7 +50,7 @@ services:
     ports:
       - '6379:6379'
   mysql:
-    image: 'mysql/mysql-server:8'
+    image: mysql/mysql-server:8.0.28-1.2.7-server
     ports:
       - '3306:3306'
     networks:

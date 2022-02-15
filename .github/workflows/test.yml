@@ -13,7 +13,7 @@ jobs:
   test:
     services:
       mysql:
-        image: mysql:8
+        image: mysql/mysql-server:8.0.28-1.2.7-server
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: ssh_management

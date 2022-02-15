@@ -9,5 +9,5 @@ CREATE TABLE servers (
 
 ALTER TABLE servers
     ADD CONSTRAINT servers_group_id_constraint
-    FOREIGN KEY (group_id) REFERENCES groups (id)
+    FOREIGN KEY (group_id) REFERENCES `groups` (id)
     ON DELETE CASCADE;

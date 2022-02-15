@@ -1,1 +1,1 @@
-ALTER TABLE servers DROP COLUMN status;
+ALTER TABLE `servers` DROP COLUMN status;
