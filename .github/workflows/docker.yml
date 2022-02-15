@@ -55,7 +55,7 @@ jobs:
           pull: true
           platforms: linux/amd64,linux/arm64
           target: production
-          tags: malusevd99/ssh-management:server${{ "-" + steps.version_tag.outputs.tag }}
+          tags: malusevd99/ssh-management:server${{ format('-{0}', steps.version_tag.outputs.tag) }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       - name: Build and push SSH Management Queue
