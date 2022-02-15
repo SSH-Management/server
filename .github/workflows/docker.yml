@@ -31,7 +31,7 @@ jobs:
           tagRegex: "v(.*)"
           tagRegexGroup: 1
 
-      - name: Get Tag
+      - name: Get Tag Develop
         if: !startsWith(github.ref, 'refs/tags/v')
         id: version_tag
         run: |
@@ -78,7 +78,7 @@ jobs:
         with:
           tagRegex: "v(.*)"
           tagRegexGroup: 1
-      - name: Get Tag
+      - name: Get Tag Develop
         if: !startsWith(github.ref, 'refs/tags/v')
         id: version_tag
         run: |
