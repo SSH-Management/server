@@ -40,6 +40,10 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+      - name: Prepare version tag
+        id: prepared_version
+        run: |
+          python3 -c "print('::set-output name=tag::${{ format('-{0}', steps.version_tag.outputs.tag) }}'.rstrip('-'))"
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
@@ -55,7 +59,7 @@ jobs:
           pull: true
           platforms: linux/amd64,linux/arm64
           target: production
-          tags: malusevd99/ssh-management:server${{ format('-{0}', steps.version_tag.outputs.tag) }}
+          tags: malusevd99/ssh-management:server${{ steps.prepared_version.outputs.tag }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       - name: Build and push SSH Management Queue
@@ -68,6 +72,6 @@ jobs:
           pull: true
           platforms: linux/amd64,linux/arm64
           target: production
-          tags: malusevd99/ssh-management:queue${{ format('-{0}', steps.version_tag.outputs.tag) }}
+          tags: malusevd99/ssh-management:queue${{ steps.prepared_version.outputs.tag }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
