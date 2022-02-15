@@ -8,7 +8,7 @@ import (
 
 var Version = "dev"
 
-//go:embed migrations/*.sql
+//go:embed migrations/*
 var migrations embed.FS
 
 func main() {

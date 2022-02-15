@@ -99,11 +99,11 @@ buildx: buildx-server buildx-queue
 
 .PHONY: buildx-server
 buildx-server:
-	@docker buildx build --target production --build-arg VERSION=$(VERSION) --platform "$(PLATFORM)" -t "malusevd99/ssh-management:server-$(VERSION)" --push --file ./docker/server/Dockerfile .
+	@docker buildx build --target production --build-arg VERSION="$(VERSION)" --platform "$(PLATFORM)" -t "malusevd99/ssh-management:server-$(VERSION)" --push --file ./docker/Dockerfile .
 
 .PHONY: buildx-queue
 buildx-queue:
-	@docker buildx build --target production --build-arg VERSION=$(VERSION) --platform "$(PLATFORM)" -t "malusevd99/ssh-management:queue-$(VERSION)" --push --file ./docker/queue/Dockerfile .
+	@docker buildx build --target production --build-arg VERSION="$(VERSION)" --platform "$(PLATFORM)" -t "malusevd99/ssh-management:queue-$(VERSION)" --push --file ./docker/Dockerfile .
 
 .PHONY: lint
 lint:

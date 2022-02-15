@@ -6,5 +6,4 @@ logs/
 .air.toml
 ssh_management.yml
 .devcontainer/
-migrations/
 README.md
