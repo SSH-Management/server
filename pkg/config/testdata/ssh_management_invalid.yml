@@ -1,0 +1,5 @@
+---
+environment: 'development'
+
+  crypto:
+  ed25519: './keys'

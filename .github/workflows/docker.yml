@@ -7,7 +7,6 @@ on:
       - main
     tags:
       - 'v*'
-
 jobs:
   tests:
     uses: SSH-Management/server/.github/workflows/test.yml@main

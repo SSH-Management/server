@@ -19,14 +19,14 @@ func (c *Container) GetSigner() signer.Signer {
 
 	var err error
 
-	generator := c.GetKeyGenerator()
-
-	if err := generator.Generate(); err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
-		zerologlog.
-			Fatal().
-			Err(err).
-			Msg("Failed to generate ed25519 keys")
-	}
+	//generator := c.GetKeyGenerator()
+	//
+	//if err := generator.Generate(); err != nil && !errors.Is(err, signer.ErrKeysAlreadyExist) {
+	//	zerologlog.
+	//		Fatal().
+	//		Err(err).
+	//		Msg("Failed to generate ed25519 keys")
+	//}
 
 	keysFs := os.DirFS(c.Config.GetString("crypto.ed25519"))
 

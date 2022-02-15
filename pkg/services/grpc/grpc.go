@@ -11,15 +11,27 @@ import (
 )
 
 func RegisterServices(c *container.Container, server grpc.ServiceRegistrar) {
+	serverPublicKey, err := c.Config.LoadServerPublicSSHKey()
+
+	if err != nil {
+		c.GetDefaultLogger().
+			Fatal().
+			Err(err).
+			Msg("Failed to load Server's Public Key")
+	}
+
 	health_check.RegisterHealthServer(
 		server,
-		health.New(c.GetDbConnection(), c.GetRedisClient(0)),
+		health.New(
+			c.GetDbConnection(),
+			c.GetRedisClient(0),
+		),
 	)
 
 	pb_client.RegisterClientServiceServer(
 		server,
 		client.New(
-			c.Config.PublicKey,
+			serverPublicKey,
 			c.GetDefaultLogger(),
 			c.GetServerRepository(),
 			c.GetUserRepository(),

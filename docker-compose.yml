@@ -21,7 +21,7 @@ services:
       - 'gocache:/root/.cache/go-build'
       - 'gomodules_server:/go'
       - './logs:/var/log/ssh_management'
-      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management_ok.yml'
       - '.:/app'
   queue:
     build:
@@ -40,7 +40,7 @@ services:
       - 'gocache:/root/.cache/go-build'
       - 'gomodules_queue:/go'
       - './logs:/var/log/ssh_management'
-      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management_ok.yml'
       - '.:/app'
   redis:
     image: 'redis:6-alpine'
