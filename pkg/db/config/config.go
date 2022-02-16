@@ -12,6 +12,7 @@ type Config struct {
 	Password        string        `mapstructure:"password" json:"password,omitempty" yaml:"password,omitempty"`
 	Database        string        `mapstructure:"database" json:"database,omitempty" yaml:"database,omitempty"`
 	Host            string        `mapstructure:"host" json:"host,omitempty" yaml:"host,omitempty"`
+	Schema          string        `mapstructure:"schema" json:"schema,omitempty" yaml:"schema,omitempty"`
 	Port            int           `mapstructure:"port" json:"port,omitempty" yaml:"port,omitempty"`
 	TimeZone        string        `mapstructure:"time_zone" json:"time_zone,omitempty" yaml:"time_zone,omitempty"`
 	SSLMode         string        `mapstructure:"ssl_mode" json:"ssl_mode,omitempty" yaml:"ssl_mode,omitempty"`
@@ -56,6 +57,12 @@ func (c Config) FormatConnectionStringURL() string {
 		}
 	}
 
+	schema := "public"
+
+	if c.Schema != "" {
+		schema = c.Schema
+	}
+
 	sslMode := "disable"
 
 	if c.SSLMode != "" {
@@ -69,7 +76,7 @@ func (c Config) FormatConnectionStringURL() string {
 	}
 
 	return fmt.Sprintf(
-		"postgresql://%s:%s@%s:%d/%s?sslmode=%s&TimeZone=%s",
+		"postgresql://%s:%s@%s:%d/%s?sslmode=%s&TimeZone=%s&search_path=%s",
 		username,
 		password,
 		host,
@@ -77,6 +84,7 @@ func (c Config) FormatConnectionStringURL() string {
 		database,
 		sslMode,
 		timeZone,
+		schema,
 	)
 }
 
@@ -115,6 +123,12 @@ func (c Config) FormatConnectionString() string {
 		}
 	}
 
+	schema := "public"
+
+	if c.Schema != "" {
+		schema = c.Schema
+	}
+
 	sslMode := "disable"
 
 	if c.SSLMode != "" {
@@ -128,7 +142,7 @@ func (c Config) FormatConnectionString() string {
 	}
 
 	return fmt.Sprintf(
-		"host=%s user=%s password=%s %s port=%d sslmode=%s application_name=%s TimeZone=%s",
+		"host=%s user=%s password=%s %s port=%d sslmode=%s application_name=%s search_path=%s TimeZone=%s",
 		host,
 		username,
 		password,
@@ -136,6 +150,7 @@ func (c Config) FormatConnectionString() string {
 		port,
 		sslMode,
 		"SSHManagementServer",
+		schema,
 		timeZone,
 	)
 }

@@ -23,7 +23,7 @@ import (
 const (
 	connectionOptions = "application_name=SSHManagementTest&sslmode=disable&search_path=%s"
 
-	connectionStringFmt = "postgresql://%s:%s@%s:%d/ssh_management_%s?%s"
+	connectionStringFmt = "postgresql://%s:%s@%s:%d/ssh_management?%s"
 )
 
 func findMigrationsDir(workingDir string) (string, error) {
@@ -77,16 +77,14 @@ func SetupDatabase() (*gorm.DB, func()) {
 
 	dbName := fmt.Sprintf("ssh_management_%s", dbRandomIndex)
 
-	connectionString := fmt.Sprintf(connectionStringFmt, username, password, host, port, dbRandomIndex, fmt.Sprintf(connectionOptions, dbName))
+	connectionString := fmt.Sprintf(connectionStringFmt, username, password, host, port, fmt.Sprintf(connectionOptions, dbName))
 
-	sqlDBConnectionStr := fmt.Sprintf("postgresql://%s:%s@%s:%d/?%s", username, password, host, port, fmt.Sprintf(connectionOptions, dbName))
-
-	if err := CreateDatabase(sqlDBConnectionStr, dbName); err != nil {
+	if err := CreateDatabase(connectionString, dbName); err != nil {
 		panic(err)
 	}
 
 	clean := func() {
-		conn, err := CreateDatabaseConnection(sqlDBConnectionStr)
+		conn, err := CreateDatabaseConnection(connectionString)
 		if err != nil {
 			panic(err)
 		}
@@ -126,7 +124,8 @@ func SetupDatabase() (*gorm.DB, func()) {
 	gormDb, err := db.GetDbConnection(config.Config{
 		Username:        username,
 		Password:        password,
-		Database:        dbName,
+		Database:        "ssh_management",
+		Schema:          dbName,
 		Host:            host,
 		Port:            int(port),
 		MaxIdleTime:     0,
