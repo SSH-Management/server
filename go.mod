@@ -12,7 +12,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/go-redis/redis/v8 v8.11.4
-	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gofiber/fiber/v2 v2.27.0
 	github.com/gofiber/storage/memory v0.0.0-20220210144513-cc5ccf062b5d
 	github.com/gofiber/storage/redis v0.0.0-20220210144513-cc5ccf062b5d
@@ -28,7 +27,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.33.0
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
-	google.golang.org/genproto v0.0.0-20220211171837-173942840c17
+	google.golang.org/genproto v0.0.0-20220216160803-4663080d8bc8
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 	gorm.io/driver/postgres v1.2.3
