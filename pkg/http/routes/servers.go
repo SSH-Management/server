@@ -8,7 +8,7 @@ import (
 )
 
 func registerServerRoutes(c *container.Container, router fiber.Router) {
-	//router.Use(middleware.Auth(c.GetSession()))
+	// router.Use(middleware.Auth(c.GetSession()))
 
 	router.Get("/", client.GetServers(c.GetServerRepository()))
 	router.Get("/:id", client.GetServer(c.GetServerRepository()))

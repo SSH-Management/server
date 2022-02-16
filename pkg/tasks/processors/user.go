@@ -176,7 +176,7 @@ func (n *NewUserCreated) ProcessTask(ctx context.Context, task *asynq.Task) erro
 
 	select {
 	case <-ctx.Done():
-		return errors.New("timeout...")
+		return errors.New("timeout")
 	default:
 		return nil
 	}

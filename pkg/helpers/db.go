@@ -26,7 +26,7 @@ func CreateDatabase(connectionStr, dbName string) error {
 		return err
 	}
 
-	_, err = conn.Exec(context.Background(), "CREATE DATABASE "+dbName)
+	_, err = conn.Exec(context.Background(), "CREATE SCHEMA "+dbName)
 
 	if err != nil {
 		return err

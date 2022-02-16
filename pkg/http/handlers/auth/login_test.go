@@ -2,12 +2,13 @@ package auth_test
 
 import (
 	"encoding/json"
-	"github.com/SSH-Management/server/pkg/constants"
 	"io"
 	"net/http"
 	"regexp"
 	"testing"
 	"time"
+
+	"github.com/SSH-Management/server/pkg/constants"
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"

@@ -3,6 +3,7 @@ package cli
 import (
 	"embed"
 	"fmt"
+
 	"gorm.io/gorm"
 
 	"github.com/golang-migrate/migrate/v4"

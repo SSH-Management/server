@@ -19,10 +19,6 @@ WORKDIR /app
 
 COPY . .
 
-ENV DEBUG=""
-
-#CMD ["air", "-c", ".air.server.toml"]
-
 FROM golang:1.17-alpine as build
 
 WORKDIR /app
@@ -44,6 +40,3 @@ EXPOSE 6543
 EXPOSE 2345
 
 RUN apt update && apt upgrade -y && mkdir -p /var/log/ssh_management.yml
-
-# CMD ["./ssh_management.yml", "--env", "production", "serve" ]
-# CMD ["./ssh_management.yml", "--env", "production", "queue:worker" ]

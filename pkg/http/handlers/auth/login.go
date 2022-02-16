@@ -1,8 +1,9 @@
 package auth
 
 import (
-	"github.com/SSH-Management/server/pkg/constants"
 	"time"
+
+	"github.com/SSH-Management/server/pkg/constants"
 
 	"github.com/SSH-Management/server/pkg/models"
 	"github.com/go-playground/validator/v10"

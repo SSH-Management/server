@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	connectionOptions = "application_name=SSHManagementTest&sslmode=disable"
+	connectionOptions = "application_name=SSHManagementTest&sslmode=disable&search_path=%s"
 
 	connectionStringFmt = "postgresql://%s:%s@%s:%d/ssh_management_%s?%s"
 )
@@ -77,9 +77,9 @@ func SetupDatabase() (*gorm.DB, func()) {
 
 	dbName := fmt.Sprintf("ssh_management_%s", dbRandomIndex)
 
-	connectionString := fmt.Sprintf(connectionStringFmt, username, password, host, port, dbRandomIndex, connectionOptions)
+	connectionString := fmt.Sprintf(connectionStringFmt, username, password, host, port, dbRandomIndex, fmt.Sprintf(connectionOptions, dbName))
 
-	sqlDBConnectionStr := fmt.Sprintf("postgresql://%s:%s@%s:%d/?%s", username, password, host, port, connectionOptions)
+	sqlDBConnectionStr := fmt.Sprintf("postgresql://%s:%s@%s:%d/?%s", username, password, host, port, fmt.Sprintf(connectionOptions, dbName))
 
 	if err := CreateDatabase(sqlDBConnectionStr, dbName); err != nil {
 		panic(err)
@@ -91,7 +91,7 @@ func SetupDatabase() (*gorm.DB, func()) {
 			panic(err)
 		}
 
-		if _, err = conn.Exec(context.Background(), "DROP DATABASE "+dbName+" WITH (FORCE)"); err != nil {
+		if _, err = conn.Exec(context.Background(), "DROP SCHEMA "+dbName+" CASCADE"); err != nil {
 			panic(err)
 		}
 
