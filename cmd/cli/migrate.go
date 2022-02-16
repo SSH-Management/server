@@ -3,6 +3,7 @@ package cli
 import (
 	"embed"
 	"fmt"
+	"gorm.io/gorm"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -13,6 +14,7 @@ import (
 	"github.com/SSH-Management/server/pkg/container"
 	"github.com/SSH-Management/server/pkg/db/config"
 	"github.com/SSH-Management/server/pkg/helpers"
+	"github.com/SSH-Management/server/pkg/models"
 )
 
 func migrateCommand(migrations embed.FS) *cobra.Command {
@@ -91,12 +93,23 @@ func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {
 			return err
 		}
 
-		if err = m.Up(); err != nil {
+		if err = m.Up(); err != nil && err != migrate.ErrNoChange {
 			return err
 		}
 
 		m.Close()
 
+		if shouldInsertDefaultRoles {
+			roles := models.GetDefaultRoles()
+			result := c.GetDbConnection().Create(roles)
+
+			if result.Error != nil {
+				fmt.Printf("%s\n", result.Statement.ToSQL(func(tx *gorm.DB) *gorm.DB {
+					return tx
+				}))
+				return result.Error
+			}
+		}
 		return nil
 	}
 }

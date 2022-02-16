@@ -28,7 +28,7 @@ func (c *Container) GetServerRepository() server.Interface {
 
 func (c *Container) GetRoleRepository() role.Interface {
 	if c.roleRepository == nil {
-		c.roleRepository = role.New(c.GetDbConnection(), c.GetDefaultLogger())
+		c.roleRepository = role.New(c.GetDbConnection())
 	}
 
 	return c.roleRepository

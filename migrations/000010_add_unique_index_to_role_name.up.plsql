@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX CONCURRENTLY role_unque_name ON roles(name);

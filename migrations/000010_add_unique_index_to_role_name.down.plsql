@@ -1,0 +1,1 @@
+DROP INDEX role_unque_name;

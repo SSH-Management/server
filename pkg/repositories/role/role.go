@@ -5,27 +5,52 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/SSH-Management/server/pkg/log"
+	"github.com/SSH-Management/server/pkg/db"
 	"github.com/SSH-Management/server/pkg/models"
 )
 
 type (
 	Repository struct {
-		db     *gorm.DB
-		logger *log.Logger
+		db *gorm.DB
 	}
 
 	Interface interface {
-		Find(context.Context, uint64) (models.Role, error)
+		Find(ctx context.Context) ([]models.Role, error)
+		FindById(context.Context, uint64) (models.Role, error)
 		FindByName(context.Context, string) (models.Role, error)
-		Create(context.Context) (models.Role, error)
+		Create(context.Context, string, []string) (models.Role, error)
 		Delete(context.Context, uint64) error
 	}
 )
 
-func (r Repository) Find(ctx context.Context, u uint64) (models.Role, error) {
-	// TODO implement me
-	panic("implement me")
+func (r Repository) Find(ctx context.Context) ([]models.Role, error) {
+	roles := make([]models.Role, 0, 20)
+	result := r.db.WithContext(ctx).Find(&roles)
+
+	if err := result.Error; result.Error != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, db.ErrNotFound
+		}
+
+		return nil, err
+	}
+
+	return roles, nil
+}
+
+func (r Repository) FindById(ctx context.Context, id uint64) (models.Role, error) {
+	var role models.Role
+	result := r.db.WithContext(ctx).Find(&role, id).Limit(1)
+
+	if err := result.Error; result.Error != nil {
+		if err == gorm.ErrRecordNotFound {
+			return models.Role{}, db.ErrNotFound
+		}
+
+		return models.Role{}, err
+	}
+
+	return role, nil
 }
 
 func (r Repository) FindByName(ctx context.Context, name string) (models.Role, error) {
@@ -43,19 +68,26 @@ func (r Repository) FindByName(ctx context.Context, name string) (models.Role, e
 	return role, nil
 }
 
-func (r Repository) Create(ctx context.Context) (models.Role, error) {
-	// TODO implement me
+func (r Repository) Create(ctx context.Context, name string, perms []string) (models.Role, error) {
+	role := models.NewRole(name, perms)
+
+	result := r.db.
+		WithContext(ctx).
+		Save(role)
+
+	if result.Error != nil {
+		return models.Role{}, result.Error
+	}
+
+	return role, nil
+}
+
+func (r Repository) Delete(ctx context.Context, id uint64) error {
 	panic("implement me")
 }
 
-func (r Repository) Delete(ctx context.Context, u uint64) error {
-	// TODO implement me
-	panic("implement me")
-}
-
-func New(db *gorm.DB, logger *log.Logger) Repository {
+func New(db *gorm.DB) Repository {
 	return Repository{
-		db:     db,
-		logger: logger,
+		db: db,
 	}
 }

@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"database/sql/driver"
-	"fmt"
 )
 
 type (
@@ -27,7 +26,6 @@ const (
 
 func (s *ServerStatus) Scan(data interface{}) error {
 	*s = ServerStatus(data.([]byte))
-	fmt.Println(*s)
 	return nil
 }
 

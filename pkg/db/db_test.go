@@ -11,10 +11,6 @@ import (
 	"github.com/SSH-Management/server/pkg/db/config"
 )
 
-func TestFormatConnectionString(t *testing.T) {
-	t.Parallel()
-}
-
 func TestGetDbConnection(t *testing.T) {
 	t.Parallel()
 	assert := require.New(t)

@@ -28,8 +28,9 @@ func TestRepository_Find(t *testing.T) {
 		roleRepo:  mockRoleRepo,
 		groupRepo: mockGroupRepo,
 	}
+	roles := models.GetDefaultRoles()
 
-	result := gormDb.Save(&models.Role{Name: "admin"})
+	result := gormDb.Save(roles)
 	assert.NoError(result.Error)
 
 	result = gormDb.Save(&models.User{
@@ -40,7 +41,7 @@ func TestRepository_Find(t *testing.T) {
 		Password:     "testpassword123",
 		Shell:        "/bin/bash",
 		PublicSSHKey: "ssh-ed25519 AAAA",
-		RoleID:       1,
+		RoleID:       roles[0].ID,
 	})
 
 	assert.NoError(result.Error)
@@ -69,7 +70,9 @@ func TestRepository_FindByEmail_Found(t *testing.T) {
 		groupRepo: mockGroupRepo,
 	}
 
-	result := gormDb.Save(&models.Role{Name: "admin"})
+	roles := models.GetDefaultRoles()
+
+	result := gormDb.Save(roles)
 	assert.NoError(result.Error)
 
 	result = gormDb.Save(&models.User{
@@ -80,7 +83,7 @@ func TestRepository_FindByEmail_Found(t *testing.T) {
 		Password:     "testpassword123",
 		Shell:        "/bin/bash",
 		PublicSSHKey: "ssh-ed25519 AAAA",
-		RoleID:       1,
+		RoleID:       roles[0].ID,
 	})
 
 	assert.NoError(result.Error)

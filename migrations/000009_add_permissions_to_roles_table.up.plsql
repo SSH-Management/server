@@ -1,0 +1,1 @@
+ALTER TABLE roles ADD COLUMN permissions text[] NOT NULL;
