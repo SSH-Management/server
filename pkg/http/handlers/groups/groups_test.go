@@ -28,7 +28,7 @@ func TestGetGroups_Error(t *testing.T) {
 
 	app.Get("/", GetGroups(mockGroupRepo))
 
-	mockGroupRepo.On("FindById", mock.Anything, false).
+	mockGroupRepo.On("Find", mock.Anything, false).
 		Once().
 		Return(nil, errors.New("some db error"))
 
