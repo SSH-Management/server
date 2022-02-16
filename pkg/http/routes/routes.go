@@ -44,12 +44,11 @@ func Register(c *container.Container, router *fiber.App, environment config.Env)
 		))
 	}
 
-	router.Get("/csrf-token", func(c *fiber.Ctx) error {
-		return c.SendStatus(http.StatusNoContent)
-	})
-
 	apiV1 := router.Group("/api/v1")
 
+	apiV1.Get("/csrf-token", func(c *fiber.Ctx) error {
+		return c.SendStatus(http.StatusNoContent)
+	})
 	registerAuthRoutes(c, apiV1.Group("/auth"))
 	registerUserRoutes(c, apiV1.Group("/users"))
 	registerServerRoutes(c, apiV1.Group("/servers"))

@@ -40,7 +40,11 @@ func (r Repository) Find(ctx context.Context) ([]models.Role, error) {
 
 func (r Repository) FindById(ctx context.Context, id uint64) (models.Role, error) {
 	var role models.Role
-	result := r.db.WithContext(ctx).Find(&role, id).Limit(1)
+
+	result := r.db.WithContext(ctx).
+		Where("id = ?", id).
+		Limit(1).
+		First(&role)
 
 	if err := result.Error; result.Error != nil {
 		if err == gorm.ErrRecordNotFound {
