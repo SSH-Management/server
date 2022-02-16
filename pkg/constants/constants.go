@@ -1,9 +1,10 @@
 package constants
 
 const (
-	RequestIdKey   = "request_id"
-	CsrfTokenKey   = "csrf_token"
-	SessionUserKey = "user"
+	RequestIdKey              = "request_id"
+	CsrfTokenKey              = "csrf_token"
+	SessionUserKey            = "user"
+	SessionUserPermissionsKey = "permissions"
 )
 
 const (

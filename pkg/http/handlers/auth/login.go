@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/SSH-Management/server/pkg/constants"
 	"time"
 
 	"github.com/SSH-Management/server/pkg/models"
@@ -14,8 +15,15 @@ import (
 	"github.com/SSH-Management/server/pkg/services/auth"
 )
 
+type LoginResponse struct {
+	User        models.User `json:"user,omitempty"`
+	Role        string      `json:"role,omitempty"`
+	Permissions []string    `json:"permissions,omitempty"`
+}
+
 func LoginHandler(loginService *auth.LoginService, validator *validator.Validate, store *session.Store) fiber.Handler {
 	store.RegisterType(models.User{})
+	store.RegisterType([]string{})
 
 	return func(c *fiber.Ctx) error {
 		var login dto.Login
@@ -59,9 +67,16 @@ func LoginHandler(loginService *auth.LoginService, validator *validator.Validate
 			}
 		}()
 
-		sess.Set("user", user)
+		permissions := user.Role.PermissionsArray()
+
+		sess.Set(constants.SessionUserKey, user)
+		sess.Set(constants.SessionUserPermissionsKey, permissions)
 		sess.SetExpiry(time.Hour)
 
-		return c.JSON(user)
+		return c.JSON(LoginResponse{
+			User:        user,
+			Role:        user.Role.Name,
+			Permissions: permissions,
+		})
 	}
 }

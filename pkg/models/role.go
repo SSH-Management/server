@@ -63,6 +63,19 @@ func NewRole(name string, perm []string) Role {
 	}
 }
 
+func (r Role) PermissionsArray() []string {
+	perms := r.Permissions.Elements
+	permissions := make([]string, 0, len(perms))
+
+	for _, perm := range perms {
+		if perm.Status == pgtype.Present {
+			permissions = append(permissions, perm.String)
+		}
+	}
+
+	return permissions
+}
+
 func GetDefaultRoles() []Role {
 	return []Role{
 		NewRole("Administrator", []string{

@@ -44,6 +44,8 @@ func TestGetGroups_InvalidType(t *testing.T) {
 
 	app, _ := helpers.CreateApplication()
 
+	mockGroupRepo := new(mockgroup.MockGroupRepository)
+
 	app.Get("/", GetGroups(group.New(nil)))
 
 	res := helpers.Get(app, "/?type=invalid_type")
@@ -54,6 +56,7 @@ func TestGetGroups_InvalidType(t *testing.T) {
 	}(res.Body)
 	bytes, _ := ioutil.ReadAll(res.Body)
 	assert.Equal([]byte("Type not valid for Groups: system or user"), bytes)
+	mockGroupRepo.AssertNotCalled(t, "Find", mock.Anything, false)
 }
 
 func TestGetGroups_Integration(t *testing.T) {

@@ -54,9 +54,9 @@ func CreateSessionCookie() *http.Cookie {
 	}
 }
 
-func GetSession(app *fiber.App, store *session.Store) (*session.Session, func()) {
+func GetSessionWithNameAndValue(app *fiber.App, store *session.Store, name, value string) (*session.Session, func()) {
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
-	ctx.Request().Header.SetCookie(SessionCookieName, SessionCookieValue)
+	ctx.Request().Header.SetCookie(name, value)
 
 	sess, err := store.Get(ctx)
 	if err != nil {
@@ -66,6 +66,14 @@ func GetSession(app *fiber.App, store *session.Store) (*session.Session, func())
 	return sess, func() {
 		app.ReleaseCtx(ctx)
 	}
+}
+
+func GetSession(app *fiber.App, store *session.Store) (*session.Session, func()) {
+	return GetSessionWithNameAndValue(app, store, SessionCookieName, SessionCookieValue)
+}
+
+func GetSessionWithValue(app *fiber.App, store *session.Store, value string) (*session.Session, func()) {
+	return GetSessionWithNameAndValue(app, store, SessionCookieName, value)
 }
 
 func CreateApplication() (*fiber.App, *session.Store) {

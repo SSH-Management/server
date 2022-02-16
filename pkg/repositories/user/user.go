@@ -83,6 +83,7 @@ func (r Repository) FindByEmail(ctx context.Context, email string) (models.User,
 		WithContext(ctx).
 		Where("email = ?", email).
 		Limit(1).
+		Preload("Role").
 		First(&u)
 
 	if result.Error != nil {

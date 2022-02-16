@@ -1,6 +1,9 @@
 package auth_test
 
 import (
+	"encoding/json"
+	"github.com/SSH-Management/server/pkg/constants"
+	"io"
 	"net/http"
 	"regexp"
 	"testing"
@@ -92,7 +95,10 @@ func TestLogin_Success(t *testing.T) {
 	userRepoMock.On("FindByEmail", mock.Anything, loginDto.Email).
 		Once().
 		Return(models.User{
+			Name:     "Test",
+			Surname:  "Test",
 			Password: "password_hash",
+			Role:     models.NewRole("Administrator", []string{"see:users"}),
 		}, nil)
 
 	hasherMock.On("Verify", "password_hash", loginDto.Password).
@@ -109,6 +115,30 @@ func TestLogin_Success(t *testing.T) {
 	cookie := res.Cookies()[0]
 	assert.Equal(helpers.SessionCookieName, cookie.Name)
 	assert.Regexp(regexp.MustCompile(`^[a-zA-Z\d_-]+$`), cookie.Value)
+
+	var resBody auth.LoginResponse
+
+	assert.NoError(json.NewDecoder(res.Body).Decode(&resBody))
+
+	assert.Equal("", resBody.User.Password)
+	assert.Equal("Test", resBody.User.Name)
+	assert.Equal("Test", resBody.User.Surname)
+	assert.Equal("Administrator", resBody.Role)
+	assert.EqualValues([]string{"see:users"}, resBody.Permissions)
+
+	sess, _ := helpers.GetSessionWithNameAndValue(app, store, cookie.Name, cookie.Value)
+
+	assert.IsType(models.User{}, sess.Get(constants.SessionUserKey))
+	assert.IsType([]string{}, sess.Get(constants.SessionUserPermissionsKey))
+
+	assert.EqualValues(
+		[]string{"see:users"},
+		sess.Get(constants.SessionUserPermissionsKey).([]string),
+	)
+
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(res.Body)
 
 	userRepoMock.AssertExpectations(t)
 	hasherMock.AssertExpectations(t)
