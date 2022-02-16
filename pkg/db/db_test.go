@@ -52,7 +52,7 @@ func TestGetDbConnection(t *testing.T) {
 		ConnMaxLifetime: time.Second,
 		ConnMaxIdle:     1,
 		ConnMaxOpen:     10,
-		TimeZone: "UTC",
+		TimeZone:        "UTC",
 	})
 
 	assert.NoError(err)

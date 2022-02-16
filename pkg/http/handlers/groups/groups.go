@@ -22,7 +22,6 @@ func GetGroups(groupRepo group.Interface) fiber.Handler {
 		}
 
 		groups, err := groupRepo.Find(ctx.UserContext(), systemGroups)
-
 		if err != nil {
 			return err
 		}

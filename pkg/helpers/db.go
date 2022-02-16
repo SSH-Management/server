@@ -13,7 +13,6 @@ func CreateDatabaseConnection(connectionStr string) (*pgx.Conn, error) {
 	}
 
 	conn, err := pgx.ConnectConfig(context.Background(), config)
-
 	if err != nil {
 		return nil, err
 	}

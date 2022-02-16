@@ -20,7 +20,6 @@ func (m *MockGroupRepository) Find(ctx context.Context, systemGroups bool) ([]mo
 	args := m.Called(ctx, systemGroups)
 
 	err := args.Error(1)
-
 	if err != nil {
 		return nil, err
 	}

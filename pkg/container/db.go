@@ -56,7 +56,6 @@ func (c *Container) GetRedisClient(db int) *redis.Client {
 
 func (c *Container) GetRawSQL() *sql.DB {
 	sqlDB, err := c.GetDbConnection().DB()
-
 	if err != nil {
 		log.
 			Fatal().

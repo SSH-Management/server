@@ -44,7 +44,6 @@ func CreateApplication(viewsPath, viewsDir string, static bool, environment conf
 				Download:  false,
 			},
 		)
-
 	}
 
 	app.Use(middleware.Context)

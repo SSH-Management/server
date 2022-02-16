@@ -12,7 +12,6 @@ import (
 
 var ErrNotFound = errors.New("item is not found")
 
-
 func createPostgresDatabaseConnection(c config.Config) gorm.Dialector {
 	return postgres.New(postgres.Config{
 		DSN:                  c.FormatConnectionString(),

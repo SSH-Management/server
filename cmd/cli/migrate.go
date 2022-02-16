@@ -47,7 +47,6 @@ func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {
 		}
 
 		shouldInsertDefaultRoles, err := flags.GetBool("create-default-roles")
-
 		if err != nil {
 			return err
 		}
@@ -88,7 +87,6 @@ func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {
 		)
 
 		m, err := migrate.NewWithSourceInstance("iofs", migrationsFS, connStr)
-
 		if err != nil {
 			return err
 		}

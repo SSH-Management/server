@@ -87,12 +87,11 @@ func SetupDatabase() (*gorm.DB, func()) {
 
 	clean := func() {
 		conn, err := CreateDatabaseConnection(sqlDBConnectionStr)
-
 		if err != nil {
 			panic(err)
 		}
 
-		if _, err = conn.Exec(context.Background(), "DROP DATABASE "+dbName + " WITH (FORCE)"); err != nil {
+		if _, err = conn.Exec(context.Background(), "DROP DATABASE "+dbName+" WITH (FORCE)"); err != nil {
 			panic(err)
 		}
 
@@ -108,7 +107,6 @@ func SetupDatabase() (*gorm.DB, func()) {
 	}
 
 	migrationsDir, err := findMigrationsDir(wd)
-
 	if err != nil {
 		clean()
 		panic(err)
@@ -136,7 +134,6 @@ func SetupDatabase() (*gorm.DB, func()) {
 		ConnMaxIdle:     1,
 		ConnMaxOpen:     10,
 	})
-
 	if err != nil {
 		clean()
 		panic(err)

@@ -12,7 +12,6 @@ import (
 
 func RegisterServices(c *container.Container, server grpc.ServiceRegistrar) {
 	serverPublicKey, err := c.Config.LoadServerPublicSSHKey()
-
 	if err != nil {
 		c.GetDefaultLogger().
 			Fatal().

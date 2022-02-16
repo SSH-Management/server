@@ -101,5 +101,4 @@ func TestGetGroups_Integration(t *testing.T) {
 		assert.Len(groups, 1)
 		assert.Equal("test_server_g1", groups[0].Name)
 	})
-
 }

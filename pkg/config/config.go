@@ -50,7 +50,6 @@ func (c *Config) LoadServerPublicSSHKey() (string, error) {
 	keysFs := os.DirFS(c.GetString("crypto.ed25519"))
 
 	contents, err := fs.ReadFile(keysFs, constants.PublicKeyFileName)
-
 	if err != nil {
 		return "", err
 	}
@@ -123,7 +122,6 @@ func New(env Env, modifiers ...Modifier) (*Config, error) {
 	}
 
 	err := v.ReadInConfig()
-
 	if err != nil {
 		return nil, err
 	}
