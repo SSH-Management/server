@@ -55,9 +55,9 @@ jobs:
           cp ssh_management.example.yml ssh_management.yml
           make ENV=development RACE=1 test
         env:
-          DB_USERNAME: root
-          DB_PASSWORD: password
-          DB_HOST: mysql
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+          DB_HOST: postgres
           MYSQL_PORT: 3306
           REDIS_HOST: redis
           REDIS_PORT: 6379
