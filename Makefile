@@ -1,14 +1,14 @@
 RACE ?= 0
 ENV ?= development
-VERSION ?= v0.2.0
+VERSION ?= v0.3.0
 GOPATH ?= ${HOME}/go
 PLATFORM ?= linux/arm64,linux/amd64
 DOCKER ?= 0
 
 ifeq ($(DOCKER),1)
-	DATABASE_URL="mysql://server:server@tcp(mysql:3306)/ssh_management?charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
+	DATABASE_URL="postgres://postgres:postgres@postgres:5432/ssh_management?sslmode=disable&application_name=SSHManagement&TimeZone=UTC"
 else
-	DATABASE_URL="mysql://server:server@tcp(localhost:3306)/ssh_management?charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
+	DATABASE_URL="postgres://postgres:postgres@localhost:5432/ssh_management?sslmode=disable&application_name=SSHManagement&TimeZone=UTC"
 endif
 
 CC = gcc
@@ -32,18 +32,6 @@ endif
 .PHONY: run
 run:
 	@CXX=g++ CC=gcc go run ./cmd/*.go
-
-#.PHONY: copy-files
-#copy-files: config.yml
-#	mkdir -p ./bin/migrations
-#	mkdir -p ./bin/public
-#ifeq ($(DOCKER),1)
-#	cp config.docker.yml ./bin/config.yml
-#else
-#	cp config.yml ./bin/config.yml
-#endif
-#	cp -r ./database/migrations ./bin
-#	cp -r ./public ./bin/
 
 .PHONY: test
 test:
@@ -77,7 +65,7 @@ migrate-down: install-migrate-cli
 
 .PHONY: migration-create
 migration-create: install-migrate-cli
-	@migrate -database $(DATABASE_URL) create -dir ./migrations -seq -ext sql $(M_NAME)
+	@migrate -database $(DATABASE_URL) create -dir ./migrations -seq -ext plsql $(M_NAME)
 
 M_VERSION ?= ""
 

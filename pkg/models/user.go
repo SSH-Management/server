@@ -13,5 +13,5 @@ type User struct {
 	RoleID uint64 `gorm:"column:role_id" json:"-"`
 	Role   Role   `json:"-"`
 
-	Groups []Group `gorm:"many2many:user_groups;" json:"groups,omitempty"`
+	Groups []Group `gorm:"many2many:user_groups;" json:"-"`
 }

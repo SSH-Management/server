@@ -2,16 +2,16 @@ package cli
 
 import (
 	"embed"
+	"fmt"
 
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/spf13/cobra"
 
 	"github.com/SSH-Management/server/cmd/command"
 	"github.com/SSH-Management/server/pkg/container"
 	"github.com/SSH-Management/server/pkg/db/config"
-	"github.com/SSH-Management/server/pkg/db/drivers/mysql"
 	"github.com/SSH-Management/server/pkg/helpers"
 )
 
@@ -25,13 +25,16 @@ func migrateCommand(migrations embed.FS) *cobra.Command {
 
 	flags := cmd.PersistentFlags()
 
-	flags.BoolP("create-database", "c", false, "Create Database in MySQL Server")
+	flags.BoolP("create-database", "c", false, "Create Database in PostgreSQL Server")
+	flags.BoolP("create-default-roles", "d", false, "Insert Default roles")
 
 	return cmd
 }
 
 func createDatabase(cfg config.Config) error {
-	return helpers.CreateMySQLDatabase(mysql.FormatDSN(cfg, false), cfg.Database)
+	c := cfg.Clone()
+	c.Database = "(empty)"
+	return helpers.CreateDatabase(c.FormatConnectionString(), cfg.Database)
 }
 
 func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {
@@ -42,6 +45,14 @@ func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {
 		if err != nil {
 			return err
 		}
+
+		shouldInsertDefaultRoles, err := flags.GetBool("create-default-roles")
+
+		if err != nil {
+			return err
+		}
+
+		_ = shouldInsertDefaultRoles
 
 		migrationsFS, err := iofs.New(migrations, "migrations")
 		if err != nil {
@@ -65,7 +76,19 @@ func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {
 			}
 		}
 
-		m, err := migrate.NewWithSourceInstance("iofs", migrationsFS, "mysql://"+mysql.FormatDSN(cfg, true))
+		connStr := fmt.Sprintf(
+			"postgresql://%s:%s@%s:%d/%s?sslmode=%s&TimeZone=%s",
+			cfg.Username,
+			cfg.Password,
+			cfg.Host,
+			cfg.Port,
+			cfg.Database,
+			cfg.SSLMode,
+			cfg.TimeZone,
+		)
+
+		m, err := migrate.NewWithSourceInstance("iofs", migrationsFS, connStr)
+
 		if err != nil {
 			return err
 		}
@@ -73,6 +96,8 @@ func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {
 		if err = m.Up(); err != nil {
 			return err
 		}
+
+		m.Close()
 
 		return nil
 	}

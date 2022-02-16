@@ -1,23 +1,37 @@
 package helpers
 
 import (
-	"database/sql"
+	"context"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/jackc/pgx/v4"
 )
 
-func CreateMySQLDatabase(connectionStr, dbName string) error {
-	sqlDB, err := sql.Open("mysql", connectionStr)
+func CreateDatabaseConnection(connectionStr string) (*pgx.Conn, error) {
+	config, err := pgx.ParseConfig(connectionStr)
+	if err != nil {
+		return nil, err
+	}
+
+	conn, err := pgx.ConnectConfig(context.Background(), config)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return conn, nil
+}
+
+func CreateDatabase(connectionStr, dbName string) error {
+	conn, err := CreateDatabaseConnection(connectionStr)
+	if err != nil {
+		return err
+	}
+
+	_, err = conn.Exec(context.Background(), "CREATE DATABASE "+dbName)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = sqlDB.Exec("CREATE DATABASE " + dbName + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-
-	if err != nil {
-		return err
-	}
-
-	return sqlDB.Close()
+	return conn.Close(context.Background())
 }

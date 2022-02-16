@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.8'
 
 services:
   server:
@@ -15,13 +15,13 @@ services:
       - '6543:6543'
       - '2345:2345'
     depends_on:
-      - mysql
+      - postgres
       - redis
     volumes:
       - 'gocache:/root/.cache/go-build'
       - 'gomodules_server:/go'
       - './logs:/var/log/ssh_management.yml'
-      - './ssh_management.yml.example.yml:/etc/ssh_management.yml/ssh_management_ok.yml'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
       - '.:/app'
   queue:
     build:
@@ -34,13 +34,13 @@ services:
     restart: unless-stopped
     depends_on:
       - server
-      - mysql
+      - postgres
       - redis
     volumes:
       - 'gocache:/root/.cache/go-build'
       - 'gomodules_queue:/go'
       - './logs:/var/log/ssh_management.yml'
-      - './ssh_management.yml.example.yml:/etc/ssh_management.yml/ssh_management_ok.yml'
+      - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
       - '.:/app'
   redis:
     image: 'redis:6-alpine'
@@ -49,21 +49,21 @@ services:
     restart: unless-stopped
     ports:
       - '6379:6379'
-  mysql:
-    image: mysql/mysql-server:8.0.28-1.2.7-server
+  postgres:
+    image: postgres:14
     ports:
-      - '3306:3306'
+      - '5432:5432'
     networks:
       - net
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: ssh_management.yml
-      MYSQL_USER: server
-      MYSQL_PASSWORD: server
-      MYSQL_ROOT_HOST: '%'
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ssh_management
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
     volumes:
-      - mysql:/var/lib/mysql
+      - postgres:/var/lib/mysql
+    shm_size: 1gb
   queuemon:
     image: hibiken/asynqmon
     command: --redis-addr redis:6379 --redis-db 3
@@ -102,7 +102,7 @@ networks:
     driver: bridge
     name: ssh_server_net
 volumes:
-  mysql:
+  postgres:
   gocache:
   gomodules_server:
   gomodules_queue:

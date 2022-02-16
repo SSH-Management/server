@@ -15,7 +15,7 @@ type (
 		Status          ServerStatus   `gorm:"status" json:"status,omitempty"`
 		PublicIpAddress sql.NullString `gorm:"column:public_ip" json:"public_ip,omitempty"`
 		GroupID         uint64         `gorm:"column:group_id" json:"group_id,omitempty"`
-		Group           Group
+		Group           Group          `json:"-"`
 	}
 )
 

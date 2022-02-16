@@ -1,8 +1,8 @@
 package helpers
 
 import (
+	"context"
 	"crypto/rand"
-	"database/sql"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"gorm.io/gorm"
 
@@ -21,9 +21,9 @@ import (
 )
 
 const (
-	connectionOptions = "charset=utf8mb4&checkConnLiveness=true&collation=utf8mb4_general_ci&interpolateParams=true&loc=UTC&multiStatements=true&parseTime=true"
+	connectionOptions = "application_name=SSHManagementTest&sslmode=disable"
 
-	connectionStringFmt = "mysql://%s:%s@tcp(%s:%d)/ssh_management_%s?%s"
+	connectionStringFmt = "postgresql://%s:%s@%s:%d/ssh_management_%s?%s"
 )
 
 func findMigrationsDir(workingDir string) (string, error) {
@@ -52,24 +52,24 @@ func SetupDatabase() (*gorm.DB, func()) {
 
 	dbRandomIndex := hex.EncodeToString(bytes[:])
 
-	username := os.Getenv("MYSQL_USERNAME")
-	password := os.Getenv("MYSQL_PASSWORD")
-	host := os.Getenv("MYSQL_HOST")
-	portStr := os.Getenv("MYSQL_PORT")
+	username := os.Getenv("DB_USERNAME")
+	password := os.Getenv("DB_PASSWORD")
+	host := os.Getenv("DB_HOST")
+	portStr := os.Getenv("DB_PORT")
 
 	if username == "" {
-		username = "root"
+		username = "postgres"
 	}
 
 	if password == "" {
-		password = "password"
+		password = "postgres"
 	}
 
 	if host == "" {
 		host = "localhost"
 	}
 
-	var port int64 = 3306
+	var port int64 = 5432
 
 	if portStr != "" {
 		port, _ = strconv.ParseInt(portStr, 10, 32)
@@ -79,23 +79,24 @@ func SetupDatabase() (*gorm.DB, func()) {
 
 	connectionString := fmt.Sprintf(connectionStringFmt, username, password, host, port, dbRandomIndex, connectionOptions)
 
-	sqlDBConnectionStr := fmt.Sprintf("%s:%s@tcp(%s:%d)/?%s", username, password, host, port, connectionOptions)
+	sqlDBConnectionStr := fmt.Sprintf("postgresql://%s:%s@%s:%d/?%s", username, password, host, port, connectionOptions)
 
-	if err := CreateMySQLDatabase(sqlDBConnectionStr, dbName); err != nil {
+	if err := CreateDatabase(sqlDBConnectionStr, dbName); err != nil {
 		panic(err)
 	}
 
 	clean := func() {
-		sqlDB, err := sql.Open("mysql", sqlDBConnectionStr)
+		conn, err := CreateDatabaseConnection(sqlDBConnectionStr)
+
 		if err != nil {
 			panic(err)
 		}
 
-		if _, err = sqlDB.Exec("DROP DATABASE " + dbName); err != nil {
+		if _, err = conn.Exec(context.Background(), "DROP DATABASE "+dbName + " WITH (FORCE)"); err != nil {
 			panic(err)
 		}
 
-		if err = sqlDB.Close(); err != nil {
+		if err = conn.Close(context.Background()); err != nil {
 			panic(err)
 		}
 	}
@@ -107,6 +108,7 @@ func SetupDatabase() (*gorm.DB, func()) {
 	}
 
 	migrationsDir, err := findMigrationsDir(wd)
+
 	if err != nil {
 		clean()
 		panic(err)
@@ -118,23 +120,23 @@ func SetupDatabase() (*gorm.DB, func()) {
 		panic(err)
 	}
 
-	if err := migrations.Up(); err != nil {
+	if err = migrations.Up(); err != nil {
 		clean()
 		panic(err)
 	}
 
 	gormDb, err := db.GetDbConnection(config.Config{
-		Driver:          "mysql",
 		Username:        username,
 		Password:        password,
 		Database:        dbName,
-		Collation:       "utf8mb4_general_ci",
-		Host:            fmt.Sprintf("%s:%d", host, port),
+		Host:            host,
+		Port:            int(port),
 		MaxIdleTime:     0,
 		ConnMaxLifetime: 0,
 		ConnMaxIdle:     1,
 		ConnMaxOpen:     10,
 	})
+
 	if err != nil {
 		clean()
 		panic(err)

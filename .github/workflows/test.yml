@@ -12,12 +12,12 @@ on:
 jobs:
   test:
     services:
-      mysql:
-        image: mysql/mysql-server:8.0.28-1.2.7-server
+      postgres:
+        image: postgres:14
         env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: ssh_management.yml
-          MYSQL_ROOT_HOST: '%'
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ssh_management
+          POSTGRES_HOST_AUTH_METHOD: scram-sha-256
       redis:
         image: redis:6-alpine
         options: >-
@@ -55,9 +55,9 @@ jobs:
           cp ssh_management.example.yml ssh_management.yml
           make ENV=development RACE=1 test
         env:
-          MYSQL_USERNAME: root
-          MYSQL_PASSWORD: password
-          MYSQL_HOST: mysql
+          DB_USERNAME: root
+          DB_PASSWORD: password
+          DB_HOST: mysql
           MYSQL_PORT: 3306
           REDIS_HOST: redis
           REDIS_PORT: 6379

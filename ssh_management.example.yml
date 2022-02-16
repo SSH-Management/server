@@ -2,16 +2,17 @@
 environment: 'development'
 
 database:
-  driver: mysql
-  username: server
-  password: server
+  username: postgres
+  password: postgres
   database: ssh_management
-  host: mysql:3306
-  collation: utf8mb4_unicode_ci
+  host: postgres
+  port: 5432
+  time_zone: UTC
+  ssl_mode: disable
   conn_max_idle_time: 30s
   conn_max_lifetime: 5m
   conn_max_idle: 10
-  conn_max_opened: 10
+  conn_max_opened: 100
 
 http:
   bind: '0.0.0.0'

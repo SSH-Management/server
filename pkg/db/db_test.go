@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"testing"
@@ -12,56 +11,48 @@ import (
 	"github.com/SSH-Management/server/pkg/db/config"
 )
 
-func TestGetDbConnection_InvalidDriver(t *testing.T) {
+func TestFormatConnectionString(t *testing.T) {
 	t.Parallel()
-
-	assert := require.New(t)
-
-	db, err := GetDbConnection(config.Config{Driver: "invalid_driver"})
-
-	assert.Error(err)
-	assert.Equal("driver 'invalid_driver' is not supported", err.Error())
-	assert.Nil(db)
 }
 
 func TestGetDbConnection(t *testing.T) {
 	t.Parallel()
 	assert := require.New(t)
 
-	username := os.Getenv("MYSQL_USERNAME")
-	password := os.Getenv("MYSQL_PASSWORD")
-	host := os.Getenv("MYSQL_HOST")
-	portStr := os.Getenv("MYSQL_PORT")
+	username := os.Getenv("DB_USERNAME")
+	password := os.Getenv("DB_PASSWORD")
+	host := os.Getenv("DB_HOST")
+	portStr := os.Getenv("DB_PORT")
 
 	if username == "" {
-		username = "root"
+		username = "postgres"
 	}
 
 	if password == "" {
-		password = "password"
+		password = "postgres"
 	}
 
 	if host == "" {
 		host = "localhost"
 	}
 
-	var port int64 = 3306
+	var port int64 = 5432
 
 	if portStr != "" {
 		port, _ = strconv.ParseInt(portStr, 10, 32)
 	}
 
 	db, err := GetDbConnection(config.Config{
-		Driver:          "mysql",
 		Username:        username,
 		Password:        password,
 		Database:        "ssh_management",
-		Collation:       "utf8mb4_unicode_ci",
-		Host:            fmt.Sprintf("%s:%d", host, port),
+		Port:            int(port),
+		Host:            host,
 		MaxIdleTime:     time.Second,
 		ConnMaxLifetime: time.Second,
 		ConnMaxIdle:     1,
 		ConnMaxOpen:     10,
+		TimeZone: "UTC",
 	})
 
 	assert.NoError(err)

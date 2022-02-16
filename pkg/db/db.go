@@ -2,39 +2,36 @@ package db
 
 import (
 	"errors"
-	"fmt"
+	"time"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	"github.com/SSH-Management/server/pkg/db/config"
-	"github.com/SSH-Management/server/pkg/db/connector"
-	"github.com/SSH-Management/server/pkg/db/drivers/mysql"
-	"gorm.io/gorm"
 )
 
 var ErrNotFound = errors.New("item is not found")
 
+
+func createPostgresDatabaseConnection(c config.Config) gorm.Dialector {
+	return postgres.New(postgres.Config{
+		DSN:                  c.FormatConnectionString(),
+		PreferSimpleProtocol: false,
+		WithoutReturning:     false,
+	})
+}
+
 func GetDbConnection(c config.Config) (*gorm.DB, error) {
-	var dbConnector connector.Interface
-	switch c.Driver {
-	case "mysql":
-		dbConnector = mysql.New()
-	default:
-		return nil, fmt.Errorf("driver '%s' is not supported", c.Driver)
-	}
-
-	dialect, err := dbConnector.Connect(c)
-
-	if err != nil {
-		return nil, err
-	}
-
-	db, err := gorm.Open(dialect, &gorm.Config{})
-
+	db, err := gorm.Open(createPostgresDatabaseConnection(c), &gorm.Config{
+		NowFunc: func() time.Time {
+			return time.Now().UTC()
+		},
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	sqlDb, err := db.DB()
-
 	if err != nil {
 		return nil, err
 	}
