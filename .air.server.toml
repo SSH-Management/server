@@ -4,9 +4,9 @@ tmp_dir = "tmp"
 [build]
 cmd = "CC=gcc CXX=g++ make build"
 bin = "bin/ssh_management"
-full_bin = "dlv exec --continue --listen=0.0.0.0:2345 --headless=true --api-version=2 --accept-multiclient --wd /app ./bin/ssh_management -- --env production --logging-level info serve"
-include_ext = ["go", "yml", "js"]
-exclude_dir = ["public", "vendor", "log", "tmp", "ui/node_modules"]
+full_bin = "dlv exec --continue --listen=0.0.0.0:2345 --headless=true --api-version=2 --accept-multiclient --wd /app ./bin/ssh_management -- --env development --logging-level debug serve"
+include_ext = ["go", "yml"]
+exclude_dir = ["public", "vendor", "log", "tmp"]
 #include_dir = []
 exclude_file = ["Dockerfile"]
 exclude_regex = ["_test.go"]

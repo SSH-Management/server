@@ -7,17 +7,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/SSH-Management/server/pkg/helpers"
-
-	"github.com/SSH-Management/server/pkg/http/handlers"
-	"github.com/SSH-Management/server/pkg/services/password"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/require"
 
 	"github.com/SSH-Management/server/pkg/db"
+	"github.com/SSH-Management/server/pkg/helpers"
+	"github.com/SSH-Management/server/pkg/http/handlers"
+	"github.com/SSH-Management/server/pkg/services/password"
 )
 
 func setupErrorHandlerApp() (*fiber.App, *validator.Validate) {
@@ -42,13 +40,34 @@ func TestErrorHandler_ReturnFiberError(t *testing.T) {
 	m := struct {
 		Message string `json:"message"`
 	}{}
-	res, err := app.Test(httptest.NewRequest(http.MethodGet, "/", nil))
+	res := helpers.Get(app, "/")
 
-	assert.Nil(err)
 	assert.EqualValues(fiber.StatusBadGateway, res.StatusCode)
 	assert.EqualValues(fiber.MIMEApplicationJSON, res.Header.Get(fiber.HeaderContentType))
 	assert.Nil(json.NewDecoder(res.Body).Decode(&m))
 	assert.NotEmpty(m.Message)
+}
+
+func TestErrorHandler_InvalidPayloadError(t *testing.T) {
+	t.Parallel()
+	assert := require.New(t)
+
+	app, _ := setupErrorHandlerApp()
+	app.Get("/", func(ctx *fiber.Ctx) error {
+		return handlers.ErrInvalidPayload
+	})
+
+	res := helpers.Get(app, "/")
+
+	m := struct {
+		Message string `json:"message"`
+	}{}
+
+	assert.EqualValues(fiber.StatusBadRequest, res.StatusCode)
+	assert.EqualValues(fiber.MIMEApplicationJSON, res.Header.Get(fiber.HeaderContentType))
+	assert.Nil(json.NewDecoder(res.Body).Decode(&m))
+	assert.NotEmpty(m.Message)
+	assert.Equal(handlers.ErrInvalidPayload.Error(), m.Message)
 }
 
 func TestErrorHandler_ValidationError(t *testing.T) {

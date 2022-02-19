@@ -22,11 +22,9 @@ import (
 	"github.com/SSH-Management/server/pkg/services/grpc/middleware"
 )
 
-var signals = [4]os.Signal{
+var signals = [2]os.Signal{
 	syscall.SIGTERM,
 	syscall.SIGINT,
-	syscall.SIGUSR1,
-	syscall.SIGUSR2,
 }
 
 func httpServerCommand() *cobra.Command {

@@ -32,6 +32,8 @@ services:
     networks:
       - net
     restart: unless-stopped
+    ports:
+      - '2346:2346'
     depends_on:
       - server
       - postgres

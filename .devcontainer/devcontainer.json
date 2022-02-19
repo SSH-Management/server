@@ -1,49 +1,15 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.205.2/containers/go
 {
 	"name": "Go",
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": {
 			"VARIANT": "1.17-bullseye",
-			"NODE_VERSION": "none",
-			"MIGRATE_TAG": "v4.15.1"
 		}
 	},
 	"runArgs": [
 		"--network=ssh_server_net",
 	],
-	"settings": {
-		"go.useLanguageServer": true,
-		"go.autocompleteUnimportedPackages": true,
-		"go.gotoSymbol.includeImports": true,
-		"go.inferGopath": true,
-		"go.gotoSymbol.includeGoroot": true,
-		"go.coverOnSave": true,
-		"go.vetOnSave": "workspace",
-		"go.coverMode": "atomic",
-		"go.addTags": {
-			"tags": "json,bson,yaml",
-			"promptForTags": true
-		},
-		"go.formatTool": "gofumports",
-		"go.coverOnSingleTest": true,
-		"go.coverOnSingleTestFile": true,
-		"go.coverShowCounts": true,
-		"go.enableCodeLens": {
-			"references": true,
-			"runtest": true
-		},
-		"gopls": {
-			"expandWorkspaceToModule": true,
-			"experimentalWorkspaceModule": true,
-			"gofumpt": true
-		},
-		"go.toolsManagement.autoUpdate": true,
-		"[go]": {
-			"editor.defaultFormatter": "golang.go"
-		},
-	},
+	"settings": {},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"golang.Go",
@@ -69,6 +35,8 @@
 	},
 	"mounts": [],
 	"forwardPorts": [
-		8080
+		8080,
+		2345,
+		2346
 	]
 }

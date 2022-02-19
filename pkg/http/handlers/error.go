@@ -2,8 +2,7 @@ package handlers
 
 import (
 	"errors"
-
-	"github.com/SSH-Management/server/pkg/services/password"
+	"net/http"
 
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -11,6 +10,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/SSH-Management/server/pkg/db"
+	"github.com/SSH-Management/server/pkg/services/password"
 )
 
 func Error(logger zerolog.Logger, translator ut.Translator) fiber.ErrorHandler {
@@ -25,6 +25,12 @@ func Error(logger zerolog.Logger, translator ut.Translator) fiber.ErrorHandler {
 		if e, ok := err.(*fiber.Error); ok {
 			return ctx.Status(e.Code).JSON(ErrorResponse{
 				Message: e.Message,
+			})
+		}
+
+		if err == ErrInvalidPayload {
+			return ctx.Status(http.StatusBadRequest).JSON(ErrorResponse{
+				Message: ErrInvalidPayload.Error(),
 			})
 		}
 
