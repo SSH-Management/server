@@ -45,14 +45,34 @@ func TestErrorHandler_ReturnFiberError(t *testing.T) {
 	m := struct {
 		Message string `json:"message"`
 	}{}
+	res := helpers.Get(app, "/")
 
-	res, err := app.Test(httptest.NewRequest(http.MethodGet, "/", nil))
-
-	assert.Nil(err)
 	assert.EqualValues(fiber.StatusBadGateway, res.StatusCode)
 	assert.EqualValues(fiber.MIMEApplicationJSON, res.Header.Get(fiber.HeaderContentType))
 	assert.Nil(json.NewDecoder(res.Body).Decode(&m))
 	assert.NotEmpty(m.Message)
+}
+
+func TestErrorHandler_InvalidPayloadError(t *testing.T) {
+	t.Parallel()
+	assert := require.New(t)
+
+	app, _, _ := setupErrorHandlerApp(t)
+	app.Get("/", func(ctx *fiber.Ctx) error {
+		return handlers.ErrInvalidPayload
+	})
+
+	res := helpers.Get(app, "/")
+
+	m := struct {
+		Message string `json:"message"`
+	}{}
+
+	assert.EqualValues(fiber.StatusBadRequest, res.StatusCode)
+	assert.EqualValues(fiber.MIMEApplicationJSON, res.Header.Get(fiber.HeaderContentType))
+	assert.Nil(json.NewDecoder(res.Body).Decode(&m))
+	assert.NotEmpty(m.Message)
+	assert.Equal(handlers.ErrInvalidPayload.Error(), m.Message)
 }
 
 func TestErrorHandler_ValidationError(t *testing.T) {

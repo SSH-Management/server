@@ -19,6 +19,11 @@ WORKDIR /app
 
 COPY . .
 
+EXPOSE 8080
+EXPOSE 6543
+EXPOSE 2345
+EXPOSE 2346
+
 FROM golang:1.17-alpine as build
 
 WORKDIR /app
@@ -38,5 +43,6 @@ COPY --from=build /app/bin .
 EXPOSE 8080
 EXPOSE 6543
 EXPOSE 2345
+EXPOSE 2346
 
 RUN apt update && apt upgrade -y && mkdir -p /var/log/ssh_management.yml

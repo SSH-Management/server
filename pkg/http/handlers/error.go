@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"net/http"
 
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -24,6 +25,12 @@ func Error(logger *log.Logger, translator ut.Translator) fiber.ErrorHandler {
 		if e, ok := err.(*fiber.Error); ok {
 			return ctx.Status(e.Code).JSON(ErrorResponse{
 				Message: e.Message,
+			})
+		}
+
+		if err == ErrInvalidPayload {
+			return ctx.Status(http.StatusBadRequest).JSON(ErrorResponse{
+				Message: ErrInvalidPayload.Error(),
 			})
 		}
 
