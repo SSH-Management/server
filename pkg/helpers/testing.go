@@ -201,7 +201,7 @@ func MakeRequest(method, uri string, modifiers ...RequestModifier) *http.Request
 func Get(app *fiber.App, uri string, modifiers ...RequestModifier) *http.Response {
 	req := MakeRequest(http.MethodGet, uri, modifiers...)
 
-	res, err := app.Test(req)
+	res, err := app.Test(req, -1)
 	if err != nil {
 		panic("Cannot get response")
 	}
@@ -212,7 +212,7 @@ func Get(app *fiber.App, uri string, modifiers ...RequestModifier) *http.Respons
 func Post(app *fiber.App, uri string, modifiers ...RequestModifier) *http.Response {
 	req := MakeRequest(http.MethodPost, uri, modifiers...)
 
-	res, err := app.Test(req)
+	res, err := app.Test(req, -1)
 	if err != nil {
 		panic("Cannot get response")
 	}
@@ -223,7 +223,7 @@ func Post(app *fiber.App, uri string, modifiers ...RequestModifier) *http.Respon
 func Put(app *fiber.App, uri string, modifiers ...RequestModifier) *http.Response {
 	req := MakeRequest(http.MethodPut, uri, modifiers...)
 
-	res, err := app.Test(req)
+	res, err := app.Test(req, -1)
 	if err != nil {
 		panic("Cannot get response")
 	}
@@ -234,7 +234,7 @@ func Put(app *fiber.App, uri string, modifiers ...RequestModifier) *http.Respons
 func Patch(app *fiber.App, uri string, modifiers ...RequestModifier) *http.Response {
 	req := MakeRequest(http.MethodPatch, uri, modifiers...)
 
-	res, err := app.Test(req)
+	res, err := app.Test(req, -1)
 	if err != nil {
 		panic("Cannot get response")
 	}
@@ -245,7 +245,7 @@ func Patch(app *fiber.App, uri string, modifiers ...RequestModifier) *http.Respo
 func Delete(app *fiber.App, uri string, modifiers ...RequestModifier) *http.Response {
 	req := MakeRequest(http.MethodDelete, uri, modifiers...)
 
-	res, err := app.Test(req)
+	res, err := app.Test(req, -1)
 	if err != nil {
 		panic("Cannot get response")
 	}

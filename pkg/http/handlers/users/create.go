@@ -12,7 +12,6 @@ import (
 	"github.com/SSH-Management/server/pkg/services/user"
 )
 
-
 func CreateUserHandler(userService user.Interface, validator *validator.Validate) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var userDto dto.CreateUser
@@ -29,12 +28,12 @@ func CreateUserHandler(userService user.Interface, validator *validator.Validate
 			return err
 		}
 
-		user, _, err := userService.Create(c.UserContext(), userDto)
+		userModel, _, err := userService.Create(c.UserContext(), userDto)
 
 		if err != nil {
 			return err
 		}
 
-		return c.Status(http.StatusCreated).JSON(user)
+		return c.Status(http.StatusCreated).JSON(userModel)
 	}
 }

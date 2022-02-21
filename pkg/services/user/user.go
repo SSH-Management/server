@@ -17,7 +17,7 @@ import (
 	"github.com/SSH-Management/server/pkg/tasks"
 )
 
-var _ Interface = &Service{} // NOOP
+var _ Interface = &Service{}
 
 type (
 	Service struct {
@@ -100,7 +100,7 @@ func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []b
 		return models.User{}, nil, err
 	}
 
-	user, err := s.userRepo.Create(ctx, u.User.WithPassword(passwordHash), publicKeyString)
+	userModel, err := s.userRepo.Create(ctx, u.User.WithPassword(passwordHash), publicKeyString)
 	if err != nil {
 		s.deleteUserFromSystem(ctx, username)
 		return models.User{}, nil, err
@@ -108,18 +108,18 @@ func (s Service) Create(ctx context.Context, u dto.CreateUser) (models.User, []b
 
 	task, err := tasks.NewUserNotification(u.User, publicKeyString)
 	if err != nil {
-		s.deleteUserFromDb(ctx, user)
-		s.deleteUserFromSystem(ctx, user.Username)
+		s.deleteUserFromDb(ctx, userModel)
+		s.deleteUserFromSystem(ctx, userModel.Username)
 	}
 
 	_, err = s.queue.Enqueue(task)
 
 	if err != nil {
-		s.deleteUserFromDb(ctx, user)
-		s.deleteUserFromSystem(ctx, user.Username)
+		s.deleteUserFromDb(ctx, userModel)
+		s.deleteUserFromSystem(ctx, userModel.Username)
 	}
 
-	return user, publicKey, err
+	return userModel, publicKey, err
 }
 
 func (s Service) deleteUserFromDb(ctx context.Context, user models.User) {
