@@ -26,7 +26,7 @@ http:
   enable_monitor: true
 
 logging:
-  file: /var/log/ssh_management.yml/server.jsonl
+  file: /var/log/ssh_management/server.jsonl
   level: info
   console: true
   sample: 0
@@ -35,7 +35,7 @@ system_groups:
   sudo: sudo
 
 crypto:
-  ed25519: './keys'
+  ed25519: '/etc/ssh_management/keys'
   auth_key: ''
   enc_key: ''
   password:
@@ -94,7 +94,7 @@ cors:
 queue:
   concurrency: 10
   logging:
-    file: /var/log/ssh_management.yml/queue.jsonl
+    file: /var/log/ssh_management/queue.jsonl
     level: info
     console: true
   redis:

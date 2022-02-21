@@ -49,7 +49,7 @@ func runHttpServer() func(cmd *cobra.Command, args []string) error {
 		signal.Notify(done, signals[:]...)
 
 		errorHandler := handlers.Error(
-			c.GetDefaultLogger().Logger,
+			c.GetDefaultLogger(),
 			c.GetTranslator(),
 		)
 
@@ -90,7 +90,8 @@ func runHttpServer() func(cmd *cobra.Command, args []string) error {
 }
 
 func runGRPCServer(c *container.Container, grpcServer *grpc.Server) {
-	addr := fmt.Sprintf("%s:%d",
+	addr := fmt.Sprintf(
+		"%s:%d",
 		c.Config.GetString("http.grpc.bind"),
 		c.Config.GetInt("http.grpc.port"),
 	)

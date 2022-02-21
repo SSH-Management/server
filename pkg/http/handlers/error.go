@@ -3,17 +3,16 @@ package handlers
 import (
 	"errors"
 
-	"github.com/SSH-Management/server/pkg/services/password"
-
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog"
 
 	"github.com/SSH-Management/server/pkg/db"
+	"github.com/SSH-Management/server/pkg/log"
+	"github.com/SSH-Management/server/pkg/services/password"
 )
 
-func Error(logger zerolog.Logger, translator ut.Translator) fiber.ErrorHandler {
+func Error(logger *log.Logger, translator ut.Translator) fiber.ErrorHandler {
 	return func(ctx *fiber.Ctx, err error) error {
 		ctx.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSONCharsetUTF8)
 		code := fiber.StatusInternalServerError

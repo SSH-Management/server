@@ -7,34 +7,37 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/SSH-Management/server/pkg/helpers"
-
-	"github.com/SSH-Management/server/pkg/http/handlers"
-	"github.com/SSH-Management/server/pkg/services/password"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
+	"github.com/rzajac/zltest"
 	"github.com/stretchr/testify/require"
 
 	"github.com/SSH-Management/server/pkg/db"
+	"github.com/SSH-Management/server/pkg/helpers"
+	"github.com/SSH-Management/server/pkg/http/handlers"
+	"github.com/SSH-Management/server/pkg/log"
+	"github.com/SSH-Management/server/pkg/services/password"
 )
 
-func setupErrorHandlerApp() (*fiber.App, *validator.Validate) {
+func setupErrorHandlerApp(t *testing.T) (*fiber.App, *validator.Validate, *zltest.Tester) {
 	v, translations := helpers.GetValidator()
 
+	logger, loggerTest := log.NewTest(t, zerolog.InfoLevel)
+
 	app := fiber.New(fiber.Config{
-		ErrorHandler: handlers.Error(log.Logger, translations),
+		ErrorHandler: handlers.Error(logger, translations),
 	})
 
-	return app, v
+	return app, v, loggerTest
 }
 
 func TestErrorHandler_ReturnFiberError(t *testing.T) {
 	t.Parallel()
 	assert := require.New(t)
 
-	app, _ := setupErrorHandlerApp()
+	app, _, _ := setupErrorHandlerApp(t)
+
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return fiber.ErrBadGateway
 	})
@@ -42,6 +45,7 @@ func TestErrorHandler_ReturnFiberError(t *testing.T) {
 	m := struct {
 		Message string `json:"message"`
 	}{}
+
 	res, err := app.Test(httptest.NewRequest(http.MethodGet, "/", nil))
 
 	assert.Nil(err)
@@ -54,7 +58,7 @@ func TestErrorHandler_ReturnFiberError(t *testing.T) {
 func TestErrorHandler_ValidationError(t *testing.T) {
 	t.Parallel()
 	assert := require.New(t)
-	app, _ := setupErrorHandlerApp()
+	app, _, _ := setupErrorHandlerApp(t)
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return validator.ValidationErrors{}
 	})
@@ -68,7 +72,7 @@ func TestErrorHandler_InvalidValidationError(t *testing.T) {
 	t.Parallel()
 	assert := require.New(t)
 
-	app, _ := setupErrorHandlerApp()
+	app, _, _ := setupErrorHandlerApp(t)
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return &validator.InvalidValidationError{}
 	})
@@ -81,7 +85,7 @@ func TestErrorHandler_InvalidValidationError(t *testing.T) {
 func TestErrorHandler(t *testing.T) {
 	t.Parallel()
 	assert := require.New(t)
-	app, _ := setupErrorHandlerApp()
+	app, _, _ := setupErrorHandlerApp(t)
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return db.ErrNotFound
 	})
@@ -94,7 +98,7 @@ func TestErrorHandler(t *testing.T) {
 func TestErrorHandler_AnyError(t *testing.T) {
 	t.Parallel()
 	assert := require.New(t)
-	app, _ := setupErrorHandlerApp()
+	app, _, _ := setupErrorHandlerApp(t)
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return errors.New("any other error")
 	})
@@ -107,7 +111,7 @@ func TestErrorHandler_AnyError(t *testing.T) {
 func TestErrorHandler_PasswordError(t *testing.T) {
 	t.Parallel()
 	assert := require.New(t)
-	app, _ := setupErrorHandlerApp()
+	app, _, _ := setupErrorHandlerApp(t)
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return password.ErrPasswordMismatch
 	})

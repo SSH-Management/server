@@ -14,12 +14,6 @@ func Auth(store *session.Store) fiber.Handler {
 			return err
 		}
 
-		sesId := c.Cookies("ssh_management_id")
-		csrf := c.Cookies("XSRF-TOKEN")
-
-		print(sesId)
-		print(csrf)
-
 		user := s.Get(constants.SessionUserKey)
 
 		if user == nil {

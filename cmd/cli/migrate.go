@@ -2,10 +2,6 @@ package cli
 
 import (
 	"embed"
-	"fmt"
-
-	"gorm.io/gorm"
-
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
@@ -57,6 +53,7 @@ func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {
 		_ = shouldInsertDefaultRoles
 
 		migrationsFS, err := iofs.New(migrations, "migrations")
+
 		if err != nil {
 			return err
 		}
@@ -78,18 +75,12 @@ func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {
 			}
 		}
 
-		connStr := fmt.Sprintf(
-			"postgresql://%s:%s@%s:%d/%s?sslmode=%s&TimeZone=%s",
-			cfg.Username,
-			cfg.Password,
-			cfg.Host,
-			cfg.Port,
-			cfg.Database,
-			cfg.SSLMode,
-			cfg.TimeZone,
+		m, err := migrate.NewWithSourceInstance(
+			"iofs",
+			migrationsFS,
+			cfg.FormatConnectionStringURL(),
 		)
 
-		m, err := migrate.NewWithSourceInstance("iofs", migrationsFS, connStr)
 		if err != nil {
 			return err
 		}
@@ -98,19 +89,17 @@ func migrateDatabase(migrations embed.FS) func(*cobra.Command, []string) error {
 			return err
 		}
 
-		m.Close()
+		_, _ = m.Close()
 
 		if shouldInsertDefaultRoles {
 			roles := models.GetDefaultRoles()
 			result := c.GetDbConnection().Create(roles)
 
 			if result.Error != nil {
-				fmt.Printf("%s\n", result.Statement.ToSQL(func(tx *gorm.DB) *gorm.DB {
-					return tx
-				}))
 				return result.Error
 			}
 		}
+
 		return nil
 	}
 }

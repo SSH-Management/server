@@ -3,16 +3,15 @@ package auth
 import (
 	"time"
 
-	"github.com/SSH-Management/server/pkg/constants"
-
-	"github.com/SSH-Management/server/pkg/models"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/leebenson/conform"
 	zerologlog "github.com/rs/zerolog/log"
 
+	"github.com/SSH-Management/server/pkg/constants"
 	"github.com/SSH-Management/server/pkg/dto"
+	"github.com/SSH-Management/server/pkg/models"
 	"github.com/SSH-Management/server/pkg/services/auth"
 )
 

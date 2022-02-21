@@ -6,13 +6,12 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"os"
-	"strconv"
-
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"gorm.io/gorm"
+	"os"
+	"strconv"
 
 	"github.com/SSH-Management/utils/v2"
 
@@ -23,7 +22,7 @@ import (
 const (
 	connectionOptions = "application_name=SSHManagementTest&sslmode=disable&search_path=%s"
 
-	connectionStringFmt = "postgresql://%s:%s@%s:%d/ssh_management?%s"
+	connectionStringFmt = "postgresql://%s:%s@%s:%d/%s?%s"
 )
 
 func findMigrationsDir(workingDir string) (string, error) {
@@ -56,6 +55,11 @@ func SetupDatabase() (*gorm.DB, func()) {
 	password := os.Getenv("DB_PASSWORD")
 	host := os.Getenv("DB_HOST")
 	portStr := os.Getenv("DB_PORT")
+	database := os.Getenv("DB_DATABASE")
+
+	if database == "" {
+		database = "ssh_management"
+	}
 
 	if username == "" {
 		username = "postgres"
@@ -75,11 +79,11 @@ func SetupDatabase() (*gorm.DB, func()) {
 		port, _ = strconv.ParseInt(portStr, 10, 32)
 	}
 
-	dbName := fmt.Sprintf("ssh_management_%s", dbRandomIndex)
+	schema := fmt.Sprintf("ssh_management_%s", dbRandomIndex)
 
-	connectionString := fmt.Sprintf(connectionStringFmt, username, password, host, port, fmt.Sprintf(connectionOptions, dbName))
+	connectionString := fmt.Sprintf(connectionStringFmt, username, password, host, port, database, fmt.Sprintf(connectionOptions, schema))
 
-	if err := CreateDatabase(connectionString, dbName); err != nil {
+	if err := CreateDatabase(connectionString, schema); err != nil {
 		panic(err)
 	}
 
@@ -89,7 +93,7 @@ func SetupDatabase() (*gorm.DB, func()) {
 			panic(err)
 		}
 
-		if _, err = conn.Exec(context.Background(), "DROP SCHEMA "+dbName+" CASCADE"); err != nil {
+		if _, err = conn.Exec(context.Background(), "DROP SCHEMA "+schema+" CASCADE"); err != nil {
 			panic(err)
 		}
 
@@ -116,7 +120,7 @@ func SetupDatabase() (*gorm.DB, func()) {
 		panic(err)
 	}
 
-	if err = migrations.Up(); err != nil {
+	if err = migrations.Up(); err != nil && err != migrate.ErrNoChange {
 		clean()
 		panic(err)
 	}
@@ -124,8 +128,8 @@ func SetupDatabase() (*gorm.DB, func()) {
 	gormDb, err := db.GetDbConnection(config.Config{
 		Username:        username,
 		Password:        password,
-		Database:        "ssh_management",
-		Schema:          dbName,
+		Database:        database,
+		Schema:          schema,
 		Host:            host,
 		Port:            int(port),
 		MaxIdleTime:     0,
@@ -133,6 +137,7 @@ func SetupDatabase() (*gorm.DB, func()) {
 		ConnMaxIdle:     1,
 		ConnMaxOpen:     10,
 	})
+
 	if err != nil {
 		clean()
 		panic(err)

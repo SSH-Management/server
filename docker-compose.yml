@@ -20,8 +20,9 @@ services:
     volumes:
       - 'gocache:/root/.cache/go-build'
       - 'gomodules_server:/go'
-      - './logs:/var/log/ssh_management.yml'
+      - './logs:/var/log/ssh_management'
       - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+      - './keys:/etc/ssh_management/keys'
       - '.:/app'
   queue:
     build:
@@ -39,7 +40,7 @@ services:
     volumes:
       - 'gocache:/root/.cache/go-build'
       - 'gomodules_queue:/go'
-      - './logs:/var/log/ssh_management.yml'
+      - './logs:/var/log/ssh_management'
       - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
       - '.:/app'
   redis:
@@ -96,7 +97,7 @@ services:
     networks:
       - net
     volumes:
-      - ./logs/client:/var/log/ssh_management.yml
+      - ./logs/client:/var/log/ssh_management
 networks:
   net:
     driver: bridge
