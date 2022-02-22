@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	osuser "os/user"
 	"runtime"
 	"testing"
 	"time"
@@ -140,4 +141,7 @@ func TestCreateUserHandler_Success(t *testing.T) {
 	res := helpers.Post(app, "/", helpers.WithBody(userSuccessDto))
 
 	assert.Equal(http.StatusCreated, res.StatusCode)
+	linuxUser, err := osuser.Lookup(userSuccessDto.User.Username)
+	assert.NoError(err)
+	assert.Equal("/home/"+linuxUser.Username, linuxUser.HomeDir)
 }

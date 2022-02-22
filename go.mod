@@ -16,7 +16,8 @@ require (
 	github.com/gofiber/storage/memory v0.0.0-20220210144513-cc5ccf062b5d
 	github.com/gofiber/storage/redis v0.0.0-20220210144513-cc5ccf062b5d
 	github.com/golang-migrate/migrate/v4 v4.15.1
-	github.com/hibiken/asynq v0.21.0
+	github.com/hibiken/asynq v0.22.1
+	github.com/jackc/pgtype v1.10.0
 	github.com/jackc/pgx/v4 v4.15.0
 	github.com/leebenson/conform v1.2.2
 	github.com/rs/zerolog v1.26.1
@@ -27,11 +28,11 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.33.0
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
-	google.golang.org/genproto v0.0.0-20220216160803-4663080d8bc8
+	google.golang.org/genproto v0.0.0-20220218161850-94dd64e39d7c
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
-	gorm.io/driver/postgres v1.2.3
-	gorm.io/gorm v1.22.5
+	gorm.io/driver/postgres v1.3.1
+	gorm.io/gorm v1.23.1
 )
 
 require (
@@ -53,10 +54,9 @@ require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.2.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
-	github.com/jackc/pgtype v1.10.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
-	github.com/klauspost/compress v1.14.2 // indirect
+	github.com/klauspost/compress v1.14.3 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lib/pq v1.10.4 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect

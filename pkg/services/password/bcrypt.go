@@ -11,8 +11,6 @@ import (
 
 var (
 	_ Hasher = BcryptPassword{}
-
-	ErrBcryptInvalidHash = errors.New("invalid bcrypt hash")
 )
 
 type BcryptPassword struct {
