@@ -22,6 +22,7 @@ services:
       - 'gomodules_server:/go'
       - './logs:/var/log/ssh_management'
       - './ssh_management.example.yml:/etc/ssh_management/ssh_management.yml'
+      - './ssh_management.example.yml:/app/ssh_management.yml'
       - './keys:/etc/ssh_management/keys'
       - '.:/app'
   queue:
